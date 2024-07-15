@@ -1,14 +1,14 @@
 -- chapters
 CREATE TABLE IF NOT EXISTS chapters (
-    id_chapter INTEGER PRIMARY KEY AUTOINCREMENT,
-    tableName TEXT UNIQUE NOT NULL,
+    chapter_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    table_name TEXT UNIQUE NOT NULL,
     image BLOB NOT NULL,
-    schema TEXT NOT NULL DEFAULT 'CREATE TABLE IF NOT EXISTS {table_name} (id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, country TEXT, city TEXT, message TEXT, id_tag INTEGER, FOREIGN KEY (id_tag) REFERENCES tags (id_tag))'
+    schema TEXT NOT NULL DEFAULT 'CREATE TABLE IF NOT EXISTS {table_name} (entry_id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, country TEXT, city TEXT, message TEXT, tag_id INTEGER, FOREIGN KEY (tag_id) REFERENCES tags (tag_id))'
 );
 
 -- tags
 CREATE TABLE IF NOT EXISTS tags (
-    id_tag INTEGER PRIMARY KEY AUTOINCREMENT,
+    tag_id INTEGER PRIMARY KEY AUTOINCREMENT,
     tag TEXT UNIQUE
 );
 
@@ -16,25 +16,24 @@ CREATE TABLE IF NOT EXISTS tags (
 CREATE TABLE IF NOT EXISTS entry_tags (
     entry_id INTEGER NOT NULL,
     tag_id INTEGER NOT NULL,
-    tableName TEXT NOT NULL,
+    table_name TEXT NOT NULL,
     date TEXT NOT NULL,
-    FOREIGN KEY (tag_id) REFERENCES tags (id_tag),
-    FOREIGN KEY (tableName) REFERENCES chapters (tableName),
-    PRIMARY KEY (tag_id, tableName, entry_id)
+    FOREIGN KEY (tag_id) REFERENCES tags (tag_id),
+    FOREIGN KEY (table_name) REFERENCES chapters (table_name),
+    PRIMARY KEY (tag_id, table_name, entry_id)
 );
 
 -- remind
 CREATE TABLE IF NOT EXISTS remind (
-    id_remind INTEGER PRIMARY KEY AUTOINCREMENT,
-    tableName TEXT NOT NULL,
+    remind_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    table_name TEXT NOT NULL,
     entry_id INTEGER NOT NULL, 
     date_remind TEXT NOT NULL,
-    FOREIGN KEY (tableName) REFERENCES chapters (tableName),
+    FOREIGN KEY (table_name) REFERENCES chapters (table_name),
     FOREIGN KEY (entry_id) REFERENCES entry_tags (entry_id)
 );
 
 -- Indexes
 CREATE INDEX idx_tag_id ON entry_tags (tag_id);
-CREATE INDEX idx_tableName ON entry_tags (tableName);
-CREATE INDEX idx_id_remind ON remind (id_remind);
+CREATE INDEX idx_table_name ON entry_tags (table_name);
 CREATE INDEX idx_entry_id ON entry_tags (entry_id);
