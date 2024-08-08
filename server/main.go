@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"server/handlers"
 	"server/oltar"
 	"server/utils"
 	"syscall"
@@ -25,6 +26,9 @@ func main() {
 
 	// Create a new ServeMux//
 	mux := http.NewServeMux()
+
+	// Handler for Endpoints //
+	handlers.RegisterChaptersEndpoints(mux, db)
 
 	// Manage connection //
 

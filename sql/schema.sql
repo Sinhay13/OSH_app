@@ -2,8 +2,7 @@
 CREATE TABLE IF NOT EXISTS chapters (
     chapter_id INTEGER PRIMARY KEY AUTOINCREMENT,
     table_name TEXT UNIQUE NOT NULL,
-    image BLOB NOT NULL,
-    schema TEXT NOT NULL DEFAULT 'CREATE TABLE IF NOT EXISTS {table_name} (entry_id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, country TEXT, city TEXT, message TEXT, tag_id INTEGER, FOREIGN KEY (tag_id) REFERENCES tags (tag_id))'
+	title TEXT UNIQUE,
 );
 
 -- tags
