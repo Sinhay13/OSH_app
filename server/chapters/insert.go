@@ -35,8 +35,7 @@ func createTableName(count int) (string, error) {
 	if count == 0 {
 		tableName = "chapter_0"
 	} else {
-		number := count - 1
-		tableName = fmt.Sprintf("chapter_%d", number)
+		tableName = fmt.Sprintf("chapter_%d", count)
 	}
 
 	return tableName, nil
@@ -73,8 +72,11 @@ func insertTableNameInsideChapters(tableName string, db *sql.DB) error {
 		return err
 	}
 
+	// get date:
+	opened := utils.DateNow()
+
 	// Execute the insert query
-	_, err = db.Exec(chaptersJson.Insert_chapters, tableName)
+	_, err = db.Exec(chaptersJson.Insert_chapters, tableName, opened)
 	if err != nil {
 		return err
 	}
@@ -100,7 +102,7 @@ func insertTitle(title string, db *sql.DB) error {
 	}
 
 	// update with title
-	_, err = db.Exec(chaptersJson.Title_chapters, title)
+	_, err = db.Exec(chaptersJson.Title_chapters, title, tableName)
 	if err != nil {
 		return err
 	}
@@ -113,7 +115,7 @@ func NewChapter(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	// count row inside chapters table
 	count, err := countRows(db)
 	if err != nil {
-		utils.Logger.Print(err)
+		utils.Logger.Printf("countRows newChapter : %v\n", err)
 		return
 	}
 
@@ -127,7 +129,7 @@ func NewChapter(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 		err = insertTitle(title, db)
 		if err != nil {
-			utils.Logger.Print(err)
+			utils.Logger.Printf("title newChapter : %v\n", err)
 			return
 		}
 	}
@@ -135,21 +137,21 @@ func NewChapter(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	// create new tableName
 	tableName, err := createTableName(count)
 	if err != nil {
-		utils.Logger.Print(err)
+		utils.Logger.Printf("createTableName newChapter : %v\n", err)
 		return
 	}
 
 	// create new chapter table
 	err = prepareAndRunQuery(tableName, db)
 	if err != nil {
-		utils.Logger.Print(err)
+		utils.Logger.Printf("prepareAndRunQuery newChapter : %v\n", err)
 		return
 	}
 
 	// insert ne chapter inside chapters
 	err = insertTableNameInsideChapters(tableName, db)
 	if err != nil {
-		utils.Logger.Print(err)
+		utils.Logger.Printf("insertTableNameInsideChapters newChapter : %v\n", err)
 		return
 	}
 

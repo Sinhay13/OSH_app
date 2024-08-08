@@ -24,9 +24,14 @@ func CorsMiddleware(h http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-// Get current Time :
+// Get current time :
 func TimeNow() string {
 	return time.Now().Format("2006-01-02 15:04:05")
+}
+
+// Get current date :
+func DateNow() string {
+	return time.Now().Format("2006-01-02")
 }
 
 // Logger //

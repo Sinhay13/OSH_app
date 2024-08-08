@@ -1,6 +1,6 @@
 {
-	"count":"SELECT COUNT(*) FROM chapters",
-	"insert_chapters":"INSERT INTO chapters (table_name) VALUES (?);",
+	"count":"SELECT COUNT(*) FROM chapters;",
+	"insert_chapters":"INSERT INTO chapters (table_name, opened) VALUES (?,?);",
 	"get_last_chapter":"SELECT table_name FROM chapters ORDER BY chapter_id DESC LIMIT 1;",
 	"title_chapters":"UPDATE chapters SET title = ? WHERE table_name = ?;"
 }

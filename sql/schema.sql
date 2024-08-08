@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS chapters (
     chapter_id INTEGER PRIMARY KEY AUTOINCREMENT,
     table_name TEXT UNIQUE NOT NULL,
 	title TEXT UNIQUE,
+	opened TIMESTAMP
 );
 
 -- tags
