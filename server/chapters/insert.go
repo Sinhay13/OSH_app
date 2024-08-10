@@ -6,11 +6,10 @@ import (
 	"fmt"
 	"net/http"
 	"server/utils"
-	"strings"
 )
 
 // countRows function takes a database connection and counts the number of rows in the 'chapters' table.
-func countRows(db *sql.DB) (int, error) {
+func CountRows(db *sql.DB) (int, error) {
 	var count int
 
 	// Load queries from JSON file
@@ -28,43 +27,21 @@ func countRows(db *sql.DB) (int, error) {
 	return count, nil
 }
 
-// Create new tableName:
-func createTableName(count int) (string, error) {
-	var tableName string
+// Create new chapterName:
+func createChapterName(count int) (string, error) {
+	var chapterName string
 
 	if count == 0 {
-		tableName = "chapter_0"
+		chapterName = "chapter_0"
 	} else {
-		tableName = fmt.Sprintf("chapter_%d", count)
+		chapterName = fmt.Sprintf("chapter_%d", count)
 	}
 
-	return tableName, nil
+	return chapterName, nil
 }
 
-// Prepare and execute new sql query to create new chapter
-func prepareAndRunQuery(tableName string, db *sql.DB) error {
-
-	// Load queries from JSON file
-	chaptersSchemaJson, err := utils.LoadQueries("chapter_model.json")
-	if err != nil {
-		return err
-	}
-
-	// Replace {table_name} with the actual tableName
-	query := chaptersSchemaJson.Chapter_model
-	query = strings.Replace(query, "{table_name}", tableName, -1)
-
-	// Run the query
-	_, err = db.Exec(query)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// insert tableName inside chapters
-func insertTableNameInsideChapters(tableName string, db *sql.DB) error {
+// insert chapterName inside chapters
+func insertChapterNameInsideChapters(chapterName string, db *sql.DB) error {
 	// Load queries from JSON file
 	chaptersJson, err := utils.LoadQueries("chapters.json")
 	if err != nil {
@@ -76,7 +53,7 @@ func insertTableNameInsideChapters(tableName string, db *sql.DB) error {
 	opened := utils.DateNow()
 
 	// Execute the insert query
-	_, err = db.Exec(chaptersJson.Insert_chapters, tableName, opened)
+	_, err = db.Exec(chaptersJson.Insert_chapters, chapterName, opened)
 	if err != nil {
 		return err
 	}
@@ -95,14 +72,14 @@ func insertTitle(title string, db *sql.DB) error {
 	}
 
 	// get the last chapter
-	var tableName string
-	err = db.QueryRow(chaptersJson.Get_last_chapter).Scan(&tableName)
+	var chapterName string
+	err = db.QueryRow(chaptersJson.Get_last_chapter).Scan(&chapterName)
 	if err != nil {
 		return err
 	}
 
 	// update with title
-	_, err = db.Exec(chaptersJson.Title_chapters, title, tableName)
+	_, err = db.Exec(chaptersJson.Title_chapters, title, chapterName)
 	if err != nil {
 		return err
 	}
@@ -113,7 +90,7 @@ func insertTitle(title string, db *sql.DB) error {
 func NewChapter(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 	// count row inside chapters table
-	count, err := countRows(db)
+	count, err := CountRows(db)
 	if err != nil {
 		utils.Logger.Printf("countRows newChapter : %v\n", err)
 		return
@@ -134,24 +111,17 @@ func NewChapter(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		}
 	}
 
-	// create new tableName
-	tableName, err := createTableName(count)
+	// create new chapterName
+	chapterName, err := createChapterName(count)
 	if err != nil {
-		utils.Logger.Printf("createTableName newChapter : %v\n", err)
-		return
-	}
-
-	// create new chapter table
-	err = prepareAndRunQuery(tableName, db)
-	if err != nil {
-		utils.Logger.Printf("prepareAndRunQuery newChapter : %v\n", err)
+		utils.Logger.Printf("createChapterName newChapter : %v\n", err)
 		return
 	}
 
 	// insert ne chapter inside chapters
-	err = insertTableNameInsideChapters(tableName, db)
+	err = insertChapterNameInsideChapters(chapterName, db)
 	if err != nil {
-		utils.Logger.Printf("insertTableNameInsideChapters newChapter : %v\n", err)
+		utils.Logger.Printf("insertChapterNameInsideChapters newChapter : %v\n", err)
 		return
 	}
 
@@ -164,6 +134,8 @@ func NewChapter(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 
-	// write the response
-	json.NewEncoder(w).Encode(response)
+	// Write the response
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		utils.Logger.Printf("Error encoding response: %v\n", err)
+	}
 }

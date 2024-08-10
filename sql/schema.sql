@@ -1,39 +1,48 @@
 -- chapters
 CREATE TABLE IF NOT EXISTS chapters (
-    chapter_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    table_name TEXT UNIQUE NOT NULL,
-	title TEXT UNIQUE,
-	opened TIMESTAMP
+    chapter_name TEXT PRIMARY KEY UNIQUE NOT NULL,
+    title TEXT UNIQUE,
+    opened TIMESTAMP UNIQUE
 );
 
 -- tags
 CREATE TABLE IF NOT EXISTS tags (
-    tag_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    tag TEXT UNIQUE
+    tag TEXT PRIMARY KEY UNIQUE NOT NULL,
+    filter TEXT  DEFAULT null
+	FOREIGN KEY (filter) REFERENCES filters (filter)
 );
 
--- entry_tags
-CREATE TABLE IF NOT EXISTS entry_tags (
-    entry_id INTEGER NOT NULL,
-    tag_id INTEGER NOT NULL,
-    table_name TEXT NOT NULL,
-    date TEXT NOT NULL,
-    FOREIGN KEY (tag_id) REFERENCES tags (tag_id),
-    FOREIGN KEY (table_name) REFERENCES chapters (table_name),
-    PRIMARY KEY (tag_id, table_name, entry_id)
+-- filters
+CREATE TABLE IF NOT EXISTS filters (
+    filter TEXT PRIMARY KEY UNIQUE NOT NULL,
+    comments TEXT NOT NULL DEFAULT 'none'
 );
 
--- remind
-CREATE TABLE IF NOT EXISTS remind (
+-- entries
+CREATE TABLE IF NOT EXISTS entries (
+    entry_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    chapter_name TEXT NOT NULL,
+    tag TEXT NOT NULL,
+    date TEXT NOT NULL UNIQUE,
+    country TEXT NOT NULL,
+    city TEXT NOT NULL,
+    message TEXT NOT NULL,
+    FOREIGN KEY (chapter_name) REFERENCES chapters(chapter_name),
+    FOREIGN KEY (tag) REFERENCES tags(tag)
+);
+
+-- reminds
+CREATE TABLE IF NOT EXISTS reminds (
     remind_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    table_name TEXT NOT NULL,
     entry_id INTEGER NOT NULL, 
-    date_remind TEXT NOT NULL,
-    FOREIGN KEY (table_name) REFERENCES chapters (table_name),
-    FOREIGN KEY (entry_id) REFERENCES entry_tags (entry_id)
+    date_remind TIMESTAMP NOT NULL,
+    repeat TEXT NOT NULL DEFAULT 'none',
+    FOREIGN KEY (entry_id) REFERENCES entries(entry_id)
 );
 
 -- Indexes
-CREATE INDEX idx_tag_id ON entry_tags (tag_id);
-CREATE INDEX idx_table_name ON entry_tags (table_name);
-CREATE INDEX idx_entry_id ON entry_tags (entry_id);
+CREATE INDEX idx_chapter_name ON entries (chapter_name);
+CREATE INDEX idx_tag ON entries (tag);
+CREATE INDEX idx_date ON entries (date);
+CREATE INDEX idx_entry_id ON remind (entry_id);
+CREATE INDEX idx_date_remind ON remind (date_remind);

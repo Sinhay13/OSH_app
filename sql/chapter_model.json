@@ -1,3 +1,0 @@
-{
-	"chapter_model":"CREATE TABLE IF NOT EXISTS {table_name} (entry_id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT, country TEXT, city TEXT, message TEXT);"
-}
