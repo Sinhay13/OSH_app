@@ -2,20 +2,17 @@
 CREATE TABLE IF NOT EXISTS chapters (
     chapter_name TEXT PRIMARY KEY UNIQUE NOT NULL,
     title TEXT UNIQUE,
-    opened TIMESTAMP UNIQUE
+    opened TIMESTAMP NOT NULL UNIQUE
 );
 
 -- tags
 CREATE TABLE IF NOT EXISTS tags (
     tag TEXT PRIMARY KEY UNIQUE NOT NULL,
-    filter TEXT  DEFAULT null
-	FOREIGN KEY (filter) REFERENCES filters (filter)
-);
-
--- filters
-CREATE TABLE IF NOT EXISTS filters (
-    filter TEXT PRIMARY KEY UNIQUE NOT NULL,
-    comments TEXT NOT NULL DEFAULT 'none'
+	comment TEXT  DEFAULT 'none',
+	principle TEXT NOT NULL CHECK (principle IN ('will', 'vitality', 'family','progress')),
+	active INTEGER NOT NULL DEFAULT 1,
+	created_time TIMESTAMP NOT NULL UNIQUE,
+	updated_time TIMESTAMP NOT NULL UNIQUE
 );
 
 -- entries
@@ -23,7 +20,7 @@ CREATE TABLE IF NOT EXISTS entries (
     entry_id INTEGER PRIMARY KEY AUTOINCREMENT,
     chapter_name TEXT NOT NULL,
     tag TEXT NOT NULL,
-    date TEXT NOT NULL UNIQUE,
+    date TIMESTAMP NOT NULL UNIQUE,
     country TEXT NOT NULL,
     city TEXT NOT NULL,
     message TEXT NOT NULL,
@@ -44,5 +41,6 @@ CREATE TABLE IF NOT EXISTS reminds (
 CREATE INDEX idx_chapter_name ON entries (chapter_name);
 CREATE INDEX idx_tag ON entries (tag);
 CREATE INDEX idx_date ON entries (date);
-CREATE INDEX idx_entry_id ON remind (entry_id);
-CREATE INDEX idx_date_remind ON remind (date_remind);
+CREATE INDEX idx_entry_id ON reminds (entry_id);
+CREATE INDEX idx_date_remind ON reminds (date_remind);
+CREATE INDEX idx_repeat ON reminds (repeat);
