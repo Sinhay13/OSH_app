@@ -1,0 +1,52 @@
+body {
+    display: flex;
+    flex-direction: column; /* Stack nav and main vertically */
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    margin: 0; /* Remove default margin */
+}
+
+nav {
+    padding: 20px;
+    border-top: 1px solid black;
+    background-color: black; /* Earth Brown */
+    display: flex;
+    justify-content: center; /* Center the buttons horizontally */
+}
+
+nav div {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px; /* Space between buttons */
+}
+
+.nav-button {
+    background-color: #fff; /* White button background */
+    color: #4e3a2a; /* Earth Brown text */
+    border: none;
+    padding: 20px 40px; /* Larger button padding */
+    font-size: 18px; /* Larger font size */
+    cursor: pointer;
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth hover effect */
+}
+
+
+
+body >main {
+    flex: 1; /* Allow main to grow and fill available space */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-image: url('forest.jpg'); /* Background image */
+    background-size: cover; /* Scale the background image to cover the entire element */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */	
+}
+
+img {
+    max-width: 100%;
+    max-height: 80vh; /* Ensure image fits within the viewport height */
+    object-fit: contain; /* Maintain aspect ratio */
+}
