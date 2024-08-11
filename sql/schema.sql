@@ -9,8 +9,10 @@ CREATE TABLE IF NOT EXISTS chapters (
 	CREATE TABLE IF NOT EXISTS tags (
 		tag TEXT PRIMARY KEY,
 		comment TEXT  DEFAULT 'none',
-		principle TEXT NOT NULL DEFAULT 'none' CHECK (principle IN ('none','will', 'vitality', 'family','progress')),
-		active INTEGER NOT NULL DEFAULT 1,
+		is_principle INTEGER NOT NULL DEFAULT 0 CHECK (is_principle IN (0, 1)),
+		principle TEXT NOT NULL DEFAULT 'none',
+		active INTEGER NOT NULL DEFAULT 1 CHECK (is_principle IN (0, 1)),
+		daily INTEGER NOT NULL DEFAULT 0 CHECK (is_principle IN (0, 1)),
 		created_time TIMESTAMP NOT NULL,
 		updated_time TIMESTAMP NOT NULL
 	);
@@ -37,10 +39,22 @@ CREATE TABLE IF NOT EXISTS reminds (
     FOREIGN KEY (entry_id) REFERENCES entries(entry_id)
 );
 
+-- system
+CREATE TABLE IF NOT EXISTS system (
+    year INTEGER NOT NULL,
+    month INTEGER NOT NULL,
+    day INTEGER NOT NULL,
+    tag TEXT NOT NULL,
+    result TEXT DEFAULT 'none',
+    PRIMARY KEY (year, month, day, tag),
+    FOREIGN KEY (tag) REFERENCES tags (tag)
+);
+
 -- Indexes
 CREATE INDEX idx_chapter_name ON entries (chapter_name);
 CREATE INDEX idx_tag ON entries (tag);
 CREATE INDEX idx_date ON entries (date);
-CREATE INDEX idx_entry_id ON reminds (entry_id);
 CREATE INDEX idx_date_remind ON reminds (date_remind);
-CREATE INDEX idx_repeat ON reminds (repeat);
+CREATE INDEX idx_year_month ON system (year, month);
+CREATE INDEX idx_year_month_tag_result ON system (year, month, tag, result);
+
