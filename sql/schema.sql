@@ -1,26 +1,26 @@
 -- chapters
 CREATE TABLE IF NOT EXISTS chapters (
-    chapter_name TEXT PRIMARY KEY UNIQUE NOT NULL,
+    chapter_name TEXT PRIMARY KEY,
     title TEXT UNIQUE,
-    opened TIMESTAMP NOT NULL UNIQUE
+    opened TIMESTAMP NOT NULL
 );
 
 -- tags
-CREATE TABLE IF NOT EXISTS tags (
-    tag TEXT PRIMARY KEY UNIQUE NOT NULL,
-	comment TEXT  DEFAULT 'none',
-	principle TEXT NOT NULL CHECK (principle IN ('will', 'vitality', 'family','progress')),
-	active INTEGER NOT NULL DEFAULT 1,
-	created_time TIMESTAMP NOT NULL UNIQUE,
-	updated_time TIMESTAMP NOT NULL UNIQUE
-);
+	CREATE TABLE IF NOT EXISTS tags (
+		tag TEXT PRIMARY KEY,
+		comment TEXT  DEFAULT 'none',
+		principle TEXT NOT NULL DEFAULT 'none' CHECK (principle IN ('none','will', 'vitality', 'family','progress')),
+		active INTEGER NOT NULL DEFAULT 1,
+		created_time TIMESTAMP NOT NULL,
+		updated_time TIMESTAMP NOT NULL
+	);
 
 -- entries
 CREATE TABLE IF NOT EXISTS entries (
     entry_id INTEGER PRIMARY KEY AUTOINCREMENT,
     chapter_name TEXT NOT NULL,
     tag TEXT NOT NULL,
-    date TIMESTAMP NOT NULL UNIQUE,
+    date TIMESTAMP NOT NULL,
     country TEXT NOT NULL,
     city TEXT NOT NULL,
     message TEXT NOT NULL,
