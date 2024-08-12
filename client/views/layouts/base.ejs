@@ -11,13 +11,36 @@
 <body>
 
 	<nav>
-		<button>Test</button>
+		<div>
+			<button name="chapters">Chapters</button>
+		</div>
+		<br>
+		<div>
+			<button name="new-entry">New Entry</button>
+		</div>
+		<br>
+		<div>
+			<button name="search">Search</button>
+		</div>
+		<br>
+		<div>
+			<button name="tags">Tags</button>
+		</div>
+		<br>
+		<div>
+			<button name="reminds">Reminds</button>
+		</div>
+		<br>
+		<div>
+			<button name="system">System</button>
+		</div>
 	</nav>
 	<div>
 		<%- include('../partials/header.ejs') %>
 			<main><%- body %></main>
 			<%- include('../partials/footer.ejs') %>
 	</div>
+	<script src="js/base.js" defer></script>
 </body>
 
 </html>
