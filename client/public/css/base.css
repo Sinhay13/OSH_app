@@ -14,7 +14,7 @@ nav {
     border-right: 1px solid black;
     width: 200px; /* Adjust width as needed */
     align-items: center; /* Center items horizontally */
-    background-color: #f9f9f9; /* Optional: Add background color */
+    background-color: #E8DDB5; /* Optional: Add background color */
 }
 
 nav .logo {
@@ -34,12 +34,12 @@ button {
     width: 100%; /* Make buttons take full width of their container */
     padding: 10px; /* Add some padding for better appearance */
     border: none; /* Remove default button border */
-    background-color: #f0f0f0; /* Add background color */
+    background-color: #E8DDB5; /* Add background color */
     font-size: 16px; /* Adjust font size as needed */
 }
 
 button:hover {
-    background-color: #e0e0e0; /* Change color on hover */
+    background-color: #D2BE76; /* Change color on hover */
 }
 
 main {
