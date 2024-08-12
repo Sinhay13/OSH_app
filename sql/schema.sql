@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS entries (
 CREATE TABLE IF NOT EXISTS reminds (
     remind_id INTEGER PRIMARY KEY AUTOINCREMENT,
     entry_id INTEGER NOT NULL, 
-    date_remind TIMESTAMP NOT NULL,
+    remind_date TIMESTAMP NOT NULL,
     repeat TEXT NOT NULL DEFAULT 'none',
     FOREIGN KEY (entry_id) REFERENCES entries(entry_id)
 );
@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS system (
     year INTEGER NOT NULL,
     month INTEGER NOT NULL,
     day INTEGER NOT NULL,
+	week TEXT NOT NULL,
     tag TEXT NOT NULL,
     result TEXT DEFAULT 'none',
     PRIMARY KEY (year, month, day, tag),
@@ -54,7 +55,7 @@ CREATE TABLE IF NOT EXISTS system (
 CREATE INDEX idx_chapter_name ON entries (chapter_name);
 CREATE INDEX idx_tag ON entries (tag);
 CREATE INDEX idx_date ON entries (date);
-CREATE INDEX idx_date_remind ON reminds (date_remind);
+CREATE INDEX idx_date_remind ON reminds (remind_date);
 CREATE INDEX idx_year_month ON system (year, month);
 CREATE INDEX idx_year_month_tag_result ON system (year, month, tag, result);
 
