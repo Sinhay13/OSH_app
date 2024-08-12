@@ -1,17 +1,26 @@
 /* base.css */
 body {
     display: flex;
-    flex-direction: row;
+    flex-direction: row; /* Arrange children in a row */
     font-family: Arial, sans-serif;
     min-height: 100vh;
+    margin: 0; /* Remove default margin */
 }
 
 nav {
     display: flex;
-    flex-direction: column; /* Stack nav items vertically */
+    flex-direction: column; /* Stack items vertically */
     padding: 20px;
     border-right: 1px solid black;
     width: 200px; /* Adjust width as needed */
+    align-items: center; /* Center items horizontally */
+    background-color: #f9f9f9; /* Optional: Add background color */
+}
+
+nav .logo {
+    max-width: 100%; /* Ensure the image scales down */
+    height: auto; /* Maintain aspect ratio */
+    margin-bottom: 20px; /* Space between the logo and buttons */
 }
 
 nav > div {
@@ -36,4 +45,16 @@ button:hover {
 main {
     padding: 20px;
     flex: 1; /* Allow main to take remaining space */
+    margin-left: 20px; /* Add space between nav and main */
+    overflow: auto; /* Add scroll if content overflows */
+}
+
+header, footer {
+    padding: 20px; /* Add padding inside header and footer */
+    margin-bottom: 20px; /* Space below header and above footer */
+    background-color: #f4f4f4; /* Optional: Add background color */
+}
+
+footer {
+    margin-top: 20px; /* Space above footer */
 }
