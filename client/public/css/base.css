@@ -1,0 +1,15 @@
+body {
+	display: flex;
+	flex-direction: row;
+	font-family: Arial, sans-serif;
+	min-height: 100vh;
+}
+
+nav {
+	padding: 20px;
+	border-right: 1px solid black
+}
+
+main {
+	padding: 20px;
+}

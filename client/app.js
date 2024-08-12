@@ -1,18 +1,26 @@
-// app.js
-const express = require('express');
-const path = require('path');
-const app = express();
-const port = 3232;
+// Imports
+const express = require('express')
+const expressLayouts = require('express-ejs-layouts')
 
-// Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, 'public')));
+const app = express()
+const port = 3232
 
+// Static Files
+app.use(express.static('public'))
+app.use('/css', express.static(__dirname + 'public/css'))
+app.use('/js', express.static(__dirname + 'public/js'))
+app.use('/img', express.static(__dirname + 'public/img'))
 
-// Serve the main HTML file
+// Set Templating Engine
+app.use(expressLayouts)
+app.set('layout', './layouts')
+app.set('view engine', 'ejs')
+
+// Routes
 app.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+	res.render('chapters', { title: 'Chapters Page', layout: './layouts/base' })
+})
 
-app.listen(port, () => {
-	console.log(`Server is running at http://localhost:${port}`);
-});
+
+// Listen on Port 5000
+app.listen(port, () => console.info(`App listening on port ${port}`))
