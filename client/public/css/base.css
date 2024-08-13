@@ -47,12 +47,25 @@ main {
     flex: 1; /* Allow main to take remaining space */
     margin-left: 20px; /* Add space between nav and main */
     overflow: auto; /* Add scroll if content overflows */
+
 }
 
-header, footer {
-    padding: 20px; /* Add padding inside header and footer */
-    margin-bottom: 20px; /* Space below header and above footer */
-    background-color: #f4f4f4; /* Optional: Add background color */
+header {
+	width: 100%;
+    background-color: #f4f4f4;
+    padding: 20px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+
+footer {
+    width: 100%;
+    background-color: #f4f4f4;
+    padding: 20px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
 }
 
 footer {
