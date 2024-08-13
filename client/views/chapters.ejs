@@ -1,49 +1,49 @@
 <link rel="stylesheet" href="css/base.css">
 <h1>Chapters History</h1>
-<div name="current-chapter">
+
+<form name="current-chapter">
 	<h3>Current Chapter</h3>
-	<table name="current-chapter">
+	<table>
 		<thead>
 			<tr>
 				<th>ChapterName</th>
 				<th>Opened</th>
 			</tr>
+		</thead>
 		<tbody>
-			<td>
-				<input type="text" name="chapter-name">
-			</td>
-			<td><input type="text" name="opened"></td>
+			<tr>
+				<td><input type="text" name="chapter-name"></td>
+				<td><input type="text" name="opened"></td>
 			</tr>
 		</tbody>
-		</thead>
 	</table>
-</div>
-<div name="previous-chapters">
+	<input type="submit" value="first">
+</form>
+
+<form name="previous-chapters">
 	<h3>Previous Chapters</h3>
-	<table name="previous-chapters">
+	<table>
 		<thead>
 			<tr>
 				<th>ChapterName</th>
 				<th>Opened</th>
 				<th>Title</th>
 			</tr>
+		</thead>
 		<tbody>
-			<td>
-				<input type="text" name="chapter-name-list">
-			</td>
-			<td><input type="text" name="opened-list"></td>
-
-			<td>
-				<input type="text" name="title-list">
-			</td>
+			<tr>
+				<td><input type="text" name="chapter-name-list"></td>
+				<td><input type="text" name="opened-list"></td>
+				<td><input type="text" name="title-list"></td>
 			</tr>
 		</tbody>
-		</thead>
 	</table>
-</div>
+</form>
+
 <form name="new-chapter">
 	<h3>New Chapter</h3>
 	<input type="text" placeholder="title for previous chapter">
 	<input type="submit" value="save">
 </form>
+
 <script src="js/chapters.js" defer></script>

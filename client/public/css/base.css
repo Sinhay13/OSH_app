@@ -50,29 +50,6 @@ main {
 
 }
 
-header {
-	width: 100%;
-    background-color: #f4f4f4;
-    padding: 20px;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-}
-
-footer {
-    width: 100%;
-    background-color: #f4f4f4;
-    padding: 20px;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-}
-
-footer {
-    margin-top: 20px; /* Space above footer */
-}
-
-
 /* tables */
 ul {
 	padding-left: 10px;
@@ -86,4 +63,9 @@ th,
 td {
 	border: 1px solid black;
 	padding: 10px;
+}
+input[type="text"] {
+    width: auto;
+    min-width: 300px; /* Adjust this as needed */
+    box-sizing: border-box; /* Ensures padding is included in the width */
 }
