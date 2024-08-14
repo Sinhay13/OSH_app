@@ -1,37 +1,56 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
-	try {
-		// Get elements:
-		const currentChapterInputs = document.querySelectorAll('form[name="current-chapter"] input');
-		const previousChaptersInputs = document.querySelectorAll('form[name="previous-chapters"] input');
-		const newChapterForm = document.querySelector('form[name="new-chapter"]');
+	// Get elements:
+	const currentChapterForm = document.forms["current-chapter"];
+	const previousChaptersForm = document.forms["previous-chapters"];
+	const newChapterForm = document.forms["new-chapter"];
 
-		// Check if it is the first chapter
-		const isFirst = await isFirstChapter();
-		if (isFirst) {
-			const currentChapterForm = document.querySelector('form[name="current-chapter"]');
-			currentChapterForm.addEventListener('submit', async (event) => {
-				event.preventDefault();
-				try {
-					await firstChapter(); // Wait for the function to complete
-					currentChapterInputs.forEach(input => input.disabled = true); // Disable all inputs after submission
-				} catch (error) {
-					console.log('Error creating first chapter:', error);
-				}
-			});
-		}
+	// disabled input 
+	currentChapterForm.elements['chapter-name'].disabled = true;
+	currentChapterForm.elements['opened'].disabled = true;
+	for (let i = 0; i < previousChaptersForm.elements.length; i++) {
+		previousChaptersForm.elements[i].disabled = true;
+	};
 
-		// Apply changes based on the `isFirst` value
-		currentChapterInputs.forEach(input => {
-			if (input.type === 'submit') {
-				input.disabled = !isFirst;
-			} else if (input.type === 'text') {
-				input.disabled = true;
+	// get and display data
+	await getAndDisplayData();
+
+
+	// Check if it is the first chapter an allow create a the first chapter or the next one year after 
+	const isFirst = await isFirstChapter();
+	if (isFirst) {
+		newChapterForm.elements['new-title'].disabled = true;
+		newChapterForm.addEventListener('submit', async (event) => {
+			event.preventDefault();
+			try {
+				await firstChapter(); // Wait for the function to complete
+				alert(' Your first chapter is created !')
+				await getAndDisplayData();
+				newChapterForm.elements['new'].disabled = true;
+			} catch (error) {
+				console.log('Error creating first chapter:', error);
 			}
 		});
-
-	} catch (error) {
-		console.error('Error in DOMContentLoaded handler:', error);
+	} else {
+		newChapterForm.addEventListener('submit', async (event) => {
+			event.preventDefault();
+			const isOneYear = await isOneYearAgo();
+			if (isOneYear) {
+				const title = newChapterForm.elements['new-title'].value
+				if (title === "") {
+					alert('Title for the previous chapter is needed !')
+				} else {
+					event.preventDefault();
+					await newChapter(title);
+					alert('New chapter created !')
+					await getAndDisplayData();
+					newChapterForm.elements['new'].disabled = true;
+					newChapterForm.elements['new-title'].disabled = true;
+				}
+			} else {
+				alert('You can only start a new chapter at least one year after the previous one began!')
+			}
+		});
 	}
 });
 
@@ -43,14 +62,12 @@ const isFirstChapter = async () => {
 		const response = await fetch(url);
 
 		if (!response.ok) {
-			throw new Error(`HTTP error! Status: ${response.status}`);
 		}
 
 		const data = await response.json();
 		return data.message === 'is first chapter';
 
 	} catch (error) {
-		console.error('Fetch error:', error);
 		return false;  // Consider returning false in case of error
 	}
 };
@@ -62,7 +79,7 @@ const firstChapter = async () => {
 		const response = await fetch(url)
 
 		if (!response.ok) {
-			throw new Error(`HTTP error! Status: ${response.status}`);
+
 		}
 
 		const result = await response.json();
@@ -73,26 +90,120 @@ const firstChapter = async () => {
 	}
 };
 
-const isOneYearAgo = () => {
-	pass;
+// Check if it is one year
+const isOneYearAgo = async () => {
+	try {
+		const url = `http://127.0.0.1:2323/chapters/year`;
+		const response = await fetch(url);
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const data = await response.json();
+		return data.found;  // Directly return the boolean value from the response
+
+	} catch (error) {
+		return false;  // Return false in case of error
+	}
 };
 
-const NewChapter = (title) => {
-	pass;
+// create a new chapter 
+const newChapter = async (title) => {
+	const title_string = encodeURIComponent(title);
+
+	try {
+		const url = `http://127.0.0.1:2323/chapters/new?title=${title_string}`;
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const result = await response.json();
+		console.log('New chapter created:', result);
+
+	} catch (error) {
+		console.error('Error creating new chapter:', error);
+	}
 };
 
-const getData = () => {
-	pass;
+// get data from server : 
+const getData = async () => {
+	const url = `http://127.0.0.1:2323/chapters/list`;
+
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		const data = await response.json();
+		// Pass data to functions
+		currentChapter(data);
+		listChapter(data);
+		return data; // Optional: if you want to return data from this function
+	} catch (error) {
+	}
 };
 
-const currentChapter = (data) => {
-	pass;
+
+// Display current chapter
+const currentChapter = async (data) => {
+	if (data != null) {
+		// Find the chapter where title is null
+		const currentChapterData = data.find(item => item.title === null);
+
+		if (currentChapterData) {
+			const chapterNameInput = document.querySelector('form[name="current-chapter"] input[name="chapter-name"]');
+			const openedInput = document.querySelector('form[name="current-chapter"] input[name="opened"]');
+
+			// Populate the current chapter form
+			chapterNameInput.value = currentChapterData.chapter_name;
+			openedInput.value = currentChapterData.opened;
+		} else {
+			console.log('No current chapter found.');
+		}
+	} else {
+		return;
+	}
 };
 
-const listChapter = (data) => {
-	pass;
+
+// Display list of previous chapters
+const listChapter = async (data) => {
+	if (data != null) {
+		const tbody = document.querySelector('form[name="previous-chapters"] tbody');
+
+		// Clear existing rows
+		tbody.innerHTML = '';
+
+		// Filter out the current chapter and populate previous chapters
+		data.forEach(item => {
+			if (item.title !== null) {
+				const row = document.createElement('tr');
+
+				// Create cells for chapter data
+				row.innerHTML = `
+		  <td><input type="text" name="chapter-name-list" value="${item.chapter_name}" disabled></td>
+		  <td><input type="text" name="opened-list" value="${item.opened}" disabled></td>
+		  <td><input type="text" name="title-list" value="${item.title}" disabled></td>
+		`;
+
+				tbody.appendChild(row);
+			}
+		});
+	} else {
+		return;
+	}
 };
 
+// get and display data
+const getAndDisplayData = async () => {
+	const data = await getData();
+	await listChapter(data);
+	await currentChapter(data);
+
+}
 
 
 

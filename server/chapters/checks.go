@@ -12,7 +12,6 @@ func IsFirstChapter(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	count, err := CountRows(db)
 	if err != nil {
 		utils.Logger.Printf("countRows isFirstChapter : %v\n", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -36,7 +35,6 @@ func IsFirstChapter(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 // check if is one year ago
 func IsOneYearAgo(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-
 	count, err := CountRows(db)
 	if err != nil {
 		utils.Logger.Printf("countRows isOneYearAgo : %v\n", err)
@@ -44,8 +42,6 @@ func IsOneYearAgo(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 
 	if count != 0 {
-
-		// Load queries from JSON file
 		chaptersJson, err := utils.LoadQueries("chapters.json")
 		if err != nil {
 			utils.Logger.Printf("Error loading queries: %v\n", err)
@@ -54,29 +50,23 @@ func IsOneYearAgo(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 		var row sql.NullString
 
-		// Execute the query to check if the last entry is one year ago
 		err = db.QueryRow(chaptersJson.One_year_ago).Scan(&row)
 		if err != nil {
 			utils.Logger.Printf("isOneYearAgo error running query: %v\n", err)
 			return
 		}
 
-		if !row.Valid { // Check if the row is NULL (using sql.NullString)
-			w.WriteHeader(http.StatusNoContent)
-			return
+		response := map[string]bool{"found": row.Valid}
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(response); err != nil {
+			utils.Logger.Printf("Error encoding response: %v\n", err)
 		}
+		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-
-	// Prepare the response
-	response := map[string]interface{}{
-		"ok":      true,
-		"message": "is one year ago",
-	}
+	// If no rows were found or count is 0
+	response := map[string]bool{"found": false}
 	w.Header().Set("Content-Type", "application/json")
-
-	// Write the response
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		utils.Logger.Printf("Error encoding response: %v\n", err)
 	}
