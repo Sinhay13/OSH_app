@@ -147,54 +147,54 @@ const getData = async () => {
 };
 
 
+// Helper function to format date (YYYY-MM-DD)
+const formatDate = (dateString) => {
+	const date = new Date(dateString);
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+	const day = String(date.getDate()).padStart(2, '0');
+	return `${year}-${month}-${day}`;
+};
+
 // Display current chapter
-const currentChapter = async (data) => {
-	if (data != null) {
-		// Find the chapter where title is null
-		const currentChapterData = data.find(item => item.title === null);
+const currentChapter = (data) => {
+	// Find the chapter where title is null
+	const currentChapterData = data.find(item => item.title === null);
 
-		if (currentChapterData) {
-			const chapterNameInput = document.querySelector('form[name="current-chapter"] input[name="chapter-name"]');
-			const openedInput = document.querySelector('form[name="current-chapter"] input[name="opened"]');
+	if (currentChapterData) {
+		const chapterNameInput = document.querySelector('form[name="current-chapter"] input[name="chapter-name"]');
+		const openedInput = document.querySelector('form[name="current-chapter"] input[name="opened"]');
 
-			// Populate the current chapter form
-			chapterNameInput.value = currentChapterData.chapter_name;
-			openedInput.value = currentChapterData.opened;
-		} else {
-			console.log('No current chapter found.');
-		}
+		// Populate the current chapter form
+		chapterNameInput.value = currentChapterData.chapter_name;
+		openedInput.value = formatDate(currentChapterData.opened);
 	} else {
-		return;
+		console.log('No current chapter found.');
 	}
 };
 
-
 // Display list of previous chapters
-const listChapter = async (data) => {
-	if (data != null) {
-		const tbody = document.querySelector('form[name="previous-chapters"] tbody');
+const listChapter = (data) => {
+	const tbody = document.querySelector('form[name="previous-chapters"] tbody');
 
-		// Clear existing rows
-		tbody.innerHTML = '';
+	// Clear existing rows
+	tbody.innerHTML = '';
 
-		// Filter out the current chapter and populate previous chapters
-		data.forEach(item => {
-			if (item.title !== null) {
-				const row = document.createElement('tr');
+	// Filter out the current chapter and populate previous chapters
+	data.forEach(item => {
+		if (item.title !== null) {
+			const row = document.createElement('tr');
 
-				// Create cells for chapter data
-				row.innerHTML = `
+			// Create cells for chapter data
+			row.innerHTML = `
 		  <td><input type="text" name="chapter-name-list" value="${item.chapter_name}" disabled></td>
-		  <td><input type="text" name="opened-list" value="${item.opened}" disabled></td>
+		  <td><input type="text" name="opened-list" value="${formatDate(item.opened)}" disabled></td>
 		  <td><input type="text" name="title-list" value="${item.title}" disabled></td>
 		`;
 
-				tbody.appendChild(row);
-			}
-		});
-	} else {
-		return;
-	}
+			tbody.appendChild(row);
+		}
+	});
 };
 
 // get and display data
