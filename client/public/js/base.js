@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+
 	// Function to handle navigation
 	function navigateTo(path) {
 		window.location.href = path;

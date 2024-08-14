@@ -69,3 +69,12 @@ input[type="text"] {
     min-width: 300px; /* Adjust this as needed */
     box-sizing: border-box; /* Ensures padding is included in the width */
 }
+
+/* editor js */
+
+#editorjs {
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	padding: 10px;
+	min-height: 300px;
+  }

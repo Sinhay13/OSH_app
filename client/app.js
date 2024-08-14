@@ -19,6 +19,9 @@ app.set('view engine', 'ejs')
 // Routes
 app.get('/', (req, res) => {
 	res.render('chapters', { title: 'Chapters Page', layout: './layouts/base' })
+});
+app.get('/new-entry', (req, res) => {
+	res.render('new-entry', { title: 'New entry Page', layout: './layouts/base' })
 })
 
 

@@ -1,0 +1,48 @@
+<h1>New Entry</h1>
+
+<form name="tag-form">
+	<h3>Tag selection : </h3>
+	<table>
+		<thead>
+			<tr>
+				<th>Tag</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					<select name="tag-list"></select>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<input type="submit" name='valid-tag' value="next">
+</form>
+<form name="city-country-form">
+	<h3> Where ? </h3>
+	<table>
+		<thead>
+			<tr>
+				<th>City</th>
+				<th>Country</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="city"></td>
+				<td><input type="text" name="country"></td>
+			</tr>
+		</tbody>
+	</table>
+	<input type="submit" name='valid-city-country' value="next">
+</form>
+<br>
+<form name="message-form">
+	<h3>Message</h3>
+	<div id="editorjs">
+		<textarea id="editor-content" style="display:none;"></textarea>
+	</div>
+	<input type="submit" name="valid-message" value="Submit">
+</form>
+<form name="date-form"></form>
+<script src="js/new-entry.js" defer></script>
