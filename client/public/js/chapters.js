@@ -157,7 +157,7 @@ const formatDate = (dateString) => {
 };
 
 // Display current chapter
-const currentChapter = (data) => {
+const currentChapter = async (data) => {
 	// Find the chapter where title is null
 	const currentChapterData = data.find(item => item.title === null);
 
@@ -174,7 +174,7 @@ const currentChapter = (data) => {
 };
 
 // Display list of previous chapters
-const listChapter = (data) => {
+const listChapter = async (data) => {
 	const tbody = document.querySelector('form[name="previous-chapters"] tbody');
 
 	// Clear existing rows
