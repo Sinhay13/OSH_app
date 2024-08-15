@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS chapters (
 		comment TEXT  DEFAULT 'none',
 		is_principle INTEGER NOT NULL DEFAULT 0 CHECK (is_principle IN (0, 1)),
 		principle TEXT NOT NULL DEFAULT 'none',
-		active INTEGER NOT NULL DEFAULT 1 CHECK (is_principle IN (0, 1)),
-		daily INTEGER NOT NULL DEFAULT 0 CHECK (is_principle IN (0, 1)),
+		active INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1)),
+		daily INTEGER NOT NULL DEFAULT 0 CHECK (daily IN (0, 1)),
 		created_time TIMESTAMP NOT NULL,
 		updated_time TIMESTAMP NOT NULL
 	);
@@ -46,7 +46,8 @@ CREATE TABLE IF NOT EXISTS system (
     day INTEGER NOT NULL,
 	week TEXT NOT NULL,
     tag TEXT NOT NULL,
-    result TEXT DEFAULT 'none',
+    observation TEXT DEFAULT 'none',
+	result TEXT NOT NULL DEFAULT 'white' CHECK (result IN ('white','green', 'yellow', 'red','blue')),
     PRIMARY KEY (year, month, day, tag),
     FOREIGN KEY (tag) REFERENCES tags (tag)
 );

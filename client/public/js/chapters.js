@@ -158,57 +158,50 @@ const formatDate = (dateString) => {
 
 // Display current chapter
 const currentChapter = async (data) => {
-	// Find the chapter where title is null
+	if (!data || !Array.isArray(data)) {
+		return;
+	}
+
 	const currentChapterData = data.find(item => item.title === null);
 
 	if (currentChapterData) {
 		const chapterNameInput = document.querySelector('form[name="current-chapter"] input[name="chapter-name"]');
 		const openedInput = document.querySelector('form[name="current-chapter"] input[name="opened"]');
 
-		// Populate the current chapter form
 		chapterNameInput.value = currentChapterData.chapter_name;
 		openedInput.value = formatDate(currentChapterData.opened);
 	} else {
-		console.log('No current chapter found.');
+		return
 	}
 };
 
 // Display list of previous chapters
 const listChapter = async (data) => {
-	const tbody = document.querySelector('form[name="previous-chapters"] tbody');
+	if (!data || !Array.isArray(data)) {
+		return;
+	}
 
-	// Clear existing rows
+	const tbody = document.querySelector('form[name="previous-chapters"] tbody');
 	tbody.innerHTML = '';
 
-	// Filter out the current chapter and populate previous chapters
 	data.forEach(item => {
 		if (item.title !== null) {
 			const row = document.createElement('tr');
-
-			// Create cells for chapter data
 			row.innerHTML = `
-		  <td><input type="text" name="chapter-name-list" value="${item.chapter_name}" disabled></td>
-		  <td><input type="text" name="opened-list" value="${formatDate(item.opened)}" disabled></td>
-		  <td><input type="text" name="title-list" value="${item.title}" disabled></td>
-		`;
-
+                <td><input type="text" name="chapter-name-list" value="${item.chapter_name}" disabled></td>
+                <td><input type="text" name="opened-list" value="${formatDate(item.opened)}" disabled></td>
+                <td><input type="text" name="title-list" value="${item.title}" disabled></td>
+            `;
 			tbody.appendChild(row);
 		}
 	});
 };
 
-// get and display data
 const getAndDisplayData = async () => {
 	const data = await getData();
-	await listChapter(data);
 	await currentChapter(data);
-
-}
-
-
-
-
-
+	await listChapter(data);
+};
 
 
 
