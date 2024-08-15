@@ -1,0 +1,5 @@
+{
+	"full_list": "SELECT tag FROM tags;",
+	"active_list":"SELECT tag FROM tags WHERE active = 1;",
+	"non_list":"SELECT tag FROM tags WHERE active = 0;"
+}

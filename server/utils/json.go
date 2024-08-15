@@ -18,6 +18,11 @@ type Queries struct {
 	Title_chapters   string `json:"title_chapters"`
 	One_year_ago     string `json:"one_year_ago"`
 	Select           string `json:"select"`
+
+	//tags:
+	FullList   string `json:"full_List"`
+	ActiveList string `json:"active_List"`
+	NonList    string `json:"non_List"`
 }
 
 // To load queries :

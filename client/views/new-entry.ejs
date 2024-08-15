@@ -18,6 +18,7 @@
 	</table>
 	<input type="submit" name='valid-tag' value="next">
 </form>
+<br>
 <form name="city-country-form">
 	<h3> Where ? </h3>
 	<table>
@@ -38,11 +39,30 @@
 </form>
 <br>
 <form name="message-form">
-	<h3>Message</h3>
+	<h3>Message : </h3>
 	<div id="editorjs">
 		<textarea id="editor-content" style="display:none;"></textarea>
 	</div>
-	<input type="submit" name="valid-message" value="Submit">
+	<input type="submit" name="clear-text" value="read">
+	<input type="submit" name="valid-message" value="submit">
 </form>
-<form name="date-form"></form>
+<br>
+<form name="date-form">
+	<h3>Time and sending : </h3>
+	<table>
+		<thead>
+			<tr>
+				<th>date</th>
+				<th>now</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="message-date"></td>
+				<td><input type="button" name="time-now" value="time-now"></td>
+			</tr>
+		</tbody>
+	</table>
+	<input type="submit" name="send-message" value="send">
+</form>
 <script src="js/new-entry.js" defer></script>
