@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 	//buttons 
 	const validMessageButton = document.querySelector('form[name="message-form"] input[name="valid-message"]');
 	const readButton = document.querySelector('button[name="clear-text"]');
+	const timeNowButton = document.querySelector('input[name="time-now"]');
+	const messageDateInput = document.querySelector('input[name="message-date"]');
 
 	//get tags list
 	tags = await getTagList();
@@ -72,8 +74,41 @@ document.addEventListener('DOMContentLoaded', async () => {
 		validMessageButton.style.display = "block";
 	});
 
-});
+	// Get the message: 
+	document.forms["message-form"].addEventListener("submit", async function (event) {
+		event.preventDefault(); // Prevent the default form submission
 
+		const formData2 = await getMessageForm();
+
+		const isValid = formData2.isValid;
+		message = formData2.message
+
+		if (isValid) {
+			// Only proceed if the message is valid
+			document.forms["message-form"].style.display = "none";
+			document.forms["date-form"].style.display = "block";
+		} else {
+			// Provide feedback to the user if the message is empty
+			console.log("Message is empty, not proceeding to the next step.");
+			// You may want to keep the form visible for correction
+		}
+	});
+	// get time now and put it in the for
+	timeNowButton.addEventListener('click', async () => {
+		messageDateInput.value = await getTimeNow();
+	});
+
+	document.forms["date-form"].addEventListener("submit", async function (event) {
+
+		event.preventDefault(); // Prevent the default form submission
+
+		date = await getDateForm(messageDateInput);
+
+		await sendNewMessage(tag, city, country, message, date);
+
+	});
+
+});
 
 // get tag list 
 const getTagList = async () => {
@@ -270,27 +305,102 @@ const clearTextArea = async () => {
 
 };
 
-// get message from the form
+// Get message from the form
 const getMessageForm = async () => {
-	const message = '';
-	return message;
+	if (window.editor) {
+		try {
+			const savedData = await window.editor.save(); // Save the content of Editor.js
 
+			// Check if the editor content is empty
+			const isEmpty = savedData.blocks.length === 0 || savedData.blocks.every(block => !block.data.text.trim());
+
+			if (isEmpty) {
+				alert("The message content cannot be empty.");
+				return { isValid: false, message: null }; // Indicate that the form is not valid
+			}
+
+			// Convert the saved data to JSON string
+			const message = JSON.stringify(savedData);
+
+			// Update the hidden textarea with the JSON content
+			const textarea = document.getElementById('editor-content');
+			if (textarea) {
+				textarea.value = message;
+			}
+
+			return { isValid: true, message }; // Indicate that the form is valid
+		} catch (error) {
+			console.error('Error getting message from Editor.js:', error);
+			return { isValid: false, message: null }; // Indicate that the form is not valid
+		}
+	} else {
+		console.error('Editor.js instance not found.');
+		return { isValid: false, message: null }; // Handle this case as needed
+	}
 };
 
 // get time now 
 const getTimeNow = async () => {
-	const timeNow = '';
-	return timeNow;
+	const now = new Date();
+
+	// Format the date as YYYY-MM-DD HH:MM:SS
+	const year = now.getFullYear();
+	const month = String(now.getMonth() + 1).padStart(2, '0');
+	const day = String(now.getDate()).padStart(2, '0');
+	const hours = String(now.getHours()).padStart(2, '0');
+	const minutes = String(now.getMinutes()).padStart(2, '0');
+	const seconds = String(now.getSeconds()).padStart(2, '0');
+
+	return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
-// get date from the form
-const getDateForm = async () => {
-	const date = '';
-	return date;
+// get date from the form with validation
+const getDateForm = async (input) => {
+	const date = input.value;
+
+	// Define the regular expression for the date format YYYY-MM-DD HH:MM:SS or YYYY-MM-DD HH:MM
+	const dateFormatPattern = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(?::\d{2})?$/;
+
+	// Check if the date matches the pattern
+	if (dateFormatPattern.test(date)) {
+		return date; // Return the date if it is in the correct format
+	} else {
+		alert("Invalid date format. Please use the format: YYYY-MM-DD HH:MM or YYYY-MM-DD HH:MM:SS");
+		return null; // Return null or handle the invalid format case as needed
+	}
 };
 
 // send new message to the API 
 const sendNewMessage = async (tag, city, country, message, date) => {
+
+	const url = `http://127.0.0.1:2323/entries/new`
+
+	const body = JSON.stringify({
+		tag,
+		city,
+		country,
+		message,
+		date
+	})
+
+	const reqOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: body,
+	};
+
+	try {
+		const response = await fetch(url, reqOptions);
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		const data = await response.json();
+		console.log(data);
+		alert("New message sent !");
+		location.reload();
+	} catch (error) {
+		console.error('Error fetching data:', error);
+	}
 
 };
 

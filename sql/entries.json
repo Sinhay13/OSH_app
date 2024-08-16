@@ -1,3 +1,4 @@
 {
-	"last_message": "SELECT message FROM entries WHERE tag = ? ORDER BY date DESC LIMIT 1;"
+	"last_message": "SELECT message FROM entries WHERE tag = ? ORDER BY date DESC LIMIT 1;",
+	"insert_new_entry":"INSERT INTO entries (chapter_name, tag, date, country, city, message) VALUES (?,?,?,?,?,?);"
 }

@@ -24,11 +24,11 @@ nav .logo {
 }
 
 nav > div {
-    flex: 1; /* Make each div take equal space */
-    display: flex;
     align-items: center; /* Center items vertically */
     justify-content: center; /* Center items horizontally */
 }
+
+
 
 button {
     width: 100%; /* Make buttons take full width of their container */
@@ -71,10 +71,14 @@ input[type="text"] {
 }
 
 /* editor js */
-
 #editorjs {
-	border: 1px solid #ddd;
-	border-radius: 4px;
-	padding: 10px;
-	min-height: 300px;
-  }
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    height: 800px; /* Take up most of the viewport height */
+    width: 800px; /* Take up most of the viewport width */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    margin: 0 auto; /* Center horizontally */
+    overflow-y: auto; /* Enable scrolling inside the editor if needed */
+}

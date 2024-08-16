@@ -15,4 +15,9 @@ func RegisterEntriesEndpoints(mux *http.ServeMux, db *sql.DB) {
 		entries.GetLastMessage(w, r, db)
 	}))
 
+	// insert new entry + CORS (insert.go)
+	mux.HandleFunc("/entries/new", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		entries.InsertNewEntry(w, r, db)
+	}))
+
 }
