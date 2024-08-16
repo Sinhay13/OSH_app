@@ -20,9 +20,10 @@ type Queries struct {
 	Select           string `json:"select"`
 
 	//tags:
-	FullList   string `json:"full_List"`
-	ActiveList string `json:"active_List"`
-	NonList    string `json:"non_List"`
+	FullList     string `json:"full_List"`
+	ActiveList   string `json:"active_List"`
+	NonList      string `json:"non_List"`
+	InsertNewTag string `json:"insert_new_tag"`
 }
 
 // To load queries :

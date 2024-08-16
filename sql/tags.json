@@ -1,5 +1,10 @@
 {
 	"full_list": "SELECT tag FROM tags;",
 	"active_list":"SELECT tag FROM tags WHERE active = 1;",
-	"non_list":"SELECT tag FROM tags WHERE active = 0;"
+	"non_list":"SELECT tag FROM tags WHERE active = 0;",
+	"insert_new_tag":"INSERT INTO tags (tag, created_time, updated_time) VALUES (?,?,?);"
 }
+
+
+
+
