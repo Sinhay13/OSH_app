@@ -30,6 +30,7 @@ func main() {
 	// Handler for Endpoints //
 	handlers.RegisterChaptersEndpoints(mux, db)
 	handlers.RegisterTagsEndpoints(mux, db)
+	handlers.RegisterEntriesEndpoints(mux, db)
 
 	// Manage connection //
 

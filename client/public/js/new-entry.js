@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', async () => {
 
 	// init variables
@@ -13,6 +14,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 	document.forms["message-form"].style.display = "none";
 	document.forms["date-form"].style.display = "none";
 
+	//buttons 
+	const validMessageButton = document.querySelector('form[name="message-form"] input[name="valid-message"]');
+	const readButton = document.querySelector('button[name="clear-text"]');
+
 	//get tags list
 	tags = await getTagList();
 
@@ -25,7 +30,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 		// get tag from form and add it if necessary
 		tag = await getTagForm(tags);
-		console.log(tag);
 
 		// Show the next form, for example the "city-country-form"
 		document.forms["city-country-form"].style.display = "block";
@@ -33,6 +37,39 @@ document.addEventListener('DOMContentLoaded', async () => {
 		// Hide the tag form
 		document.forms["tag-form"].style.display = "none";
 
+	});
+
+	// Add event listener for the "submit" event on the city / country form 
+	document.forms["city-country-form"].addEventListener("submit", async function (event) {
+		event.preventDefault(); // Prevent the default form submission
+
+		// get city and country from form
+		const formData = await getCityCountryForm();
+		city = formData.city;
+		country = formData.country;
+
+		// Hide the city-country-form and show the message-form
+		document.forms["city-country-form"].style.display = "none";
+		document.forms["message-form"].style.display = "block";
+		validMessageButton.style.display = "none";
+
+		// get the last message
+		const lastMessage = await getLastMessage(tag);
+
+		//Show last message 
+		await showLastMessage(lastMessage);
+
+	});
+
+	// clear text area
+	readButton.addEventListener('click', async (event) => {
+
+		event.preventDefault(); // Prevent the default form submission
+
+		await clearTextArea();
+
+		readButton.style.display = "none";
+		validMessageButton.style.display = "block";
 	});
 
 });
@@ -141,20 +178,95 @@ const addNewTag = async (tag) => {
 
 }
 
-// get city and country from form 
+// get city and country from form
 const getCityCountryForm = async () => {
-	const city = '';
-	const country = '';
+	const form = document.forms["city-country-form"];
+	const cityInput = form.elements["city"];
+	const countryInput = form.elements["country"];
+
+	// Retrieve values from the form fields
+	const city = cityInput.value.trim();
+	const country = countryInput.value.trim();
+
+	// Check if city and country are not empty
+	if (!city || !country) {
+		alert("City and country fields cannot be empty.");
+		return { city: "", country: "" }; // Return empty strings or handle this case as needed
+	}
+
+	// Return the values if they are valid
 	return { city, country };
 };
 
 // get the last message in function of the tag
-const showLastMessage = async () => {
+const getLastMessage = async (tag) => {
+	const tag_string = encodeURIComponent(tag);
+	const url = `http://127.0.0.1:2323/entries/last?tag=${tag_string}`;
 
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		const data = await response.json();
+		return data.message; // Return just the message
+	} catch (error) {
+		console.error('Error fetching last message:', error);
+		return null; // Or handle the error as needed
+	}
 };
+
+// Show last message in the form
+const showLastMessage = async (lastMessage) => {
+	if (window.editor) {
+		try {
+			if (lastMessage) {
+				let dataToRender;
+				try {
+					// Try to parse the lastMessage as JSON
+					dataToRender = JSON.parse(lastMessage);
+				} catch (error) {
+					// If parsing fails, treat the lastMessage as plain text
+					dataToRender = {
+						blocks: [
+							{
+								type: 'paragraph',
+								data: {
+									text: lastMessage
+								}
+							}
+						]
+					};
+				}
+				// Render the content
+				await window.editor.render(dataToRender);
+			} else {
+				console.log('No message content to display.');
+				await window.editor.render({}); // Renders an empty editor
+			}
+		} catch (error) {
+			console.error('Error rendering message in Editor.js:', error);
+		}
+	} else {
+		console.error('Editor.js instance not found.');
+	}
+};
+
 
 // clear text area
 const clearTextArea = async () => {
+	const textarea = document.getElementById('editor-content');
+	if (textarea) {
+		textarea.value = ''; // Clear the textarea
+	} else {
+		console.error('Textarea not found');
+	}
+
+	if (window.editor) {
+		window.editor.clear(); // Clear the Editor.js content
+	} else {
+		console.error('Editor.js instance not found.');
+	}
 
 };
 

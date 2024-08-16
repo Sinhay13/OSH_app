@@ -24,6 +24,9 @@ type Queries struct {
 	ActiveList   string `json:"active_List"`
 	NonList      string `json:"non_List"`
 	InsertNewTag string `json:"insert_new_tag"`
+
+	// entries :
+	LastMessage string `json:"last_message"`
 }
 
 // To load queries :

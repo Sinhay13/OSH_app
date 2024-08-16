@@ -1,8 +1,12 @@
+// editor.js
+
+window.editor = null; // Initialize global editor variable
+
 document.addEventListener('DOMContentLoaded', () => {
 	const editorHolder = document.getElementById('editorjs');
 
 	if (editorHolder) {
-		const editor = new EditorJS({
+		window.editor = new EditorJS({
 			holder: 'editorjs',
 			tools: {
 				header: {
@@ -36,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				console.log('Editor.js is ready to work!');
 			},
 			onChange: () => {
-				editor.save().then((outputData) => {
+				window.editor.save().then((outputData) => {
 					const textarea = document.getElementById('editor-content');
 					if (textarea) {
 						textarea.value = JSON.stringify(outputData);
@@ -52,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		// Load initial content if available
 		const textarea = document.getElementById('editor-content');
 		if (textarea && textarea.value) {
-			editor.render(JSON.parse(textarea.value));
+			window.editor.render(JSON.parse(textarea.value));
 		}
 	} else {
 		console.log('Editor.js holder element not found. Editor.js was not initialized.');
