@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS chapters (
 		tag TEXT PRIMARY KEY,
 		comment TEXT  DEFAULT 'none',
 		is_principle INTEGER NOT NULL DEFAULT 0 CHECK (is_principle IN (0, 1)),
+		principle_tag TEXT,
 		active INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1)),
 		is_system INTEGER NOT NULL DEFAULT 0 CHECK (is_system IN (0, 1)),
 		created_time TIMESTAMP NOT NULL,
