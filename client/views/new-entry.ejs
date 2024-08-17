@@ -17,6 +17,7 @@
 		</tbody>
 	</table>
 	<input type="submit" name='valid-tag' value="next">
+	<p class="right">.SO</p>
 </form>
 <br>
 <form name="city-country-form">
@@ -36,15 +37,18 @@
 		</tbody>
 	</table>
 	<input type="submit" name='valid-city-country' value="next">
+	<p class="right">.SO</p>
 </form>
 <br>
 <form name="message-form">
 	<h3>Message : </h3>
+	<p name="tag-city-country"></p>
 	<div id="editorjs">
 		<textarea id="editor-content" style="display:none;"></textarea>
 	</div>
-	<button type="button" name="clear-text">Read done</button>
+	<button type="button" name="clear-text">New</button>
 	<input type="submit" name="valid-message" value="submit">
+	<p class="right">.SO</p>
 </form>
 <br>
 <form name="date-form">
@@ -64,5 +68,6 @@
 		</tbody>
 	</table>
 	<input type="submit" name="send-message" value="send">
+	<p class="right">.SO</p>
 </form>
 <script src="js/new-entry.js" defer></script>

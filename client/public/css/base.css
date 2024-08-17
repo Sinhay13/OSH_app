@@ -82,3 +82,7 @@ input[type="text"] {
     margin: 0 auto; /* Center horizontally */
     overflow-y: auto; /* Enable scrolling inside the editor if needed */
 }
+
+.right {
+	text-align: right; 
+  }

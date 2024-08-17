@@ -61,6 +61,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 		//Show last message 
 		await showLastMessage(lastMessage);
 
+		// Update the <p> element inside message-form with the selected tag, city, and country
+		const tagCityCountryElement = document.forms["message-form"].querySelector('p[name="tag-city-country"]');
+		tagCityCountryElement.innerHTML = `Tag: ${tag} <br> City: ${city} <br> Country: ${country}`;
+
 	});
 
 	// clear text area
@@ -220,13 +224,19 @@ const getCityCountryForm = async () => {
 	const countryInput = form.elements["country"];
 
 	// Retrieve values from the form fields
-	const city = cityInput.value.trim();
-	const country = countryInput.value.trim();
+	let city = cityInput.value.trim();
+	let country = countryInput.value.trim();
 
 	// Check if city and country are not empty
 	if (!city || !country) {
 		alert("City and country fields cannot be empty.");
-		return { city: "", country: "" }; // Return empty strings or handle this case as needed
+		// Focus on the first empty field
+		if (!city) {
+			cityInput.focus();
+		} else {
+			countryInput.focus();
+		}
+		throw new Error("City or country is empty.");
 	}
 
 	// Return the values if they are valid
