@@ -102,7 +102,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 			let newFormatDate = formatDate(oldDate);
 			oldDate = newFormatDate;
 			previousDataElement.innerHTML = `Previous Date: ${oldDate} <br> Previous City : ${oldCity} <br> Previous Country : ${oldCountry}`;
+		} else {
+			alert('No more previous message');
 		}
+
 
 	});
 
@@ -125,7 +128,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 			let newFormatDate = formatDate(oldDate);
 			oldDate = newFormatDate;
 			previousDataElement.innerHTML = `Previous Date: ${oldDate} <br> Previous City : ${oldCity} <br> Previous Country : ${oldCountry}`;
+		} else {
+			alert('No more message');
 		}
+
 	});
 
 	// clear text area
