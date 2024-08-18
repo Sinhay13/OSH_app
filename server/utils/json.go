@@ -29,6 +29,7 @@ type Queries struct {
 	LastMessage           string `json:"last_message"`
 	InsertNewEntry        string `json:"insert_new_entry"`
 	LastMessageBeforeDate string `json:"last_message_before_date"`
+	NextMessageAfterDate  string `json:"next_message_after_date"`
 }
 
 // To load queries :

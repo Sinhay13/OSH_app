@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	//buttons and elements 
 	const validMessageButton = document.querySelector('form[name="message-form"] input[name="valid-message"]');
 	const previousButton = document.querySelector('button[name="previous"]');
+	const nextButton = document.querySelector('button[name="next"]');
 	const readButton = document.querySelector('button[name="clear-text"]');
 	const timeNowButton = document.querySelector('input[name="time-now"]');
 	const messageDateInput = document.querySelector('input[name="message-date"]');
@@ -77,8 +78,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 		tagCityCountryElement.innerHTML = `Tag: ${tag} <br> City: ${city} <br> Country: ${country}`;
 
 		// Update the <p> element inside message-form with the selected tag, previous date
-		readableDate = formatDate(oldDate);
-		previousDataElement.innerHTML = `Previous Date: ${readableDate} <br> Previous City : ${oldCity} <br> Previous Country : ${oldCountry}`;
+		let newFormatDate = formatDate(oldDate);
+		oldDate = newFormatDate;
+		previousDataElement.innerHTML = `Previous Date: ${oldDate} <br> Previous City : ${oldCity} <br> Previous Country : ${oldCountry}`;
 	});
 
 	// previous message : 
@@ -87,17 +89,43 @@ document.addEventListener('DOMContentLoaded', async () => {
 		event.preventDefault(); // Prevent the default form submission
 
 		// get the last message
-		const dataMessage2 = await getLastMessageWithDate(tag, oldDate);
+		const dataMessage2 = await getLastMessageWithDate(tag, oldDate, "previous");
 		lastMessage = dataMessage2.message;
-		oldDate = dataMessage2.date;
-		oldCity = dataMessage2.city;
-		oldCountry = dataMessage2.country;
+		if (lastMessage != "No message") {
+			oldDate = dataMessage2.date;
+			oldCity = dataMessage2.city;
+			oldCountry = dataMessage2.country;
 
-		//Show last message 
-		await showLastMessage(lastMessage);
+			//Show last message 
+			await showLastMessage(lastMessage);
 
-		readableDate = formatDate(oldDate);
-		previousDataElement.innerHTML = `Previous Date: ${readableDate} <br> Previous City : ${oldCity} <br> Previous Country : ${oldCountry}`;
+			let newFormatDate = formatDate(oldDate);
+			oldDate = newFormatDate;
+			previousDataElement.innerHTML = `Previous Date: ${oldDate} <br> Previous City : ${oldCity} <br> Previous Country : ${oldCountry}`;
+		}
+
+	});
+
+	// next message : 
+	nextButton.addEventListener('click', async (event) => {
+
+		event.preventDefault(); // Prevent the default form submission
+
+		// get the last message
+		const dataMessage3 = await getLastMessageWithDate(tag, oldDate, "next");
+		lastMessage = dataMessage3.message;
+		if (lastMessage != "No message") {
+			oldDate = dataMessage3.date;
+			oldCity = dataMessage3.city;
+			oldCountry = dataMessage3.country;
+
+			//Show last message 
+			await showLastMessage(lastMessage);
+
+			let newFormatDate = formatDate(oldDate);
+			oldDate = newFormatDate;
+			previousDataElement.innerHTML = `Previous Date: ${oldDate} <br> Previous City : ${oldCity} <br> Previous Country : ${oldCountry}`;
+		}
 	});
 
 	// clear text area
@@ -108,6 +136,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 		await clearTextArea();
 
 		readButton.style.display = "none";
+		previousButton.style.display = "none";
+		nextButton.style.display = "none";
 		validMessageButton.style.display = "block";
 	});
 
@@ -294,11 +324,12 @@ const getLastMessage = async (tag) => {
 	}
 };
 
-// get the last message in function of the tag
-const getLastMessageWithDate = async (tag, date) => {
+// get the last message in function of the tag and date
+const getLastMessageWithDate = async (tag, date, action) => {
 	const tag_string = encodeURIComponent(tag);
 	const date_string = encodeURIComponent(date);
-	const url = `http://127.0.0.1:2323/entries/last?tag=${tag_string}&date=${date_string}`;
+	const action_string = encodeURIComponent(action);
+	const url = `http://127.0.0.1:2323/entries/last?tag=${tag_string}&date=${date_string}&action=${action_string}`;
 
 	try {
 		const response = await fetch(url);
@@ -315,22 +346,18 @@ const getLastMessageWithDate = async (tag, date) => {
 
 // To make date more readable 
 const formatDate = (dateString) => {
-
-	if (dateString != "?") {
-		const options = {
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric',
-			hour: '2-digit',
-			minute: '2-digit',
-			hour12: false
-		};
-		const date = new Date(dateString);
-		return date.toLocaleDateString('en-US', options);
+	if (dateString === "?") {
+		return dateString;
 	}
-	return dateString
-};
 
+	const [datePart, timePart] = dateString.split('T');
+	const [hours, minutes, seconds] = timePart.replace('Z', '').split(':');
+
+	// Construct the formatted date with or without seconds
+	const formattedDate = `${datePart} ${hours}:${minutes}` + (seconds ? `:${seconds}` : '');
+
+	return formattedDate;
+};
 
 // Show last message in the form
 const showLastMessage = async (lastMessage) => {

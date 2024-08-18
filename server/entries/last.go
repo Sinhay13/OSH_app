@@ -3,6 +3,7 @@ package entries
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"server/utils"
 )
@@ -26,9 +27,9 @@ func getLastMessageFromDB(db *sql.DB, tag string) (Entries, error) {
 	query := entriesJson.LastMessage
 
 	// Prepare the query to return message, date, country, and city
-	var message, date, country, city string
+	var entry Entries
 
-	err = db.QueryRow(query, tag).Scan(&message, &date, &country, &city)
+	err = db.QueryRow(query, tag).Scan(&entry.Message, &entry.Date, &entry.Country, &entry.City)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			// No rows found, return default values
@@ -43,28 +44,37 @@ func getLastMessageFromDB(db *sql.DB, tag string) (Entries, error) {
 		return Entries{}, err
 	}
 
-	return Entries{Message: message, Date: date, Country: country, City: city}, nil
+	return entry, nil
 }
 
-// Get last message before a specified date from DB
-func getLastMessageBeforeDateFromDB(db *sql.DB, tag string, oldDate string) (Entries, error) {
+// Get last or next message relative to a specified date from DB
+func getMessageRelativeToDateFromDB(db *sql.DB, tag, date, action string) (Entries, error) {
 	// Load the JSON with queries
 	entriesJson, err := utils.LoadQueries("entries.json")
 	if err != nil {
 		return Entries{}, err
 	}
 
-	query := entriesJson.LastMessageBeforeDate
+	// Define a map for query selection
+	queries := map[string]string{
+		"previous": entriesJson.LastMessageBeforeDate,
+		"next":     entriesJson.NextMessageAfterDate,
+	}
 
-	// Prepare the query to return message, date, country, and city
-	var message, date, country, city string
+	// Select the appropriate query
+	query, ok := queries[action]
+	if !ok {
+		return Entries{}, fmt.Errorf("invalid action: %s", action)
+	}
 
-	err = db.QueryRow(query, tag, tag, oldDate).Scan(&message, &date, &country, &city)
+	// Execute the query
+	var entry Entries
+	err = db.QueryRow(query, tag, date).Scan(&entry.Message, &entry.Date, &entry.Country, &entry.City)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			// No rows found, return default values
 			return Entries{
-				Message: "No previous message",
+				Message: "No message",
 				Date:    "?",
 				Country: "?",
 				City:    "?",
@@ -74,12 +84,11 @@ func getLastMessageBeforeDateFromDB(db *sql.DB, tag string, oldDate string) (Ent
 		return Entries{}, err
 	}
 
-	return Entries{Message: message, Date: date, Country: country, City: city}, nil
+	return entry, nil
 }
 
-// Handler to get the last message
+// Handler to get the last or next message
 func GetLastMessage(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-
 	tag := r.URL.Query().Get("tag")
 	if tag == "" {
 		utils.Logger.Println("Tag name is missing")
@@ -90,20 +99,28 @@ func GetLastMessage(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var entry Entries
 	var err error
 
-	oldDate := r.URL.Query().Get("date")
-	if oldDate == "" {
+	date := r.URL.Query().Get("date")
+	action := r.URL.Query().Get("action")
+
+	if date == "" {
 		entry, err = getLastMessageFromDB(db, tag)
 	} else {
-		entry, err = getLastMessageBeforeDateFromDB(db, tag, oldDate)
+		if action == "" {
+			utils.Logger.Println("Action type is missing")
+			http.Error(w, "Action type is required", http.StatusBadRequest)
+			return
+		}
+		entry, err = getMessageRelativeToDateFromDB(db, tag, date, action)
 	}
 
 	if err != nil {
 		utils.Logger.Print(err)
-		http.Error(w, "Error retrieving last message", http.StatusInternalServerError)
+		http.Error(w, "Error retrieving message", http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 
 	// Prepare the response
 	response := map[string]interface{}{
@@ -113,7 +130,6 @@ func GetLastMessage(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		"country": entry.Country,
 		"city":    entry.City,
 	}
-	w.Header().Set("Content-Type", "application/json")
 
 	// Write the response
 	if err := json.NewEncoder(w).Encode(response); err != nil {
