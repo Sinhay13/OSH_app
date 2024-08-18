@@ -8,17 +8,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 	let country;
 	let message;
 	let date;
+	let lastMessage;
+	let oldDate;
+	let oldCountry;
+	let oldCity;
+	let readableDate;
 
 	// hide forms 
 	document.forms["city-country-form"].style.display = "none";
 	document.forms["message-form"].style.display = "none";
 	document.forms["date-form"].style.display = "none";
 
-	//buttons 
+	//buttons and elements 
 	const validMessageButton = document.querySelector('form[name="message-form"] input[name="valid-message"]');
+	const previousButton = document.querySelector('button[name="previous"]');
 	const readButton = document.querySelector('button[name="clear-text"]');
 	const timeNowButton = document.querySelector('input[name="time-now"]');
 	const messageDateInput = document.querySelector('input[name="message-date"]');
+	const previousDataElement = document.forms["message-form"].querySelector('p[name="previous-data"]');
+	const tagCityCountryElement = document.forms["message-form"].querySelector('p[name="tag-city-country"]');
 
 	//get tags list
 	tags = await getTagList();
@@ -56,15 +64,40 @@ document.addEventListener('DOMContentLoaded', async () => {
 		validMessageButton.style.display = "none";
 
 		// get the last message
-		const lastMessage = await getLastMessage(tag);
+		const dataMessage = await getLastMessage(tag);
+		lastMessage = dataMessage.message;
+		oldDate = dataMessage.date;
+		oldCity = dataMessage.city;
+		oldCountry = dataMessage.country;
 
 		//Show last message 
 		await showLastMessage(lastMessage);
 
 		// Update the <p> element inside message-form with the selected tag, city, and country
-		const tagCityCountryElement = document.forms["message-form"].querySelector('p[name="tag-city-country"]');
 		tagCityCountryElement.innerHTML = `Tag: ${tag} <br> City: ${city} <br> Country: ${country}`;
 
+		// Update the <p> element inside message-form with the selected tag, previous date
+		readableDate = formatDate(oldDate);
+		previousDataElement.innerHTML = `Previous Date: ${readableDate} <br> Previous City : ${oldCity} <br> Previous Country : ${oldCountry}`;
+	});
+
+	// previous message : 
+	previousButton.addEventListener('click', async (event) => {
+
+		event.preventDefault(); // Prevent the default form submission
+
+		// get the last message
+		const dataMessage2 = await getLastMessageWithDate(tag, oldDate);
+		lastMessage = dataMessage2.message;
+		oldDate = dataMessage2.date;
+		oldCity = dataMessage2.city;
+		oldCountry = dataMessage2.country;
+
+		//Show last message 
+		await showLastMessage(lastMessage);
+
+		readableDate = formatDate(oldDate);
+		previousDataElement.innerHTML = `Previous Date: ${readableDate} <br> Previous City : ${oldCity} <br> Previous Country : ${oldCountry}`;
 	});
 
 	// clear text area
@@ -254,12 +287,50 @@ const getLastMessage = async (tag) => {
 			throw new Error(`HTTP error! Status: ${response.status}`);
 		}
 		const data = await response.json();
-		return data.message; // Return just the message
+		return data; // Return just the message
 	} catch (error) {
 		console.error('Error fetching last message:', error);
 		return null; // Or handle the error as needed
 	}
 };
+
+// get the last message in function of the tag
+const getLastMessageWithDate = async (tag, date) => {
+	const tag_string = encodeURIComponent(tag);
+	const date_string = encodeURIComponent(date);
+	const url = `http://127.0.0.1:2323/entries/last?tag=${tag_string}&date=${date_string}`;
+
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		const data = await response.json();
+		return data; // Return just the message
+	} catch (error) {
+		console.error('Error fetching last message:', error);
+		return null; // Or handle the error as needed
+	}
+};
+
+// To make date more readable 
+const formatDate = (dateString) => {
+
+	if (dateString != "?") {
+		const options = {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: false
+		};
+		const date = new Date(dateString);
+		return date.toLocaleDateString('en-US', options);
+	}
+	return dateString
+};
+
 
 // Show last message in the form
 const showLastMessage = async (lastMessage) => {

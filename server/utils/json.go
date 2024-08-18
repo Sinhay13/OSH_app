@@ -26,8 +26,9 @@ type Queries struct {
 	InsertNewTag string `json:"insert_new_tag"`
 
 	// entries :
-	LastMessage    string `json:"last_message"`
-	InsertNewEntry string `json:"insert_new_entry"`
+	LastMessage           string `json:"last_message"`
+	InsertNewEntry        string `json:"insert_new_entry"`
+	LastMessageBeforeDate string `json:"last_message_before_date"`
 }
 
 // To load queries :
