@@ -143,9 +143,6 @@ const getData = async () => {
 			throw new Error(`HTTP error! Status: ${response.status}`);
 		}
 		const data = await response.json();
-		// Pass data to functions
-		currentChapter(data);
-		listChapter(data);
 		return data; // Optional: if you want to return data from this function
 	} catch (error) {
 	}
