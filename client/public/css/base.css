@@ -59,11 +59,46 @@ li {
 	padding-left: 10px;
 }
 
-th,
-td {
-	border: 1px solid black;
-	padding: 10px;
+
+/* Minimalist Table with Visible Cell Separations */
+table {
+    width: 100%; /* Full width of the container */
+    border-collapse: separate; /* Allow separation between cells */
+    border-spacing: 0; /* Remove extra spacing between cells */
+    margin: 20px 0; /* Space around the table */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
+
+th, td {
+    padding: 12px; /* Space within cells */
+    text-align: left; /* Align text to the left */
+    border-bottom: 1px solid #ddd; /* Light border below each cell */
+    border-right: 1px solid #ddd; /* Visible border between cells */
+}
+
+th {
+    background-color: #f9f9f9; /* Light background for the header */
+    color: #333; /* Text color for the header */
+    font-weight: 600; /* Slightly bold text */
+}
+
+td {
+    background-color: #fff; /* White background for table cells */
+}
+
+tr:nth-child(even) td {
+    background-color: #f7f7f7; /* Slightly different shade for alternating rows */
+}
+
+tr:hover td {
+    background-color: #f1f1f1; /* Light grey highlight on hover */
+}
+
+th:last-child, td:last-child {
+    border-right: none; /* No right border for the last column */
+}
+
+
 input[type="text"] {
     width: auto;
     min-width: 300px; /* Adjust this as needed */

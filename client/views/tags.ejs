@@ -1,14 +1,20 @@
 <h1>Tags</h1>
+
 <form name="is-active">
 	<h3>Type of Tags : </h3>
 	<div class="button-container">
 		<button type="button" name="active">Activated</button>
-		<br>
 		<button type="button" name="deactivated">Deactivated</button>
+		<button type="button" name="all-tags">All tags</button>
 	</div>
 </form>
+
 <form name="deactivated-tags">
-	<h3>List deactivated Tags </h3>
+	<h3>List for Deactivated Tags : </h3>
+	<div name="return-button">
+		<button type="button" name="return">Return</button>
+	</div>
+	<br>
 	<table>
 		<thead>
 			<tr>
@@ -17,15 +23,187 @@
 				<th>Updated</th>
 				<th>Messages</th>
 				<th>Comments</th>
-				<th>Action</th>
+				<th>Actions</th>
+
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="name-deactivated"></td>
+				<td><input type="text" name="created-deactivated"></td>
+				<td><input type="text" name="updated-deactivated"></td>
+				<td><button type="button" name="see-messages-list-deactivated">Messages</button></td>
+				<td><button type="button" name="see-messages-comments-deactivated">Comments</button></td>
+				<td>
+					<button type="button" name="activated-tag-update">Update</button>
+					<button type="button" name="activate-tag">Activate</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</form>
+
+<form name="filters-activated-tags">
+	<h3>Filters for Active Tags:</h3>
+	<div name="return-button">
+		<button type="button" name="return">Return</button>
+	</div>
+	<br>
+	<table>
+		<thead>
+			<tr>
+				<th>is-system</th>
+				<th>is-principle</th>
+				<th>principle</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
 				<td>
-
+					<select name="is-system-filter">
+						<option value="all">All</option>
+						<option value="yes">Yes</option>
+						<option value="no">No</option>
+					</select>
+				</td>
+				<td>
+					<select name="is-principle-filter">
+						<option value="all">All</option>
+						<option value="yes">Yes</option>
+						<option value="no">No</option>
+					</select>
+				</td>
+				<td>
+					<select name="principle-filter">
+						<option value="all">All</option>
+					</select>
 				</td>
 			</tr>
 		</tbody>
 	</table>
+</form>
+
+<form name="activated-tags">
+	<h3>List for Activated Tags : </h3>
+	<div name="return-button">
+		<button type="button" name="return">Return</button>
+	</div>
+	<br>
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>is-system</th>
+				<th>is-principle</th>
+				<th>principle</th>
+				<th>Created</th>
+				<th>Updated</th>
+				<th>Messages</th>
+				<th>Comments</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="name-activated"></td>
+				<td>
+					<select name="is-system">
+						<option value="no">No</option>
+						<option value="yes">Yes</option>
+					</select>
+				</td>
+				<td>
+					<select name="is-principle">
+						<option value="no">No</option>
+						<option value="yes">Yes</option>
+					</select>
+				</td>
+				<td>
+					<select name="principle">
+						<option value="none">null</option>
+					</select>
+				</td>
+				<td><input type="text" name="created-activated"></td>
+				<td><input type="text" name="updated-activated"></td>
+				<td><button type="button" name="see-messages-list-activated">Messages</button></td>
+				<td><button type="button" name="see-messages-comments-activated">Comments</button></td>
+				<td>
+					<button type="button" name="deactivate-tag-update">Update</button>
+					<button type="button" name="deactivate-tag">Deactivate</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</form>
+
+<form name="full-tags">
+
+	<h3>List Tags : </h3>
+	<div name="return-button">
+		<button type="button" name="return">Return</button>
+	</div>
+	<br>
+	<input type="text" name="tag-name-input" placeholder="tag">
+	<ul name="tags-list"></ul>
+
+</form>
+
+<form name="chapters-list">
+
+	<h3>Chapters Lis : </h3>
+	<div name="return-button">
+		<button type="button" name="return">Return</button>
+	</div>
+	<br>
+
+	<table>
+		<thead>
+			<tr>
+				<th>ChapterName</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					<select name="chapters-name-list">
+						<option value="all">All</option>
+					</select>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+
+
+</form>
+
+<form name="message-list">
+	<h3> Messages Found : </h3>
+	<div name="return-button">
+		<button type="button" name="return">Return</button>
+	</div>
+	<br>
+
+	<table>
+		<thead>
+			<tr>
+				<th>Entry-id</th>
+				<th>City</th>
+				<th>Country</th>
+				<th>Date</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="message-id"></td>
+				<td><input type="text" name="message-city"></td>
+				<td><input type="text" name="message-country"></td>
+				<td><input type="text" name="message-date"></td>
+				<td><button type="button" name="message-read">Read</button></td>
+			</tr>
+		</tbody>
+	</table>
+
+
 </form>
