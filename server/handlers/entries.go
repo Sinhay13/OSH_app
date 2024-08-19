@@ -8,7 +8,7 @@ import (
 )
 
 func RegisterEntriesEndpoints(mux *http.ServeMux, db *sql.DB) {
-	// Endpoints for tags :
+	// Endpoints for entries :
 
 	// get last message + CORS (last.go)
 	mux.HandleFunc("/entries/last", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {

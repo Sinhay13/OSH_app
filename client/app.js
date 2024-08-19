@@ -17,12 +17,21 @@ app.set('layout', './layouts')
 app.set('view engine', 'ejs')
 
 // Routes
-app.get('/', (req, res) => {
+app.get('/chapters', (req, res) => {
 	res.render('chapters', { title: 'Chapters Page', layout: './layouts/base' })
 });
-app.get('/new-entry', (req, res) => {
-	res.render('new-entry', { title: 'New entry Page', layout: './layouts/base' })
-})
+app.get('/entries', (req, res) => {
+	res.render('entries', { title: 'Entries Page', layout: './layouts/base' })
+});
+app.get('/tags', (req, res) => {
+	res.render('tags', { title: 'Tags Page', layout: './layouts/base' })
+});
+app.get('/reminds', (req, res) => {
+	res.render('reminds', { title: 'Reminds Page', layout: './layouts/base' })
+});
+app.get('/system', (req, res) => {
+	res.render('system', { title: 'System Page', layout: './layouts/base' })
+});
 
 
 // Listen on Port 5000

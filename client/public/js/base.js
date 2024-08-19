@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	// Attach event listeners to buttons
-	document.querySelector('button[name="chapters"]').addEventListener('click', () => navigateTo('/'));
-	document.querySelector('button[name="new-entry"]').addEventListener('click', () => navigateTo('/new-entry'));
+	document.querySelector('button[name="chapters"]').addEventListener('click', () => navigateTo('/chapters'));
+	document.querySelector('button[name="entries"]').addEventListener('click', () => navigateTo('/entries'));
 	document.querySelector('button[name="tags"]').addEventListener('click', () => navigateTo('/tags'));
 	document.querySelector('button[name="reminds"]').addEventListener('click', () => navigateTo('/reminds'));
 	document.querySelector('button[name="system"]').addEventListener('click', () => navigateTo('/system'));

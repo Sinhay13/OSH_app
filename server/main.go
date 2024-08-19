@@ -31,6 +31,8 @@ func main() {
 	handlers.RegisterChaptersEndpoints(mux, db)
 	handlers.RegisterTagsEndpoints(mux, db)
 	handlers.RegisterEntriesEndpoints(mux, db)
+	handlers.RegisterRemindsEndpoints(mux, db)
+	handlers.RegisterSystemEndpoints(mux, db)
 
 	// Manage connection //
 
