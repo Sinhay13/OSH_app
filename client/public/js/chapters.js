@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	// disabled input 
 	currentChapterForm.elements['chapter-name'].disabled = true;
 	currentChapterForm.elements['opened'].disabled = true;
+	currentChapterForm.elements['entries'].disabled = true;
 	for (let i = 0; i < previousChaptersForm.elements.length; i++) {
 		previousChaptersForm.elements[i].disabled = true;
 	};
@@ -40,7 +41,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 				if (title === "") {
 					alert('Title for the previous chapter is needed !')
 				} else {
-					event.preventDefault();
 					await newChapter(title);
 					alert('New chapter created !')
 					await getAndDisplayData();
@@ -52,6 +52,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 			}
 		});
 	}
+
+	// show all number entries:
+	const countEntriesElement = document.querySelector('section[name="count-all-section"] p[name="count-all"]');
+	const entriesNb = await getEntriesNB();
+	countEntriesElement.innerHTML = `<strong>Total Entries: </strong> ${entriesNb}`;
 });
 
 
@@ -165,11 +170,17 @@ const currentChapter = async (data) => {
 	const currentChapterData = data.find(item => item.title === null);
 
 	if (currentChapterData) {
+
 		const chapterNameInput = document.querySelector('form[name="current-chapter"] input[name="chapter-name"]');
 		const openedInput = document.querySelector('form[name="current-chapter"] input[name="opened"]');
+		const entriesInput = document.querySelector('form[name="current-chapter"] input[name="entries"]');
+
+		const entriesValue = await getEntriesNB(currentChapterData.chapter_name);
 
 		chapterNameInput.value = currentChapterData.chapter_name;
 		openedInput.value = formatDate(currentChapterData.opened);
+		entriesInput.value = entriesValue;
+
 	} else {
 		return
 	}
@@ -180,21 +191,21 @@ const listChapter = async (data) => {
 	if (!data || !Array.isArray(data)) {
 		return;
 	}
-
 	const tbody = document.querySelector('form[name="previous-chapters"] tbody');
 	tbody.innerHTML = '';
-
-	data.forEach(item => {
+	for (let item of data) {
 		if (item.title !== null) {
 			const row = document.createElement('tr');
+			const entries = await getEntriesNB(item.chapter_name);
 			row.innerHTML = `
                 <td><input type="text" name="chapter-name-list" value="${item.chapter_name}" disabled></td>
-                <td><input type="text" name="opened-list" value="${formatDate(item.opened)}" disabled></td>
                 <td><input type="text" name="title-list" value="${item.title}" disabled></td>
+                <td><input type="text" name="entries-list" value="${entries}" disabled></td>
+                <td><input type="text" name="opened-list" value="${formatDate(item.opened)}" disabled></td>
             `;
 			tbody.appendChild(row);
 		}
-	});
+	}
 };
 
 const getAndDisplayData = async () => {
@@ -202,6 +213,27 @@ const getAndDisplayData = async () => {
 	await currentChapter(data);
 	await listChapter(data);
 };
+
+// get entires number :
+
+const getEntriesNB = async (chapterName = "") => {
+
+	const chapterNameString = encodeURIComponent(chapterName);
+
+	const url = `http://127.0.0.1:2323/entries/count?name=${chapterNameString}`;
+
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		const data = await response.json();
+		return data.count; // Return just the message
+	} catch (error) {
+		console.error('Error fetching last message:', error);
+		return null; // Or handle the error as needed
+	}
+}
 
 
 
