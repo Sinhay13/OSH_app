@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		oldCountry = dataMessage.country;
 
 		// save last date, city, country
-		lastDate = oldDate;
+		lastDate = formatDate(oldDate);
 		lastCity = oldCountry;
 		lastCountry = oldCountry;
 
@@ -82,12 +82,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 		await showLastMessage(lastMessage);
 
 		// Update the <p> element inside message-form with the selected tag, city, and country
-		tagCityCountryElement.innerHTML = `Tag: ${tag} <br> City: ${city} <br> Country: ${country}`;
+		tagCityCountryElement.innerHTML = `<strong>Tag:</strong> ${tag} <br> <strong>New City:</strong> ${city} <br> <strong>New Country:</strong> ${country}`;
 
 		// Update the <p> element inside message-form with the selected tag, previous date
 		let newFormatDate = formatDate(oldDate);
 		oldDate = newFormatDate;
-		previousDataElement.innerHTML = `Previous Date: ${oldDate} <br> Previous City : ${oldCity} <br> Previous Country : ${oldCountry}`;
+		previousDataElement.innerHTML = `<strong>Last Date:</strong> ${oldDate} <br> <strong>Last City :</strong> ${oldCity} <br>  <strong>Last Country :</strong> ${oldCountry}`;
 	});
 
 	// previous message : 
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 			let newFormatDate = formatDate(oldDate);
 			oldDate = newFormatDate;
-			previousDataElement.innerHTML = `Previous Date: ${oldDate} <br> Previous City : ${oldCity} <br> Previous Country : ${oldCountry}`;
+			previousDataElement.innerHTML = `<strong>Date:</strong> ${oldDate} <br> <strong>City :</strong> ${oldCity} <br> <strong>Country :</strong> ${oldCountry}`;
 		} else {
 			alert('No more previous message');
 		}
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 			let newFormatDate = formatDate(oldDate);
 			oldDate = newFormatDate;
-			previousDataElement.innerHTML = `Previous Date: ${oldDate} <br> Previous City : ${oldCity} <br> Previous Country : ${oldCountry}`;
+			previousDataElement.innerHTML = `<strong>Date:</strong> ${oldDate} <br> <strong>City :</strong> ${oldCity} <br> <strong>Country :</strong> ${oldCountry}`;
 		} else {
 			alert('No more message');
 		}
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	// clear text area
 	readButton.addEventListener('click', async (event) => {
 
-		previousDataElement.innerHTML = `Previous Date: ${lastDate} <br> Previous City : ${lastCity} <br> Previous Country : ${lastCountry}`;
+		previousDataElement.innerHTML = `<strong>Last Date:</strong> ${lastDate} <br> <strong>Last City :</strong> ${lastCity} <br> <strong>Last Country :</strong> ${lastCountry}`;
 
 		event.preventDefault(); // Prevent the default form submission
 
