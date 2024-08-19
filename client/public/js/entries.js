@@ -192,6 +192,42 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 });
 
+// To reset process 
+const resetProcess = () => {
+	// Reset the variables
+	tag = '';
+	tags = [];
+	city = '';
+	country = '';
+	message = '';
+	date = '';
+	lastMessage = '';
+	oldDate = '';
+	oldCountry = '';
+	oldCity = '';
+	lastDate = '';
+	lastCity = '';
+	lastCountry = '';
+
+	// Hide all forms
+	document.forms["city-country-form"].style.display = "none";
+	document.forms["message-form"].style.display = "none";
+	document.forms["date-form"].style.display = "none";
+
+	// Show the tag form
+	document.forms["tag-form"].style.display = "block";
+
+	// Clear previous data
+	previousDataElement.innerHTML = '';
+	tagCityCountryElement.innerHTML = '';
+
+	// Reset button visibility
+	readButton.style.display = "none";
+	previousButton.style.display = "none";
+	nextButton.style.display = "none";
+	validMessageButton.style.display = "block";
+};
+
 // get tag list 
 const getTagList = async () => {
 
@@ -252,7 +288,14 @@ const getTagForm = async (tags) => {
 		while (!isValid) {
 			newTag = prompt("Enter a new tag (must start with '#', be a single word without spaces, and not be empty):");
 
-			if (newTag && newTag.trim().length > 0 && newTag.startsWith("#") && !newTag.includes(" ")) {
+			// Check if the user clicked "Cancel"
+			if (newTag === null) {
+				// Restart the process
+				resetProcess();
+				return null; // Exit the function
+			}
+
+			if (newTag.trim().length > 0 && newTag.startsWith("#") && !newTag.includes(" ")) {
 				// Check if tags array is valid and the new tag is not a duplicate
 				const isDuplicate = tags && tags.some(tagObj => tagObj.tag === newTag);
 
@@ -265,7 +308,7 @@ const getTagForm = async (tags) => {
 				alert("Tag must start with '#', be a single word without spaces, and cannot be empty.");
 			}
 		}
-		// send new tag to the db
+		// Send the new tag to the database
 		await addNewTag(newTag);
 
 		return newTag;
@@ -291,6 +334,7 @@ const addNewTag = async (tag) => {
 
 	} catch (error) {
 		console.error('Error adding new tag:', error);
+		alert("Error adding new tag. Please check if this tag already exists in the disabled list.");
 	}
 
 }
@@ -520,7 +564,7 @@ const sendNewMessage = async (tag, city, country, message, date) => {
 		const data = await response.json();
 		console.log(data);
 		alert("New message sent !");
-		location.reload();
+		resetProcess();
 	} catch (error) {
 		console.error('Error fetching data:', error);
 	}
