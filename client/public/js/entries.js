@@ -12,7 +12,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 	let oldDate;
 	let oldCountry;
 	let oldCity;
-	let readableDate;
+	let lastDate;
+	let lastCity;
+	let lastCountry
 
 	// hide forms 
 	document.forms["city-country-form"].style.display = "none";
@@ -70,6 +72,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 		oldDate = dataMessage.date;
 		oldCity = dataMessage.city;
 		oldCountry = dataMessage.country;
+
+		// save last date, city, country
+		lastDate = oldDate;
+		lastCity = oldCountry;
+		lastCountry = oldCountry;
 
 		//Show last message 
 		await showLastMessage(lastMessage);
@@ -136,6 +143,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	// clear text area
 	readButton.addEventListener('click', async (event) => {
+
+		previousDataElement.innerHTML = `Previous Date: ${lastDate} <br> Previous City : ${lastCity} <br> Previous Country : ${lastCountry}`;
 
 		event.preventDefault(); // Prevent the default form submission
 
