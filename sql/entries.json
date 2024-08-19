@@ -2,6 +2,8 @@
 	"last_message": "SELECT message, date, country, city FROM entries WHERE tag = ? ORDER BY date DESC LIMIT 1;",
 	"insert_new_entry": "INSERT INTO entries (chapter_name, tag, date, country, city, message) VALUES (?,?,?,?,?,?);",
     "last_message_before_date": "SELECT message, date, country, city FROM entries WHERE tag = ? AND datetime(date) < datetime(?) ORDER BY datetime(date) DESC LIMIT 1;",
-	"next_message_after_date": "SELECT message, date, country, city FROM entries WHERE tag = ? AND datetime(date) > datetime(?) ORDER BY datetime(date) ASC LIMIT 1;"
+	"next_message_after_date": "SELECT message, date, country, city FROM entries WHERE tag = ? AND datetime(date) > datetime(?) ORDER BY datetime(date) ASC LIMIT 1;",
+	"count_all_entries":"SELECT COUNT(*) AS total_entries FROM entries;",
+	"count_entries_per_chapter": "SELECT COUNT(*) AS entries_per_chapter FROM entries WHERE chapter_name = ?;"
 }
 

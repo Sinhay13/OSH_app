@@ -20,4 +20,9 @@ func RegisterEntriesEndpoints(mux *http.ServeMux, db *sql.DB) {
 		entries.InsertNewEntry(w, r, db)
 	}))
 
+	// insert count entries + CORS (count.go)
+	mux.HandleFunc("/entries/count", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		entries.CountEntries(w, r, db)
+	}))
+
 }
