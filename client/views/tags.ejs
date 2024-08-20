@@ -1,16 +1,16 @@
 <h1>Tags</h1>
 
 <form name="is-active">
-	<h3>Type of Tags : </h3>
+	<h3>Status : </h3>
 	<div class="button-container">
-		<button type="button" name="active">Activated</button>
-		<button type="button" name="deactivated">Deactivated</button>
-		<button type="button" name="all-tags">All tags</button>
+		<button type="button" name="enabled-tags-button">Tags enabled </button>
+		<button type="button" name="disabled-tags-button">Tags disabled</button>
+		<button type="button" name="all-tags-button">All</button>
 	</div>
 </form>
 
-<form name="deactivated-tags">
-	<h3>List for Deactivated Tags : </h3>
+<form name="disabled-tags">
+	<h3>List of disabled Tags : </h3>
 	<div name="return-button">
 		<button type="button" name="return">Return</button>
 	</div>
@@ -29,22 +29,22 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td><input type="text" name="name-deactivated"></td>
-				<td><input type="text" name="created-deactivated"></td>
-				<td><input type="text" name="updated-deactivated"></td>
-				<td><button type="button" name="see-messages-list-deactivated">Messages</button></td>
-				<td><button type="button" name="see-messages-comments-deactivated">Comments</button></td>
+				<td><input type="text" name="name-disabled-tag"></td>
+				<td><input type="text" name="created-disabled-tag"></td>
+				<td><input type="text" name="updated-disabled-tag"></td>
+				<td><button type="button" name="see-messages-list-disabled-tag">Messages</button></td>
+				<td><button type="button" name="see-comment-disabled">Comment</button></td>
 				<td>
-					<button type="button" name="activated-tag-update">Update</button>
-					<button type="button" name="activate-tag">Activate</button>
+					<button type="button" name="disabled-tag-update">Update</button>
+					<button type="button" name="active-tag">active</button>
 				</td>
 			</tr>
 		</tbody>
 	</table>
 </form>
 
-<form name="filters-activated-tags">
-	<h3>Filters for Active Tags:</h3>
+<form name="enabled-tags-filters">
+	<h3>Filters of enabled Tags:</h3>
 	<div name="return-button">
 		<button type="button" name="return">Return</button>
 	</div>
@@ -83,8 +83,8 @@
 	</table>
 </form>
 
-<form name="activated-tags">
-	<h3>List for Activated Tags : </h3>
+<form name="enabled-tags">
+	<h3>Enabled Tags List : </h3>
 	<div name="return-button">
 		<button type="button" name="return">Return</button>
 	</div>
@@ -105,7 +105,7 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td><input type="text" name="name-activated"></td>
+				<td><input type="text" name="name-enabled-tag"></td>
 				<td>
 					<select name="is-system">
 						<option value="no">No</option>
@@ -123,13 +123,13 @@
 						<option value="none">null</option>
 					</select>
 				</td>
-				<td><input type="text" name="created-activated"></td>
-				<td><input type="text" name="updated-activated"></td>
-				<td><button type="button" name="see-messages-list-activated">Messages</button></td>
-				<td><button type="button" name="see-messages-comments-activated">Comments</button></td>
+				<td><input type="text" name="created-enabled-tag"></td>
+				<td><input type="text" name="updated-enabled-tag"></td>
+				<td><button type="button" name="see-messages-list-enabled-tag">Messages</button></td>
+				<td><button type="button" name="see-comments-enabled-tag">Comment</button></td>
 				<td>
-					<button type="button" name="deactivate-tag-update">Update</button>
-					<button type="button" name="deactivate-tag">Deactivate</button>
+					<button type="button" name="enabled-tag-update">Update</button>
+					<button type="button" name="disable-tag">Disable</button>
 				</td>
 			</tr>
 		</tbody>
@@ -138,19 +138,32 @@
 
 <form name="full-tags">
 
-	<h3>List Tags : </h3>
+	<h3>Tags list: </h3>
 	<div name="return-button">
 		<button type="button" name="return">Return</button>
 	</div>
 	<br>
-	<input type="text" name="tag-name-input" placeholder="tag">
-	<ul name="tags-list"></ul>
+	<table>
+		<thead>
+			<tr>
+				<th>Tag Name</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="tag-name-input"></td>
+			</tr>
+		</tbody>
+	</table>
+	<p><strong>Result :</strong></p>
+	<ul name="list-tag-result"></ul>
 
 </form>
 
-<form name="chapters-list">
+<form name="chapters-filter">
 
-	<h3>Chapters Lis : </h3>
+	<h3>Chapters List : </h3>
+
 	<div name="return-button">
 		<button type="button" name="return">Return</button>
 	</div>
