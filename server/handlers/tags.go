@@ -25,6 +25,11 @@ func RegisterTagsEndpoints(mux *http.ServeMux, db *sql.DB) {
 		tags.TagsListNon(w, r, db)
 	}))
 
+	// get  principles + CORS (principles.go)
+	mux.HandleFunc("/tags/principles", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		tags.TagsPrinciples(w, r, db)
+	}))
+
 	// insert new tag + CORS (insert.go)
 	mux.HandleFunc("/tags/new", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		tags.InsertNewTag(w, r, db)

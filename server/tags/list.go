@@ -45,7 +45,6 @@ func getTags(db *sql.DB, listType string) ([]Tags, error) {
 	for rows.Next() {
 		var tag Tags
 		if err := rows.Scan(&tag.Tag); err != nil {
-			utils.Logger.Print(err)
 			return nil, err
 		}
 		tags = append(tags, tag)
@@ -53,7 +52,6 @@ func getTags(db *sql.DB, listType string) ([]Tags, error) {
 
 	// Check for errors from iterating over rows
 	if err := rows.Err(); err != nil {
-		utils.Logger.Print(err)
 		return nil, err
 	}
 

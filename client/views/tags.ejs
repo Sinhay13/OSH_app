@@ -1,12 +1,23 @@
 <h1>Tags</h1>
 
-<form name="is-active">
+<form name="status-tags">
 	<h3>Status : </h3>
-	<div class="button-container">
-		<button type="button" name="enabled-tags-button">Tags enabled </button>
-		<button type="button" name="disabled-tags-button">Tags disabled</button>
-		<button type="button" name="all-tags-button">All</button>
-	</div>
+	<table>
+		<thead>
+			<tr>
+				<th>Tags enabled</th>
+				<th>Tags disabled</th>
+				<th>All</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><button type="button" name="enabled-tags-button">Next</button></td>
+				<td><button type="button" name="disabled-tags-button">Next</button></td>
+				<td><button type="button" name="all-tags-button">Next</button></td>
+			</tr>
+		</tbody>
+	</table>
 </form>
 
 <form name="disabled-tags">
@@ -55,6 +66,8 @@
 				<th>is-system</th>
 				<th>is-principle</th>
 				<th>principle</th>
+				<th>action</th>
+
 			</tr>
 		</thead>
 		<tbody>
@@ -78,6 +91,7 @@
 						<option value="all">All</option>
 					</select>
 				</td>
+				<td><button type="button" name="apply-filters-tags">next</button></td>
 			</tr>
 		</tbody>
 	</table>
@@ -220,3 +234,5 @@
 
 
 </form>
+
+<script src="js/tags.js" defer></script>

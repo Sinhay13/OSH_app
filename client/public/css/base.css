@@ -118,10 +118,27 @@ input[type="text"] {
     overflow-y: auto; /* Enable scrolling inside the editor if needed */
 }
 
+/* .SO */
 .right {
 	text-align: right; 
   }
 
   .button-container {
 	display: flex;
+}
+
+/* return button Tags */
+button[name="return"] {
+    width: 100px;    /* Set a fixed width */
+    height: 40px;    /* Set a fixed height */
+    background-color: #4CAF50;  /* Green background */
+    color: white;    /* White text */
+    border: none;    /* Remove borders */
+    border-radius: 5px;  /* Rounded corners */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+button[name="return"]:hover {
+    background-color: #45a049; /* Darker green on hover */
 }

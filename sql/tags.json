@@ -2,7 +2,8 @@
 "full_list": "SELECT tag FROM tags ORDER BY tag ASC;",
 "active_list": "SELECT tag FROM tags WHERE active = 1 ORDER BY tag ASC;",
 "non_list": "SELECT tag FROM tags WHERE active = 0 ORDER BY tag ASC;",	
-"insert_new_tag":"INSERT INTO tags (tag, created_time, updated_time) VALUES (?,?,?);"
+"insert_new_tag":"INSERT INTO tags (tag, created_time, updated_time) VALUES (?,?,?);",
+"principles": "SELECT tag FROM tags WHERE is_principle = 1;"
 }
 
 
