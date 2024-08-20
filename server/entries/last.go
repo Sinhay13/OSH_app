@@ -14,6 +14,7 @@ type Entries struct {
 	Date    string `json:"date"`
 	Country string `json:"country"`
 	City    string `json:"city"`
+	EntryID int    `Json:"entry_id"`
 }
 
 // Get last message from DB
@@ -29,7 +30,7 @@ func getLastMessageFromDB(db *sql.DB, tag string) (Entries, error) {
 	// Prepare the query to return message, date, country, and city
 	var entry Entries
 
-	err = db.QueryRow(query, tag).Scan(&entry.Message, &entry.Date, &entry.Country, &entry.City)
+	err = db.QueryRow(query, tag).Scan(&entry.Message, &entry.Date, &entry.Country, &entry.City, &entry.EntryID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			// No rows found, return default values
@@ -38,6 +39,7 @@ func getLastMessageFromDB(db *sql.DB, tag string) (Entries, error) {
 				Date:    "?",
 				Country: "?",
 				City:    "?",
+				EntryID: 0,
 			}, nil
 		}
 		// Some other error
@@ -69,7 +71,7 @@ func getMessageRelativeToDateFromDB(db *sql.DB, tag, date, action string) (Entri
 
 	// Execute the query
 	var entry Entries
-	err = db.QueryRow(query, tag, date).Scan(&entry.Message, &entry.Date, &entry.Country, &entry.City)
+	err = db.QueryRow(query, tag, date).Scan(&entry.Message, &entry.Date, &entry.Country, &entry.City, &entry.EntryID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			// No rows found, return default values
@@ -78,6 +80,7 @@ func getMessageRelativeToDateFromDB(db *sql.DB, tag, date, action string) (Entri
 				Date:    "?",
 				Country: "?",
 				City:    "?",
+				EntryID: 0,
 			}, nil
 		}
 		// Some other error
@@ -129,6 +132,7 @@ func GetLastMessage(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		"date":    entry.Date,
 		"country": entry.Country,
 		"city":    entry.City,
+		"entryID": entry.EntryID,
 	}
 
 	// Write the response

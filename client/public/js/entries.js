@@ -14,7 +14,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 	let oldCity;
 	let lastDate;
 	let lastCity;
-	let lastCountry
+	let lastCountry;
+	let oldEntryID;
+	let lastEntryID;
 
 	// hide forms 
 	document.forms["city-country-form"].style.display = "none";
@@ -72,11 +74,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 		oldDate = dataMessage.date;
 		oldCity = dataMessage.city;
 		oldCountry = dataMessage.country;
+		oldEntryID = dataMessage.entryID;
 
 		// save last date, city, country
 		lastDate = formatDate(oldDate);
 		lastCity = oldCountry;
 		lastCountry = oldCountry;
+		lastEntryID = oldEntryID;
 
 		//Show last message 
 		await showLastMessage(lastMessage);
@@ -87,7 +91,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		// Update the <p> element inside message-form with the selected tag, previous date
 		let newFormatDate = formatDate(oldDate);
 		oldDate = newFormatDate;
-		previousDataElement.innerHTML = `<strong>Last Date:</strong> ${oldDate} <br> <strong>Last City :</strong> ${oldCity} <br>  <strong>Last Country :</strong> ${oldCountry}`;
+		previousDataElement.innerHTML = `<strong>Last ID :</strong> ${lastEntryID} <br><strong>Last Date:</strong> ${lastDate} <br> <strong>Last City :</strong> ${lastCity} <br>  <strong>Last Country :</strong> ${lastCountry}`;
 	});
 
 	// previous message : 
@@ -102,13 +106,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 			oldDate = dataMessage2.date;
 			oldCity = dataMessage2.city;
 			oldCountry = dataMessage2.country;
+			oldEntryID = dataMessage2.entryID;
 
 			//Show last message 
 			await showLastMessage(lastMessage);
 
 			let newFormatDate = formatDate(oldDate);
 			oldDate = newFormatDate;
-			previousDataElement.innerHTML = `<strong>Date:</strong> ${oldDate} <br> <strong>City :</strong> ${oldCity} <br> <strong>Country :</strong> ${oldCountry}`;
+			previousDataElement.innerHTML = `<strong> ID :</strong> ${oldEntryID} <br><strong>Date:</strong> ${oldDate} <br> <strong>City :</strong> ${oldCity} <br> <strong>Country :</strong> ${oldCountry}`;
 		} else {
 			alert('No more previous message');
 		}
@@ -128,13 +133,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 			oldDate = dataMessage3.date;
 			oldCity = dataMessage3.city;
 			oldCountry = dataMessage3.country;
+			oldEntryID = dataMessage3.entryID;
 
 			//Show last message 
 			await showLastMessage(lastMessage);
 
 			let newFormatDate = formatDate(oldDate);
 			oldDate = newFormatDate;
-			previousDataElement.innerHTML = `<strong>Date:</strong> ${oldDate} <br> <strong>City :</strong> ${oldCity} <br> <strong>Country :</strong> ${oldCountry}`;
+			previousDataElement.innerHTML = `<strong> ID :</strong> ${oldEntryID} <br><strong>Date:</strong> ${oldDate} <br> <strong>City :</strong> ${oldCity} <br> <strong>Country :</strong> ${oldCountry}`;
 		} else {
 			alert('No more message');
 		}
@@ -144,7 +150,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	// clear text area
 	readButton.addEventListener('click', async (event) => {
 
-		previousDataElement.innerHTML = `<strong>Last Date:</strong> ${lastDate} <br> <strong>Last City :</strong> ${lastCity} <br> <strong>Last Country :</strong> ${lastCountry}`;
+		previousDataElement.innerHTML = `<strong>Last ID :</strong> ${lastEntryID} <br><strong>Last Date:</strong> ${lastDate} <br> <strong>Last City :</strong> ${lastCity} <br>  <strong>Last Country :</strong> ${lastCountry}`;
 
 		event.preventDefault(); // Prevent the default form submission
 
