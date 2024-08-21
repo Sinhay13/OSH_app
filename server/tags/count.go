@@ -22,13 +22,13 @@ func getActiveAndInactiveTags(db *sql.DB) (int, int, error) {
 	query := tagsJson.CountTags
 
 	// for active tag
-	err = db.QueryRow(query, 0).Scan(&activeTags)
+	err = db.QueryRow(query, 1).Scan(&activeTags)
 	if err != nil {
 		return 0, 0, err
 	}
 
 	// for active tag
-	err = db.QueryRow(query, 1).Scan(&inactiveTags)
+	err = db.QueryRow(query, 0).Scan(&inactiveTags)
 	if err != nil {
 		return 0, 0, err
 	}
