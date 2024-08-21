@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 		// save last date, city, country
 		lastDate = formatDate(oldDate);
-		lastCity = oldCountry;
+		lastCity = oldCity;
 		lastCountry = oldCountry;
 		lastEntryID = oldEntryID;
 

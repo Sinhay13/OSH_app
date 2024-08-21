@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const disabledTagsButton = document.querySelector('button[name="disabled-tags-button"]');
 	const allTagsButton = document.querySelector('button[name="all-tags-button"]');
 	const returnButtons = document.querySelectorAll('button[name="return"]');
-	const applyFiltersButtons = document.querySelectorAll('button[name="apply-filters-tags"]');
+	const applyFiltersButton = document.querySelector('button[name="apply-filters-tags"]');
 
 
 
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	// Form "enabled-tags-filters" //
 
-	applyFiltersButtons.addEventListener('click', async (event) => {
+	applyFiltersButton.addEventListener('click', async (event) => {
 		event.preventDefault();
 
 		document.forms["enabled-tags-filters"].style.display = "none";
