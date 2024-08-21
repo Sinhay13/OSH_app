@@ -35,4 +35,9 @@ func RegisterTagsEndpoints(mux *http.ServeMux, db *sql.DB) {
 		tags.InsertNewTag(w, r, db)
 	}))
 
+	// count tags + CORS (count.go)
+	mux.HandleFunc("/tags/count", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		tags.CountTags(w, r, db)
+	}))
+
 }
