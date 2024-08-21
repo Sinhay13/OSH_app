@@ -25,6 +25,11 @@ func RegisterTagsEndpoints(mux *http.ServeMux, db *sql.DB) {
 		tags.TagsListNon(w, r, db)
 	}))
 
+	// get  filtered active tags list+ CORS (filtered.go)
+	mux.HandleFunc("/tags/list/filtered", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		tags.GetTagsEnabledFilteredList(w, r, db)
+	}))
+
 	// get  principles + CORS (principles.go)
 	mux.HandleFunc("/tags/principles", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		tags.TagsPrinciples(w, r, db)

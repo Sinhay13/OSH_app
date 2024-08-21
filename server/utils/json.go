@@ -20,12 +20,13 @@ type Queries struct {
 	Select           string `json:"select"`
 
 	//tags:
-	FullList     string `json:"full_List"`
-	ActiveList   string `json:"active_List"`
-	NonList      string `json:"non_List"`
-	InsertNewTag string `json:"insert_new_tag"`
-	Principles   string `json:"principles"`
-	CountTags    string `json:"count_tags"`
+	FullList            string `json:"full_List"`
+	ActiveList          string `json:"active_List"`
+	NonList             string `json:"non_List"`
+	InsertNewTag        string `json:"insert_new_tag"`
+	Principles          string `json:"principles"`
+	CountTags           string `json:"count_tags"`
+	FilteredTagsEnabled string `json:"filtered_tags_enabled"`
 
 	// entries :
 	LastMessage            string `json:"last_message"`

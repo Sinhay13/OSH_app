@@ -4,8 +4,8 @@
 "non_list": "SELECT tag FROM tags WHERE active = 0 ORDER BY tag ASC;",	
 "insert_new_tag":"INSERT INTO tags (tag, created_time, updated_time) VALUES (?,?,?);",
 "principles": "SELECT tag FROM tags WHERE is_principle = 1;",
-"count_tags":"SELECT COUNT(*) FROM tags WHERE active = ?;"
-
+"count_tags":"SELECT COUNT(*) FROM tags WHERE active = ?;",
+"filtered_tags_enabled":"SELECT * FROM tags WHERE active = 1"
 }
 
 

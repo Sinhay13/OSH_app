@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
 	// Init variables:
+	let dataTagsEnabled;
 
 	// hide form : 
 	document.forms["disabled-tags"].style.display = "none";
@@ -18,26 +19,35 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const returnButtons = document.querySelectorAll('button[name="return"]');
 	const applyFiltersButton = document.querySelector('button[name="apply-filters-tags"]');
 	const countElement = document.querySelector('p[name="count-tags"]');
+	const isPrincipleFilter = document.querySelector('select[name="is-principle-filter"]');
+	const principleFilter = document.querySelector('select[name="principle-filter"]');
+
 
 	// Count Tags //
-
-	const dataCountTags = await countTags();
-	const active = dataCountTags.active;
-	const inactive = dataCountTags.inactive;
-	const allTags = active + inactive;
-
-	countElement.innerHTML = `<strong> Enabled Tags :</strong> ${active} <br><strong>Disabled Tags :</strong> ${inactive} <br> <strong> Total Tags :</strong> ${allTags}`;
+	await countAndShowTags(countElement);
 
 	// Form "status-tag" //
 
+	// for enabled tags
 	enabledTagsButton.addEventListener('click', async (event) => {
 		event.preventDefault();
 
+		// get principle List
 		const principlesList = await principles();
 		await feedPrinciple(principlesList);
 
 		document.forms["enabled-tags-filters"].style.display = "block";
 		document.forms["status-tags"].style.display = "none";
+	});
+
+	// Handle is-principle-filter change
+	isPrincipleFilter.addEventListener('change', () => {
+		if (isPrincipleFilter.value === 'yes') {
+			principleFilter.value = 'all';
+			principleFilter.disabled = true;
+		} else {
+			principleFilter.disabled = false;
+		}
 	});
 
 	disabledTagsButton.addEventListener('click', async (event) => {
@@ -65,16 +75,34 @@ document.addEventListener('DOMContentLoaded', async () => {
 	applyFiltersButton.addEventListener('click', async (event) => {
 		event.preventDefault();
 
+		const params = await getParamsForFilteringTagsEnabled();
+		dataTagsEnabled = await getListTagsEnabledFiltered(params);
+		console.log(dataTagsEnabled)
+
+
 		document.forms["enabled-tags-filters"].style.display = "none";
 		document.forms["enabled-tags"].style.display = "block";
+
+		// feed table with the function
 	});
 
 
 });
 
-// Functions general //
+// Count Tags functions //
 
-// get principles list
+//Count and show : 
+const countAndShowTags = async (countElement) => {
+	const dataCountTags = await countTags();
+	const active = dataCountTags.active;
+	const inactive = dataCountTags.inactive;
+	const allTags = active + inactive;
+
+	countElement.innerHTML = `<strong> Enabled Tags :</strong> ${active} <br><strong>Disabled Tags :</strong> ${inactive} <br> <strong> Total Tags :</strong> ${allTags}`;
+}
+
+
+// Call API
 const countTags = async () => {
 
 	const url = `http://127.0.0.1:2323/tags/count`;
@@ -135,8 +163,73 @@ const feedPrinciple = async (principlesList) => {
 	});
 };
 
-
 // Function form "enabled-tags-filters" //
 
+const getParamsForFilteringTagsEnabled = async () => {
+	// Get the form elements
+	const form = document.forms["enabled-tags-filters"];
+
+	// Retrieve values from the form fields
+	let isSystem = form.querySelector('select[name="is-system-filter"]').value;
+	if (isSystem === 'yes') {
+		isSystem = 1;
+	} else if (isSystem === 'no') {
+		isSystem = 0;
+	} else {
+		isSystem = null;
+	}
+
+	let isPrinciple = form.querySelector('select[name="is-principle-filter"]').value;
+	if (isPrinciple === 'yes') {
+		isPrinciple = 1;
+	} else if (isPrinciple === 'no') {
+		isPrinciple = 0;
+	} else {
+		isPrinciple = null;
+	}
+
+	let principle = form.querySelector('select[name="principle-filter"]').value;
+	if (principle === 'all') {
+		principle = null
+	}
+
+	// Return the parameters as an object
+	return {
+		isSystem,
+		isPrinciple,
+		principle
+	};
+};
+
+const getListTagsEnabledFiltered = async (params) => {
+
+	const url = `http://127.0.0.1:2323/tags/list/filtered`;
+
+	const body = JSON.stringify({
+		isSystem: params.isSystem,
+		isPrinciple: params.isPrinciple,
+		principle: params.principle
+	})
+
+	const reqOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: body,
+	};
+
+	try {
+		const response = await fetch(url, reqOptions);
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		const data = await response.json();
+		console.log(data);
+		alert("New message sent !");
+		resetProcess();
+	} catch (error) {
+		console.error('Error fetching data:', error);
+	}
+
+}
 
 
