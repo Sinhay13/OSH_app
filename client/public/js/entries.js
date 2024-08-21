@@ -26,12 +26,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 	//buttons and elements 
 	const validMessageButton = document.querySelector('form[name="message-form"] input[name="valid-message"]');
 	const previousButton = document.querySelector('button[name="previous"]');
+	const resetButton = document.querySelector('button[name="reset-button"]');
 	const nextButton = document.querySelector('button[name="next"]');
 	const readButton = document.querySelector('button[name="clear-text"]');
 	const timeNowButton = document.querySelector('input[name="time-now"]');
 	const messageDateInput = document.querySelector('input[name="message-date"]');
 	const previousDataElement = document.forms["message-form"].querySelector('p[name="previous-data"]');
 	const tagCityCountryElement = document.forms["message-form"].querySelector('p[name="tag-city-country"]');
+
+	// reset button :
+	resetButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+
+		await resetProcess();
+	});
 
 	//get tags list
 	tags = await getTagList();
@@ -199,7 +207,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // To reset process 
-const resetProcess = () => {
+const resetProcess = async () => {
 	// Reset the variables
 	tag = '';
 	tags = [];

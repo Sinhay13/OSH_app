@@ -128,7 +128,8 @@ input[type="text"] {
 }
 
 /* return button Tags */
-button[name="return"] {
+button[name="return"], 
+button[name="reset-button"] {
     width: 100px;    /* Set a fixed width */
     height: 40px;    /* Set a fixed height */
     background-color: #4CAF50;  /* Green background */
