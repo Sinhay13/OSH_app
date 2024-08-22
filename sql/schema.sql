@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS chapters (
 		principle_tag TEXT,
 		active INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1)),
 		is_system INTEGER NOT NULL DEFAULT 0 CHECK (is_system IN (0, 1)),
-		created_time TIMESTAMP NOT NULL,
-		updated_time TIMESTAMP NOT NULL
+		created_time TEXT NOT NULL,
+		updated_time TEXT NOT NULL
 	);
 
 -- entries

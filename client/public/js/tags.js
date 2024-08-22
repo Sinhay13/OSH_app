@@ -76,6 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		event.preventDefault();
 
 		const params = await getParamsForFilteringTagsEnabled();
+		console.log(params)
 		dataTagsEnabled = await getListTagsEnabledFiltered(params);
 		console.log(dataTagsEnabled)
 
@@ -174,9 +175,9 @@ const getParamsForFilteringTagsEnabled = async () => {
 	if (isSystem === 'yes') {
 		isSystem = 1;
 	} else if (isSystem === 'no') {
-		isSystem = 0;
+		isSystem = 0; // 10 == null filter disabled
 	} else {
-		isSystem = null;
+		isSystem = 10;
 	}
 
 	let isPrinciple = form.querySelector('select[name="is-principle-filter"]').value;
@@ -185,13 +186,10 @@ const getParamsForFilteringTagsEnabled = async () => {
 	} else if (isPrinciple === 'no') {
 		isPrinciple = 0;
 	} else {
-		isPrinciple = null;
+		isPrinciple = 10; // 10 == null filter disabled
 	}
 
-	let principle = form.querySelector('select[name="principle-filter"]').value;
-	if (principle === 'all') {
-		principle = null
-	}
+	let principle = form.querySelector('select[name="principle-filter"]').value; // if = all ==> null 
 
 	// Return the parameters as an object
 	return {
@@ -211,6 +209,8 @@ const getListTagsEnabledFiltered = async (params) => {
 		principle: params.principle
 	})
 
+	console.log(body)
+
 	const reqOptions = {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
@@ -223,9 +223,7 @@ const getListTagsEnabledFiltered = async (params) => {
 			throw new Error('Network response was not ok');
 		}
 		const data = await response.json();
-		console.log(data);
-		alert("New message sent !");
-		resetProcess();
+		return data;
 	} catch (error) {
 		console.error('Error fetching data:', error);
 	}
