@@ -144,7 +144,7 @@ const feedPrinciple = async (principlesList) => {
 	const principleFilterSelect = document.querySelector('select[name="principle-filter"]');
 
 	// Clear existing options, but keep the "all" option
-	principleFilterSelect.innerHTML = '<option value="all">All</option>,<option value="none">none</option> ';
+	principleFilterSelect.innerHTML = '<option value="all">all</option>,<option value="none">none</option> ';
 
 	// Check if the principlesList contains anything other than { tag: 'none' }
 	if (principlesList.length === 1 && principlesList[0].tag === 'none') {
@@ -250,7 +250,9 @@ const showFilterEnabled = async (params, currentEnabledFilter) => {
 		isPrinciple = 'All'
 	};
 
-	principleTag = params.principle;
+	if (params.principle) {
+		principleTag = "All";
+	}
 
 	currentEnabledFilter.innerHTML = `Current Filters : <br> <strong> Is System :</strong> ${isSystem} <br><strong> Is Principle :</strong> ${isPrinciple} <br> <strong> Principle Tag :</strong> ${principleTag}`;
 }

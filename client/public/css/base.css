@@ -1,4 +1,3 @@
-/* base.css */
 body {
     display: flex;
     flex-direction: row; /* Arrange children in a row */
@@ -28,8 +27,6 @@ nav > div {
     justify-content: center; /* Center items horizontally */
 }
 
-
-
 button {
     width: 100%; /* Make buttons take full width of their container */
     padding: 10px; /* Add some padding for better appearance */
@@ -47,20 +44,24 @@ main {
     flex: 1; /* Allow main to take remaining space */
     margin-left: 20px; /* Add space between nav and main */
     overflow: auto; /* Add scroll if content overflows */
-
 }
 
 /* tables */
 ul {
-	padding-left: 10px;
+    padding-left: 10px;
 }
 
 li {
-	padding-left: 10px;
+    padding-left: 10px;
 }
 
-
 /* Minimalist Table with Visible Cell Separations */
+.table-container {
+    max-height: 1000px; /* Set desired height */
+    overflow-y: auto;  /* Enable vertical scrolling */
+	border: 1px solid #ddd; /* Optional: Add a border around the container */
+}
+
 table {
     width: 100%; /* Full width of the container */
     border-collapse: separate; /* Allow separation between cells */
@@ -69,17 +70,22 @@ table {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
-th, td {
+thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f9f9f9; /* Light background for the header */
+    color: #333; /* Text color for the header */
+    font-weight: 600; /* Slightly bold text */
+    border-bottom: 1px solid #ddd; /* Light border below each cell */
+    border-right: 1px solid #ddd; /* Visible border between cells */
+    z-index: 2; /* Ensure the header stays above the body */
+    padding: 16px; /* Increased padding for more space */
+}
+tbody td {
     padding: 12px; /* Space within cells */
     text-align: left; /* Align text to the left */
     border-bottom: 1px solid #ddd; /* Light border below each cell */
     border-right: 1px solid #ddd; /* Visible border between cells */
-}
-
-th {
-    background-color: #f9f9f9; /* Light background for the header */
-    color: #333; /* Text color for the header */
-    font-weight: 600; /* Slightly bold text */
 }
 
 td {
@@ -97,7 +103,6 @@ tr:hover td {
 th:last-child, td:last-child {
     border-right: none; /* No right border for the last column */
 }
-
 
 input[type="text"] {
     width: auto;
@@ -120,11 +125,11 @@ input[type="text"] {
 
 /* .SO */
 .right {
-	text-align: right; 
-  }
+    text-align: right; 
+}
 
-  .button-container {
-	display: flex;
+.button-container {
+    display: flex;
 }
 
 /* return button Tags */
