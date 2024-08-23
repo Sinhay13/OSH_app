@@ -2,7 +2,8 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
 	// Init variables:
-	let dataTagsEnabled;
+	let principlesList;
+	let params;
 
 	// hide form : 
 	document.forms["disabled-tags"].style.display = "none";
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const countElement = document.querySelector('p[name="count-tags"]');
 	const isPrincipleFilter = document.querySelector('select[name="is-principle-filter"]');
 	const principleFilter = document.querySelector('select[name="principle-filter"]');
+	const currentEnabledFilter = document.querySelector('p[name="current-enabled-filter"]');
 
 
 	// Count Tags //
@@ -33,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		event.preventDefault();
 
 		// get principle List
-		const principlesList = await principles();
+		principlesList = await principles();
 		await feedPrinciple(principlesList);
 
 		document.forms["enabled-tags-filters"].style.display = "block";
@@ -75,19 +77,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 	applyFiltersButton.addEventListener('click', async (event) => {
 		event.preventDefault();
 
-		const params = await getParamsForFilteringTagsEnabled();
-		console.log(params)
-		dataTagsEnabled = await getListTagsEnabledFiltered(params);
-		console.log(dataTagsEnabled)
-
+		params = await getParamsForFilteringTagsEnabled();
+		const dataTagsEnabled = await getListTagsEnabledFiltered(params);
+		await feedTableEnabledTags(dataTagsEnabled, principlesList, params, countElement);
 
 		document.forms["enabled-tags-filters"].style.display = "none";
 		document.forms["enabled-tags"].style.display = "block";
 
-		// feed table with the function
+		await showFilterEnabled(params, currentEnabledFilter);
 	});
-
-
 });
 
 // Count Tags functions //
@@ -209,7 +207,6 @@ const getListTagsEnabledFiltered = async (params) => {
 		principle: params.principle
 	})
 
-	console.log(body)
 
 	const reqOptions = {
 		method: 'POST',
@@ -228,6 +225,231 @@ const getListTagsEnabledFiltered = async (params) => {
 		console.error('Error fetching data:', error);
 	}
 
+};
+
+// show current enabled filter
+const showFilterEnabled = async (params, currentEnabledFilter) => {
+
+	let isSystem;
+	let isPrinciple;
+	let principleTag;
+
+	if (params.isSystem === 0) {
+		isSystem = 'No'
+	} else if (params.isSystem === 1) {
+		isSystem = 'Yes'
+	} else {
+		isSystem = 'All'
+	};
+
+	if (params.isPrinciple === 0) {
+		isPrinciple = 'No'
+	} else if (params.isPrinciple === 1) {
+		isPrinciple = 'Yes'
+	} else {
+		isPrinciple = 'All'
+	};
+
+	principleTag = params.principle;
+
+	currentEnabledFilter.innerHTML = `Current Filters : <br> <strong> Is System :</strong> ${isSystem} <br><strong> Is Principle :</strong> ${isPrinciple} <br> <strong> Principle Tag :</strong> ${principleTag}`;
 }
 
+// feed table for filtered enabled tags 
+const feedTableEnabledTags = async (data, principlesList, params, countElement) => {
+	const form = document.forms["enabled-tags"];
+	const tbody = form.querySelector('tbody');
 
+	// Clear existing rows
+	tbody.innerHTML = '';
+
+	// Check for empty data
+	if (!data || data.length === 0) {
+		form.style.display = "none";
+		alert("No data available.");
+		location.reload();
+	}
+
+	// Iterate over the data to create rows
+	data.forEach(tag => {
+		const row = document.createElement('tr');
+
+		// Tag name
+		const nameCell = document.createElement('td');
+		const nameInput = document.createElement('input');
+		nameInput.type = "text";
+		nameInput.name = "name-enabled-tag";
+		nameInput.value = tag.tag;
+		nameInput.disabled = true;
+		nameCell.appendChild(nameInput);
+		row.appendChild(nameCell);
+
+		// Is-system
+		const isSystemCell = document.createElement('td');
+		const isSystemSelect = document.createElement('select');
+		isSystemSelect.name = "is-system";
+		const optionNoSystem = new Option('no', 'no', tag.is_system === 0);
+		const optionYesSystem = new Option('yes', 'yes', tag.is_system === 1);
+		isSystemSelect.add(optionNoSystem);
+		isSystemSelect.add(optionYesSystem);
+		isSystemSelect.value = tag.is_system === 1 ? 'yes' : 'no';
+		isSystemCell.appendChild(isSystemSelect);
+		row.appendChild(isSystemCell);
+
+		// Is-principle
+		const isPrincipleCell = document.createElement('td');
+		const isPrincipleSelect = document.createElement('select');
+		isPrincipleSelect.name = "is-principle";
+		const optionNoPrinciple = new Option('no', 'no', tag.is_principle === 0);
+		const optionYesPrinciple = new Option('yes', 'yes', tag.is_principle === 1);
+		isPrincipleSelect.add(optionNoPrinciple);
+		isPrincipleSelect.add(optionYesPrinciple);
+		isPrincipleSelect.value = tag.is_principle === 1 ? 'yes' : 'no';
+		isPrincipleCell.appendChild(isPrincipleSelect);
+		row.appendChild(isPrincipleCell);
+
+		// Principle tag
+		const principleCell = document.createElement('td');
+		const principleSelect = document.createElement('select');
+		principleSelect.name = "principle";
+
+		// Add "none" option
+		const optionNone = new Option('none', 'none', tag.principle_tag === 'none');
+		principleSelect.add(optionNone);
+
+		// Add the principles from the list
+		principlesList.forEach(principle => {
+			if (principle.tag !== 'none') {
+				const option = new Option(principle.tag, principle.tag, tag.principle_tag === principle.tag);
+				principleSelect.add(option);
+			}
+		});
+
+		principleSelect.value = tag.principle_tag || 'none';
+		principleCell.appendChild(principleSelect);
+		row.appendChild(principleCell);
+
+		// Created time
+		const createdCell = document.createElement('td');
+		const createdInput = document.createElement('input');
+		createdInput.type = "text";
+		createdInput.name = "created-enabled-tag";
+		createdInput.value = tag.created_time;
+		createdInput.disabled = true;
+		createdCell.appendChild(createdInput);
+		row.appendChild(createdCell);
+
+		// Updated time
+		const updatedCell = document.createElement('td');
+		const updatedInput = document.createElement('input');
+		updatedInput.type = "text";
+		updatedInput.name = "updated-enabled-tag";
+		updatedInput.value = tag.updated_time;
+		updatedInput.disabled = true;
+		updatedCell.appendChild(updatedInput);
+		row.appendChild(updatedCell);
+
+		// Messages button
+		const messagesCell = document.createElement('td');
+		const messagesButton = document.createElement('button');
+		messagesButton.type = "button";
+		messagesButton.name = "see-messages-list-enabled-tag";
+		messagesButton.textContent = "Messages";
+		messagesCell.appendChild(messagesButton);
+		row.appendChild(messagesCell);
+
+		// Comments button
+		const commentsCell = document.createElement('td');
+		const commentsButton = document.createElement('button');
+		commentsButton.type = "button";
+		commentsButton.name = "see-comments-enabled-tag";
+		commentsButton.textContent = "Comment";
+		commentsCell.appendChild(commentsButton);
+		row.appendChild(commentsCell);
+
+		// Actions buttons
+		const actionsCell = document.createElement('td');
+		const updateButton = document.createElement('button');
+		updateButton.type = "button";
+		updateButton.name = "enabled-tag-update";
+		updateButton.textContent = "Update";
+		actionsCell.appendChild(updateButton);
+
+		const disableButton = document.createElement('button');
+		disableButton.type = "button";
+		disableButton.name = "disable-tag";
+		disableButton.textContent = "Disable";
+		disableButton.addEventListener('click', async () => await disableTagButton(tag.tag, principlesList, params, countElement));
+		actionsCell.appendChild(disableButton);
+
+		row.appendChild(actionsCell);
+
+		// Append the row to the table body
+		tbody.appendChild(row);
+	});
+
+	// Display the form now that it's populated
+	form.style.display = "block";
+};
+
+// check if it is principle and is using. 
+const checkPrincipleTags = async (tag) => {
+
+	const tag_string = encodeURIComponent(tag);
+
+	const url = `http://127.0.0.1:2323/tags/principles/check?tag=${tag_string}`;
+
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		const data = await response.json();
+		return data.result; // Return just result
+	} catch (error) {
+		console.error('Error fetching principles:', error);
+		return null; // Or handle the error as needed
+	}
+
+
+}
+
+// listener for disable button
+const disableTagButton = async (tag, principlesList, params, countElement) => {
+
+
+	const result = await checkPrincipleTags(tag);
+
+	if (result > 0) {
+		alert("It is not allowed to disable a tag if another tag uses it as a principle.");
+		return;
+	} else {
+
+		await disableTag(tag);
+		await countAndShowTags(countElement);
+		const newDataTagsEnabled = await getListTagsEnabledFiltered(params);
+		await feedTableEnabledTags(newDataTagsEnabled, principlesList, params, countElement);
+	}
+};
+
+// Disable a tag 
+const disableTag = async (tag) => {
+
+	const tag_string = encodeURIComponent(tag);
+
+	try {
+		const url = `http://127.0.0.1:2323/tags/disable?tag=${tag_string}`;
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const result = await response.json();
+
+	} catch (error) {
+		console.error('Error adding new tag:', error);
+		alert("Error to disable tag");
+	}
+
+};

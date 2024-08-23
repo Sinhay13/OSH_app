@@ -7,6 +7,8 @@ import (
 	"server/utils"
 )
 
+// Get list of principles //
+
 type Principles struct {
 	Tag string `json:"tag"`
 }
@@ -68,6 +70,59 @@ func TagsPrinciples(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if err != nil {
 		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
 		utils.Logger.Printf("Error encoding JSON: %v", err)
+	}
+
+}
+
+// Check if principle is using //
+
+func countPrinciples(db *sql.DB, tag string) (int, error) {
+
+	// Load JSON query configurations
+	tagsJson, err := utils.LoadQueries("tags.json")
+	if err != nil {
+		utils.Logger.Print(err)
+		return 0, err
+	}
+
+	query := tagsJson.CheckPrinciplesTags
+	var result int
+
+	err = db.QueryRow(query, tag).Scan(&result)
+	if err != nil {
+		return 0, err
+	}
+
+	return result, nil
+
+}
+
+func CheckPrinciples(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+
+	tag := r.URL.Query().Get("tag")
+	if tag == "" {
+		utils.Logger.Println("Tag name is needed")
+		return
+	}
+
+	result, err := countPrinciples(db, tag)
+	if err != nil {
+		utils.Logger.Printf("Error SQL request to count principles using : %v\n", err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+
+	// Prepare the response
+	response := map[string]interface{}{
+		"ok":     true,
+		"result": result,
+	}
+	w.Header().Set("Content-Type", "application/json")
+
+	// Write the response
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		utils.Logger.Printf("Error encoding response: %v\n", err)
 	}
 
 }

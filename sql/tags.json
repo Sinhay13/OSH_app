@@ -5,7 +5,9 @@
 "insert_new_tag":"INSERT INTO tags (tag, created_time, updated_time) VALUES (?,?,?);",
 "principles": "SELECT tag FROM tags WHERE is_principle = 1;",
 "count_tags":"SELECT COUNT(*) FROM tags WHERE active = ?;",
-"filtered_tags_enabled":"SELECT * FROM tags WHERE active = 1"
+"filtered_tags_enabled":"SELECT * FROM tags WHERE active = 1",
+"check_principles_tags":"SELECT COUNT(*) FROM tags WHERE principle_tag = ?;",
+"disable_tag":"UPDATE tags SET is_principle = 0, is_system = 0, active = 0, principle_tag = NULL ,updated_time = ? WHERE tag = ?;"
 }
 
 

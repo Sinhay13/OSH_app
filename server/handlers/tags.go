@@ -45,4 +45,14 @@ func RegisterTagsEndpoints(mux *http.ServeMux, db *sql.DB) {
 		tags.CountTags(w, r, db)
 	}))
 
+	// check principles + CORS (principles.go)
+	mux.HandleFunc("/tags/principles/check", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		tags.CheckPrinciples(w, r, db)
+	}))
+
+	// disable tag + CORS (disable.go)
+	mux.HandleFunc("/tags/disable", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		tags.DisableTag(w, r, db)
+	}))
+
 }
