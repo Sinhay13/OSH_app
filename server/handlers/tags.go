@@ -60,4 +60,9 @@ func RegisterTagsEndpoints(mux *http.ServeMux, db *sql.DB) {
 		tags.UpdateTag(w, r, db)
 	}))
 
+	// checks if tags inactive + CORS (checks.go)
+	mux.HandleFunc("/tags/checks/inactive", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		tags.CheckIfTagInactive(w, r, db)
+	}))
+
 }

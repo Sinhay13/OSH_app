@@ -30,6 +30,7 @@ type Queries struct {
 	CheckPrinciplesTags string `json:"check_principles_tags"`
 	DisableTag          string `json:"disable_tag"`
 	UpdateTag           string `json:"update_tag"`
+	CheckIfTagInactive  string `json:"check_if_tag_inactive"`
 
 	// entries :
 	LastMessage            string `json:"last_message"`

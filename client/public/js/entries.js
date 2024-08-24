@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	resetButton.addEventListener('click', async (event) => {
 		event.preventDefault();
 
-		await resetProcess();
+		location.reload();
 	});
 
 	//get tags list
@@ -206,41 +206,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 });
 
-// To reset process 
-const resetProcess = async () => {
-	// Reset the variables
-	tag = '';
-	tags = [];
-	city = '';
-	country = '';
-	message = '';
-	date = '';
-	lastMessage = '';
-	oldDate = '';
-	oldCountry = '';
-	oldCity = '';
-	lastDate = '';
-	lastCity = '';
-	lastCountry = '';
-
-	// Hide all forms
-	document.forms["city-country-form"].style.display = "none";
-	document.forms["message-form"].style.display = "none";
-	document.forms["date-form"].style.display = "none";
-
-	// Show the tag form
-	document.forms["tag-form"].style.display = "block";
-
-	// Clear previous data
-	previousDataElement.innerHTML = '';
-	tagCityCountryElement.innerHTML = '';
-
-	// Reset button visibility
-	readButton.style.display = "none";
-	previousButton.style.display = "none";
-	nextButton.style.display = "none";
-	validMessageButton.style.display = "block";
-};
 
 // get tag list 
 const getTagList = async () => {
@@ -290,7 +255,6 @@ const populateTagSelect = async (tags) => {
 	}
 };
 
-// get tag from form
 const getTagForm = async (tags) => {
 	const selectTag = document.forms["tag-form"].elements["tag-list"];
 	let selectedTag = selectTag.value;
@@ -300,36 +264,59 @@ const getTagForm = async (tags) => {
 		let isValid = false;
 
 		while (!isValid) {
-			newTag = prompt("Enter a new tag (must start with '#', be a single word without spaces, and not be empty):");
+			newTag = prompt("Enter a new tag (must start with '#', be followed by a digit or an uppercase letter, be a single word without spaces, and not be empty):");
 
-			// Check if the user clicked "Cancel"
 			if (newTag === null) {
-				// Restart the process
-				resetProcess();
-				return null; // Exit the function
+				location.reload();
 			}
 
-			if (newTag.trim().length > 0 && newTag.startsWith("#") && !newTag.includes(" ")) {
-				// Check if tags array is valid and the new tag is not a duplicate
+			newTag = newTag.trim();
+			if (newTag.length > 0 && newTag.startsWith("#") && /^[#][A-Z0-9][^\s]*$/.test(newTag)) {
 				const isDuplicate = tags && tags.some(tagObj => tagObj.tag === newTag);
 
 				if (!isDuplicate) {
-					isValid = true;
+					const count = await checkIfTagDisabled(newTag);
+					if (count > 0) {
+						alert(`${newTag} already exists but is disabled. Please enable it to use.`);
+						location.reload();
+					} else {
+						await addNewTag(newTag);
+						isValid = true;
+					}
 				} else {
-					alert("This tag already exists. Please enter a different tag.");
+					alert(`${newTag} tag already exists. Please enter a different tag.`);
+					location.reload();
 				}
 			} else {
-				alert("Tag must start with '#', be a single word without spaces, and cannot be empty.");
+				alert("Tag must start with '#', be followed by a digit or an uppercase letter, be a single word without spaces, and cannot be empty.");
+				location.reload();
 			}
 		}
-		// Send the new tag to the database
-		await addNewTag(newTag);
-
 		return newTag;
 	} else {
 		return selectedTag;
 	}
 };
+
+const checkIfTagDisabled = async (tag) => {
+
+	const tag_string = encodeURIComponent(tag);
+
+	try {
+		const url = `http://127.0.0.1:2323/tags/checks/inactive?name=${tag_string}`;
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const result = await response.json();
+		return result.result
+
+	} catch (error) {
+		console.error('Error to check if tag is disabled:', error);
+	}
+}
 
 // add new tag
 const addNewTag = async (tag) => {
@@ -373,6 +360,21 @@ const getCityCountryForm = async () => {
 			countryInput.focus();
 		}
 		throw new Error("City or country is empty.");
+	}
+
+	// Check if city and country start with an uppercase letter
+	const isUppercase = (str) => /^[A-Z]/.test(str);
+
+	if (!isUppercase(city)) {
+		alert("City must start with an uppercase letter.");
+		cityInput.focus();
+		throw new Error("City does not start with an uppercase letter.");
+	}
+
+	if (!isUppercase(country)) {
+		alert("Country must start with an uppercase letter.");
+		countryInput.focus();
+		throw new Error("Country does not start with an uppercase letter.");
 	}
 
 	// Return the values if they are valid
