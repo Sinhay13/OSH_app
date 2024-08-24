@@ -375,6 +375,14 @@ const feedTableEnabledTags = async (data, principlesList, params, countElement) 
 		updateButton.type = "button";
 		updateButton.name = "enabled-tag-update";
 		updateButton.textContent = "Update";
+		updateButton.addEventListener('click', async () => {
+			const row = updateButton.closest('tr'); // Get the current row
+			const isPrinciple = row.querySelector('select[name="is-principle"]').value === 'yes' ? 1 : 0;
+			const isSystem = row.querySelector('select[name="is-system"]').value === 'yes' ? 1 : 0;
+			const principleTag = row.querySelector('select[name="principle"]').value;
+
+			await updateTagButton(tag.tag, isPrinciple, isSystem, principleTag, principlesList, params, countElement);
+		});
 		actionsCell.appendChild(updateButton);
 
 		const disableButton = document.createElement('button');
@@ -448,10 +456,65 @@ const disableTag = async (tag) => {
 		}
 
 		const result = await response.json();
+		alert("Tags Disabled!");
 
 	} catch (error) {
 		console.error('Error adding new tag:', error);
 		alert("Error to disable tag");
 	}
 
+};
+
+// deal with update button 
+const updateTagButton = async (tag, is_principle, is_system, principle_tag, principlesList, params, countElement) => {
+
+	let count = 0;
+
+	if (is_principle === 0) {
+		count = await checkPrincipleTags(tag);
+	};
+
+	if (principle_tag === null) {
+		principle_tag = "none";
+	}
+
+	if (count > 0) {
+		alert("It is not allowed to update is_principle to no a tag if another tag uses it as a principle.");
+		return;
+	} else {
+		await updateTag(tag, is_principle, is_system, principle_tag);
+		const newDataTagsEnabled = await getListTagsEnabledFiltered(params);
+		principlesList = await principles();
+		await feedTableEnabledTags(newDataTagsEnabled, principlesList, params, countElement);
+	}
+};
+
+// Function to update tag : 
+const updateTag = async (tag, is_principle, is_system, principle_tag) => {
+
+	const url = `http://127.0.0.1:2323/tags/update`
+
+	const body = JSON.stringify({
+		tag,
+		is_principle,
+		is_system,
+		principle_tag
+	})
+
+	const reqOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: body,
+	};
+
+	try {
+		const response = await fetch(url, reqOptions);
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		const data = await response.json();
+		alert("Tags Updated!");
+	} catch (error) {
+		console.error('Error fetching data:', error);
+	}
 };

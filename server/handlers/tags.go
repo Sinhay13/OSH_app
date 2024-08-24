@@ -55,4 +55,9 @@ func RegisterTagsEndpoints(mux *http.ServeMux, db *sql.DB) {
 		tags.DisableTag(w, r, db)
 	}))
 
+	// update tag + CORS (update.go)
+	mux.HandleFunc("/tags/update", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		tags.UpdateTag(w, r, db)
+	}))
+
 }

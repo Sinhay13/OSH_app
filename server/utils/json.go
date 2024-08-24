@@ -29,6 +29,7 @@ type Queries struct {
 	FilteredTagsEnabled string `json:"filtered_tags_enabled"`
 	CheckPrinciplesTags string `json:"check_principles_tags"`
 	DisableTag          string `json:"disable_tag"`
+	UpdateTag           string `json:"update_tag"`
 
 	// entries :
 	LastMessage            string `json:"last_message"`

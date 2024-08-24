@@ -95,6 +95,7 @@ func InsertNewEntry(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	err = sendDataToTheDB(db, tag, city, country, message, date)
 	if err != nil {
 		utils.Logger.Printf("Error to insert new entry inside db : %v\n", err)
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)

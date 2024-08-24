@@ -40,6 +40,7 @@ func extractFilters(w http.ResponseWriter, r *http.Request) (int, int, string, e
 		}
 	} else {
 		utils.Logger.Println("isSystem not found in data")
+		return 0, 0, "", err
 	}
 
 	if val, ok := data["isPrinciple"]; ok {
@@ -50,12 +51,14 @@ func extractFilters(w http.ResponseWriter, r *http.Request) (int, int, string, e
 		}
 	} else {
 		utils.Logger.Println("isPrinciple not found in data")
+		return 0, 0, "", err
 	}
 
 	if val, ok := data["principle"]; ok {
 		principleTag = fmt.Sprintf("%v", val)
 	} else {
 		utils.Logger.Println("principle not found in data")
+		return 0, 0, "", err
 	}
 
 	return isSystem, isPrinciple, principleTag, nil
@@ -89,6 +92,9 @@ func prepareSQL(isSystem int, isPrinciple int, principleTag string) (string, []i
 			params = append(params, principleTag)
 		}
 	}
+
+	// Add ORDER BY clause to sort results by tag name
+	query += " ORDER BY tag ASC"
 
 	return query, params, nil
 }
