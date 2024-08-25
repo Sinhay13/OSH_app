@@ -178,36 +178,6 @@
 
 </form>
 
-<form name="chapters-filter">
-
-	<h3>Chapters List : </h3>
-
-	<div name="return-button">
-		<button type="button" name="return">Return</button>
-	</div>
-	<br>
-
-	<table>
-		<thead>
-			<tr>
-				<th>ChapterName</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>
-					<select name="chapters-name-list">
-						<option value="all">All</option>
-					</select>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-
-
-
-</form>
-
 <form name="message-list">
 	<h3> Messages Found : </h3>
 	<div name="return-button">
@@ -219,6 +189,7 @@
 		<thead>
 			<tr>
 				<th>Entry-id</th>
+				<th>Chapter</th>
 				<th>City</th>
 				<th>Country</th>
 				<th>Date</th>
@@ -228,6 +199,7 @@
 		<tbody>
 			<tr>
 				<td><input type="text" name="message-id"></td>
+				<td><input type="text" name="message-chapter"></td>
 				<td><input type="text" name="message-city"></td>
 				<td><input type="text" name="message-country"></td>
 				<td><input type="text" name="message-date"></td>
@@ -235,8 +207,47 @@
 			</tr>
 		</tbody>
 	</table>
-
-
 </form>
+
+<form name="comment-form">
+	<h3> Comment : </h3>
+	<p name="comment-tag-name"></p>
+	<div id="editorjs">
+		<textarea id="editor-content" style="display:none;"></textarea>
+	</div>
+	<input type="submit" name="comment-save" value="Save">
+	<p class="right">.SO</p>
+</form>
+
+<form name="message-form">
+	<h3> Comment : </h3>
+	<p name="message-data"></p>
+	<div id="editorjs">
+		<textarea id="editor-content" style="display:none;"></textarea>
+	</div>
+	<input type="submit" name="message-close" value="Close">
+	<p class="right">.SO</p>
+</form>
+
+<form name="comment-form-disabled">
+	<h3> Comment : </h3>
+	<p name="comment-tag-name-disabled"></p>
+	<div id="editorjs">
+		<textarea id="editor-content" style="display:none;"></textarea>
+	</div>
+	<input type="submit" name="comment-save-disabled" value="Save">
+	<p class="right">.SO</p>
+</form>
+
+<form name="message-form-disabled">
+	<h3> Comment : </h3>
+	<p name="message-data-disabled"></p>
+	<div id="editorjs">
+		<textarea id="editor-content" style="display:none;"></textarea>
+	</div>
+	<input type="submit" name="message-close-disabled" value="Close">
+	<p class="right">.SO</p>
+</form>
+
 
 <script src="js/tags.js" defer></script>

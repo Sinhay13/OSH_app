@@ -65,4 +65,14 @@ func RegisterTagsEndpoints(mux *http.ServeMux, db *sql.DB) {
 		tags.CheckIfTagInactive(w, r, db)
 	}))
 
+	// read comments tags inactive + CORS (comments.go)
+	mux.HandleFunc("/tags/comments/read", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		tags.ReadComments(w, r, db)
+	}))
+
+	// save comments tags inactive + CORS (comments.go)
+	mux.HandleFunc("/tags/comments/save", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		tags.SaveComments(w, r, db)
+	}))
+
 }

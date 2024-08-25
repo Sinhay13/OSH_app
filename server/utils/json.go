@@ -31,6 +31,8 @@ type Queries struct {
 	DisableTag          string `json:"disable_tag"`
 	UpdateTag           string `json:"update_tag"`
 	CheckIfTagInactive  string `json:"check_if_tag_inactive"`
+	ReadComment         string `json:"read_comment"`
+	SaveComment         string `json:"save_comment"`
 
 	// entries :
 	LastMessage            string `json:"last_message"`

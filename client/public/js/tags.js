@@ -1,17 +1,21 @@
+// Init variables:
+let principlesList;
+let params;
+let currentTag;
+
 
 document.addEventListener('DOMContentLoaded', async () => {
-
-	// Init variables:
-	let principlesList;
-	let params;
 
 	// hide form : 
 	document.forms["disabled-tags"].style.display = "none";
 	document.forms["enabled-tags-filters"].style.display = "none";
 	document.forms["enabled-tags"].style.display = "none";
 	document.forms["full-tags"].style.display = "none";
-	document.forms["chapters-filter"].style.display = "none";
 	document.forms["message-list"].style.display = "none";
+	document.forms["comment-form"].style.display = "none";
+	document.forms["message-form"].style.display = "none";
+	document.forms["comment-form-disabled"].style.display = "none";
+	document.forms["message-form-disabled"].style.display = "none";
 
 	// Buttons and elements :
 	const enabledTagsButton = document.querySelector('button[name="enabled-tags-button"]');
@@ -23,6 +27,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const isPrincipleFilter = document.querySelector('select[name="is-principle-filter"]');
 	const principleFilter = document.querySelector('select[name="principle-filter"]');
 	const currentEnabledFilter = document.querySelector('p[name="current-enabled-filter"]');
+	const saveCommentInput = document.querySelector('input[name="comment-save"]');
+
 
 
 	// Count Tags //
@@ -65,7 +71,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 	});
 
 	// Return button //
-
 	returnButtons.forEach(button => {
 		button.addEventListener('click', async (event) => {
 			location.reload();
@@ -73,7 +78,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 	});
 
 	// Form "enabled-tags-filters" //
-
 	applyFiltersButton.addEventListener('click', async (event) => {
 		event.preventDefault();
 
@@ -85,6 +89,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 		document.forms["enabled-tags"].style.display = "block";
 
 		await showFilterEnabled(params, currentEnabledFilter);
+	});
+
+	// Save comment 
+	saveCommentInput.addEventListener('click', async (event) => {
+		event.preventDefault();
+
+
+		const formData = await getMessageOrCommentForm();
+		const valid = formData.isValid;
+		if (valid) {
+			const newComment = formData.message;
+			await saveComment(currentTag, newComment);
+
+			const newDataTagsEnabled = await getListTagsEnabledFiltered(params);
+			await feedTableEnabledTags(newDataTagsEnabled, principlesList, params, countElement);
+
+			document.forms["enabled-tags"].style.display = "block";
+			document.forms["comment-form"].style.display = "none";
+		} else {
+			return
+		};
 	});
 });
 
@@ -367,6 +392,10 @@ const feedTableEnabledTags = async (data, principlesList, params, countElement) 
 		commentsButton.type = "button";
 		commentsButton.name = "see-comments-enabled-tag";
 		commentsButton.textContent = "Comment";
+		commentsButton.addEventListener('click', async (event) => {
+			event.preventDefault();
+			await commentTagButton(tag.tag);
+		});
 		commentsCell.appendChild(commentsButton);
 		row.appendChild(commentsCell);
 
@@ -376,7 +405,8 @@ const feedTableEnabledTags = async (data, principlesList, params, countElement) 
 		updateButton.type = "button";
 		updateButton.name = "enabled-tag-update";
 		updateButton.textContent = "Update";
-		updateButton.addEventListener('click', async () => {
+		updateButton.addEventListener('click', async (event) => {
+			event.preventDefault();
 			const row = updateButton.closest('tr'); // Get the current row
 			const isPrinciple = row.querySelector('select[name="is-principle"]').value === 'yes' ? 1 : 0;
 			const isSystem = row.querySelector('select[name="is-system"]').value === 'yes' ? 1 : 0;
@@ -390,7 +420,10 @@ const feedTableEnabledTags = async (data, principlesList, params, countElement) 
 		disableButton.type = "button";
 		disableButton.name = "disable-tag";
 		disableButton.textContent = "Disable";
-		disableButton.addEventListener('click', async () => await disableTagButton(tag.tag, principlesList, params, countElement));
+		disableButton.addEventListener('click', async (event) => {
+			event.preventDefault();
+			await disableTagButton(tag.tag, principlesList, params, countElement);
+		});
 		actionsCell.appendChild(disableButton);
 
 		row.appendChild(actionsCell);
@@ -523,5 +556,139 @@ const updateTag = async (tag, is_principle, is_system, principle_tag) => {
 		alert("Tags Updated!");
 	} catch (error) {
 		console.error('Error fetching data:', error);
+	}
+};
+
+// function for comment button: 
+const commentTagButton = async (tag) => {
+
+	currentTag = tag;
+
+	document.forms["enabled-tags"].style.display = "none";
+	document.forms["comment-form"].style.display = "block";
+	const commentTagName = document.querySelector('p[name="comment-tag-name"]');
+	commentTagName.innerHTML = `<strong> Tag :</strong> ${tag}`;
+
+	const comment = await readComment(tag);
+	await showCommentOrMessage(comment);
+};
+
+// Function to get comment 
+const readComment = async (tag) => {
+
+	const tag_string = encodeURIComponent(tag);
+
+	try {
+		const url = `http://127.0.0.1:2323/tags/comments/read?tag=${tag_string}`;
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const result = await response.json();
+		return result.comment
+
+	} catch (error) {
+		console.error('Error getting comment:', error);
+		alert("Error getting comment");
+	}
+};
+
+// Function to save comment 
+const saveComment = async (tag, comment) => {
+
+	const url = `http://127.0.0.1:2323/tags/comments/save`
+
+	const body = JSON.stringify({
+		tag,
+		comment,
+	})
+
+	const reqOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: body,
+	};
+
+	try {
+		const response = await fetch(url, reqOptions);
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		const data = await response.json();
+		alert("Comment saved !");
+	} catch (error) {
+		console.error('Error fetching data:', error);
+	}
+};
+
+// Show last message in the form
+const showCommentOrMessage = async (message) => {
+	if (window.editor) {
+		try {
+			if (message) {
+				let dataToRender;
+				try {
+					// Try to parse the message as JSON
+					dataToRender = JSON.parse(message);
+				} catch (error) {
+					// If parsing fails, treat the message as plain text
+					dataToRender = {
+						blocks: [
+							{
+								type: 'paragraph',
+								data: {
+									text: message
+								}
+							}
+						]
+					};
+				}
+				// Render the content
+				await window.editor.render(dataToRender);
+			} else {
+				console.log('No message content to display.');
+				await window.editor.render({}); // Renders an empty editor
+			}
+		} catch (error) {
+			console.error('Error rendering message in Editor.js:', error);
+		}
+	} else {
+		console.error('Editor.js instance not found.');
+	}
+};
+
+// Get message from the form
+const getMessageOrCommentForm = async () => {
+	if (window.editor) {
+		try {
+			const savedData = await window.editor.save(); // Save the content of Editor.js
+
+			// Check if the editor content is empty
+			const isEmpty = savedData.blocks.length === 0 || savedData.blocks.every(block => !block.data.text.trim());
+
+			if (isEmpty) {
+				alert("The message or comment content cannot be empty.");
+				return { isValid: false, message: null }; // Indicate that the form is not valid
+			}
+
+			// Convert the saved data to JSON string
+			const message = JSON.stringify(savedData);
+
+			// Update the hidden textarea with the JSON content
+			const textarea = document.getElementById('editor-content');
+			if (textarea) {
+				textarea.value = message;
+			}
+
+			return { isValid: true, message }; // Indicate that the form is valid
+		} catch (error) {
+			console.error('Error getting message from Editor.js:', error);
+			return { isValid: false, message: null }; // Indicate that the form is not valid
+		}
+	} else {
+		console.error('Editor.js instance not found.');
+		return { isValid: false, message: null }; // Handle this case as needed
 	}
 };
