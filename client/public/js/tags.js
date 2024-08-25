@@ -428,18 +428,24 @@ const checkPrincipleTags = async (tag) => {
 // listener for disable button
 const disableTagButton = async (tag, principlesList, params, countElement) => {
 
+	const userConfirmed = confirm(`Are you sure to disable ${tag}`);
 
-	const result = await checkPrincipleTags(tag);
+	if (userConfirmed) {
 
-	if (result > 0) {
-		alert("It is not allowed to disable a tag if another tag uses it as a principle.");
-		return;
+		const result = await checkPrincipleTags(tag);
+
+		if (result > 0) {
+			alert("It is not allowed to disable a tag if another tag uses it as a principle.");
+			return;
+		} else {
+
+			await disableTag(tag);
+			await countAndShowTags(countElement);
+			const newDataTagsEnabled = await getListTagsEnabledFiltered(params);
+			await feedTableEnabledTags(newDataTagsEnabled, principlesList, params, countElement);
+		}
 	} else {
-
-		await disableTag(tag);
-		await countAndShowTags(countElement);
-		const newDataTagsEnabled = await getListTagsEnabledFiltered(params);
-		await feedTableEnabledTags(newDataTagsEnabled, principlesList, params, countElement);
+		return;
 	}
 };
 
