@@ -3,7 +3,6 @@ let principlesList;
 let params;
 let currentTag;
 
-
 document.addEventListener('DOMContentLoaded', async () => {
 
 	// hide form : 
@@ -15,7 +14,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 	document.forms["comment-form"].style.display = "none";
 	document.forms["message-form"].style.display = "none";
 	document.forms["comment-form-disabled"].style.display = "none";
-	document.forms["message-form-disabled"].style.display = "none";
 
 	// Buttons and elements :
 	const enabledTagsButton = document.querySelector('button[name="enabled-tags-button"]');
@@ -28,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const principleFilter = document.querySelector('select[name="principle-filter"]');
 	const currentEnabledFilter = document.querySelector('p[name="current-enabled-filter"]');
 	const saveCommentInput = document.querySelector('input[name="comment-save"]');
+	const filtersTagsButton = document.querySelector('button[name="back-to-filter"]');
 
 
 
@@ -77,6 +76,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 		});
 	});
 
+	// go back filters enabled 
+	filtersTagsButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+		document.forms["enabled-tags-filters"].style.display = "block";
+		document.forms["enabled-tags"].style.display = "none";
+	});
+
+
 	// Form "enabled-tags-filters" //
 	applyFiltersButton.addEventListener('click', async (event) => {
 		event.preventDefault();
@@ -94,7 +101,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 	// Save comment 
 	saveCommentInput.addEventListener('click', async (event) => {
 		event.preventDefault();
-
 
 		const formData = await getMessageOrCommentForm();
 		const valid = formData.isValid;
@@ -124,7 +130,6 @@ const countAndShowTags = async (countElement) => {
 
 	countElement.innerHTML = `<strong> Enabled Tags :</strong> ${active} <br><strong>Disabled Tags :</strong> ${inactive} <br> <strong> Total Tags :</strong> ${allTags}`;
 }
-
 
 // Call API
 const countTags = async () => {
@@ -454,8 +459,6 @@ const checkPrincipleTags = async (tag) => {
 		console.error('Error fetching principles:', error);
 		return null; // Or handle the error as needed
 	}
-
-
 }
 
 // listener for disable button

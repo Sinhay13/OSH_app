@@ -17,8 +17,6 @@ let lastEntryID;
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-
-
 	// hide forms 
 	document.forms["city-country-form"].style.display = "none";
 	document.forms["message-form"].style.display = "none";

@@ -134,6 +134,7 @@ input[type="text"] {
 
 /* return button Tags */
 button[name="return"], 
+button[name="back-to-filter"], 
 button[name="reset-button"] {
     width: 100px;    /* Set a fixed width */
     height: 40px;    /* Set a fixed height */
@@ -148,3 +149,4 @@ button[name="reset-button"] {
 button[name="return"]:hover {
     background-color: #45a049; /* Darker green on hover */
 }
+
