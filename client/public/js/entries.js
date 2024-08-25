@@ -580,7 +580,7 @@ const sendNewMessage = async (tag, city, country, message, date) => {
 		const data = await response.json();
 		console.log(data);
 		alert("New message sent !");
-		resetProcess();
+		location.reload();
 	} catch (error) {
 		console.error('Error fetching data:', error);
 	}

@@ -250,10 +250,11 @@ const showFilterEnabled = async (params, currentEnabledFilter) => {
 		isPrinciple = 'All'
 	};
 
-	if (params.principle) {
+	if (params.principle === 'all') {
 		principleTag = "All";
+	} else {
+		principleTag = params.principle
 	}
-
 	currentEnabledFilter.innerHTML = `Current Filters : <br> <strong> Is System :</strong> ${isSystem} <br><strong> Is Principle :</strong> ${isPrinciple} <br> <strong> Principle Tag :</strong> ${principleTag}`;
 }
 
