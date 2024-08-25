@@ -1,22 +1,23 @@
+// init variables
+let tag;
+let tags;
+let city;
+let country;
+let message;
+let date;
+let lastMessage;
+let oldDate;
+let oldCountry;
+let oldCity;
+let lastDate;
+let lastCity;
+let lastCountry;
+let oldEntryID;
+let lastEntryID;
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-	// init variables
-	let tag;
-	let tags;
-	let city;
-	let country;
-	let message;
-	let date;
-	let lastMessage;
-	let oldDate;
-	let oldCountry;
-	let oldCity;
-	let lastDate;
-	let lastCity;
-	let lastCountry;
-	let oldEntryID;
-	let lastEntryID;
+
 
 	// hide forms 
 	document.forms["city-country-form"].style.display = "none";
