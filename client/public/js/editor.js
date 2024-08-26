@@ -1,5 +1,4 @@
 // editor.js
-
 window.editor = null; // Initialize global editor variable
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -12,6 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
 				header: {
 					class: window.Header,
 					inlineToolbar: ['link'],
+				},
+				checklist: {
+					class: Checklist,
+					inlineToolbar: true,
 				},
 				list: {
 					class: window.List,
