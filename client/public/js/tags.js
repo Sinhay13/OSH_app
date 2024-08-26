@@ -705,6 +705,7 @@ const getMessageOrCommentForm = async () => {
 const messagesTagButton = async (tag) => {
 
 	currentTag = tag;
+	currentPage = 1;
 
 	const messageTagName = document.querySelector('p[name="tag-name-message-list"]');
 	messageTagName.innerHTML = `<strong> Tag :</strong> ${tag}`;
