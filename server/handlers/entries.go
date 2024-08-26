@@ -25,4 +25,13 @@ func RegisterEntriesEndpoints(mux *http.ServeMux, db *sql.DB) {
 		entries.CountEntries(w, r, db)
 	}))
 
+	// get list of messages + CORS (messages.go)
+	mux.HandleFunc("/entries/messages/list", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		entries.GetMessagesList(w, r, db)
+	}))
+	// get message in function of ID + CORS (count.go)
+	mux.HandleFunc("/entries/messages/message", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		entries.GetMessageFromID(w, r, db)
+	}))
+
 }

@@ -2,6 +2,7 @@
 let principlesList;
 let params;
 let currentTag;
+let currentPage;
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -388,6 +389,10 @@ const feedTableEnabledTags = async (data, principlesList, params, countElement) 
 		messagesButton.type = "button";
 		messagesButton.name = "see-messages-list-enabled-tag";
 		messagesButton.textContent = "Messages";
+		messagesButton.addEventListener('click', async (event) => {
+			event.preventDefault();
+			await messagesTagButton(tag.tag);
+		});
 		messagesCell.appendChild(messagesButton);
 		row.appendChild(messagesCell);
 
@@ -695,3 +700,16 @@ const getMessageOrCommentForm = async () => {
 		return { isValid: false, message: null }; // Handle this case as needed
 	}
 };
+
+// Function to get message list
+const messagesTagButton = async (tag) => {
+
+	currentTag = tag;
+
+	const messageTagName = document.querySelector('p[name="tag-name-message-list"]');
+	messageTagName.innerHTML = `<strong> Tag :</strong> ${tag}`;
+
+	document.forms["message-list"].style.display = "block";
+	document.forms["enabled-tags"].style.display = "none";
+
+}
