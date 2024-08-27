@@ -3,6 +3,10 @@ let principlesList;
 let params;
 let currentTag;
 let currentPage;
+let currentDate;
+let currentID;
+let currentCity;
+let currentCountry;
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -28,8 +32,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const currentEnabledFilter = document.querySelector('p[name="current-enabled-filter"]');
 	const saveCommentInput = document.querySelector('input[name="comment-save"]');
 	const filtersTagsButton = document.querySelector('button[name="back-to-filter"]');
-
-
+	const firstPageButton = document.querySelector('input[name="message-list-first"]');
+	const previousPageButton = document.querySelector('input[name="message-list-back"]');
+	const nextPageButton = document.querySelector('input[name="message-list-next"]');
 
 	// Count Tags //
 	await countAndShowTags(countElement);
@@ -117,6 +122,45 @@ document.addEventListener('DOMContentLoaded', async () => {
 		} else {
 			return
 		};
+	});
+
+	// First page  (table-message-list)
+	firstPageButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+
+		currentPage = 1;
+
+		const data = await getMessageList(currentTag, currentPage)
+		await feedTableMessageList(data);
+	});
+
+	// Previous Page (table-message-list)
+	previousPageButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+
+		const page = currentPage - 1;
+
+		if (page > 1) {
+			currentPage = page;
+
+			const data = await getMessageList(currentTag, currentPage)
+			await feedTableMessageList(data);
+		}
+	});
+
+	// Next Page (table-message-list)
+	nextPageButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+
+		let page = currentPage + 1;
+
+		const data = await getMessageList(currentTag, page)
+		if (data) {
+			await feedTableMessageList(data);
+			currentPage = page;
+		} else {
+			alert(" No more data available.")
+		}
 	});
 });
 
@@ -578,7 +622,7 @@ const commentTagButton = async (tag) => {
 	commentTagName.innerHTML = `<strong> Tag :</strong> ${tag}`;
 
 	const comment = await readComment(tag);
-	await showCommentOrMessage(comment);
+	await showCommentOrMessage(comment, "editor-content-comment");
 };
 
 // Function to get comment 
@@ -632,16 +676,15 @@ const saveComment = async (tag, comment) => {
 };
 
 // Show last message in the form
-const showCommentOrMessage = async (message) => {
-	if (window.editor) {
+const showCommentOrMessage = async (message, textareaId) => {
+	const textarea = document.getElementById(textareaId);
+	if (window.editor && textarea) {
 		try {
 			if (message) {
 				let dataToRender;
 				try {
-					// Try to parse the message as JSON
 					dataToRender = JSON.parse(message);
 				} catch (error) {
-					// If parsing fails, treat the message as plain text
 					dataToRender = {
 						blocks: [
 							{
@@ -653,17 +696,19 @@ const showCommentOrMessage = async (message) => {
 						]
 					};
 				}
-				// Render the content
 				await window.editor.render(dataToRender);
+
+				textarea.value = JSON.stringify(dataToRender);
 			} else {
 				console.log('No message content to display.');
-				await window.editor.render({}); // Renders an empty editor
+				await window.editor.render({});
+				textarea.value = '';
 			}
 		} catch (error) {
 			console.error('Error rendering message in Editor.js:', error);
 		}
 	} else {
-		console.error('Editor.js instance not found.');
+		console.error('Editor.js instance or textarea not found.');
 	}
 };
 
@@ -710,7 +755,178 @@ const messagesTagButton = async (tag) => {
 	const messageTagName = document.querySelector('p[name="tag-name-message-list"]');
 	messageTagName.innerHTML = `<strong> Tag :</strong> ${tag}`;
 
-	document.forms["message-list"].style.display = "block";
-	document.forms["enabled-tags"].style.display = "none";
+	const data = await getMessageList(currentTag, currentPage)
+	await feedTableMessageList(data);
 
+	document.forms["enabled-tags"].style.display = "none";
+};
+
+// Function to get list of message : 
+const getMessageList = async (tag, page) => {
+
+
+	const tag_string = encodeURIComponent(tag);
+	const page_string = encodeURIComponent(page);
+
+	try {
+		const url = `http://127.0.0.1:2323/entries/messages/list?tag=${tag_string}&page=${page_string}`;
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const result = await response.json();
+		return result
+
+	} catch (error) {
+		console.error('Error getting list of messages:', error);
+		alert("Error list of messages");
+	}
+}
+
+// Function to get message in function of a entry_id
+const getMessageFromID = async (entryID) => {
+
+	const id_string = encodeURIComponent(entryID);
+
+	try {
+		const url = `http://127.0.0.1:2323/entries/messages/message?id=${id_string}`;
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const result = await response.json();
+		return result
+
+	} catch (error) {
+		console.error('Error getting message with ID:', error);
+		alert("Error message with ID");
+	}
+}
+
+// Function to feed table for message list: 
+const feedTableMessageList = async (data) => {
+
+	const form = document.forms["message-list"];
+	const tbody = form.querySelector('tbody');
+
+	// Clear existing rows
+	tbody.innerHTML = '';
+
+	// Check for empty data
+	if (!data || data.length === 0) {
+		form.style.display = "none";
+		alert("No data available.");
+		location.reload();
+	};
+
+	// Iterate over the data to create rows
+	data.forEach(tag => {
+		const row = document.createElement('tr');
+
+		// entry_id
+		const entryIdCell = document.createElement('td');
+		const entryIdInput = document.createElement('input');
+		entryIdInput.type = "text";
+		entryIdInput.name = "message-id";
+		entryIdInput.value = tag.entry_id;
+		entryIdInput.disabled = true;
+		entryIdCell.appendChild(entryIdInput);
+		row.appendChild(entryIdCell);
+
+		// chapter name 
+		const chapterCell = document.createElement('td');
+		const chapterInput = document.createElement('input');
+		chapterInput.type = "text";
+		chapterInput.name = "message-chapter";
+		chapterInput.value = tag.chapter_name;
+		chapterInput.disabled = true;
+		chapterCell.appendChild(chapterInput);
+		row.appendChild(chapterCell);
+
+		// city
+		const cityCell = document.createElement('td');
+		const cityInput = document.createElement('input');
+		cityInput.type = "text";
+		cityInput.name = "message-city";
+		cityInput.value = tag.city;
+		cityInput.disabled = true;
+		cityCell.appendChild(cityInput);
+		row.appendChild(cityCell);
+
+		// country
+		const countryCell = document.createElement('td');
+		const countryInput = document.createElement('input');
+		countryInput.type = "text";
+		countryInput.name = "message-country";
+		countryInput.value = tag.country;
+		countryInput.disabled = true;
+		countryCell.appendChild(countryInput);
+		row.appendChild(countryCell);
+
+		// date
+		const dateCell = document.createElement('td');
+		const dateInput = document.createElement('input');
+		dateInput.type = "text";
+		dateInput.name = "message-date";
+		dateInput.value = formatDate(tag.date);
+		dateInput.disabled = true;
+		dateCell.appendChild(dateInput);
+		row.appendChild(dateCell);
+
+		// Action button
+		const actionCell = document.createElement('td');
+		const actionButton = document.createElement('button');
+		actionButton.type = "button";
+		actionButton.name = "message-read";
+		actionButton.textContent = "Read";
+		actionButton.addEventListener('click', async (event) => {
+			event.preventDefault();
+			await readMessageButton(tag.entry_id);
+		});
+		actionCell.appendChild(actionButton);
+		row.appendChild(actionCell);
+
+		// Append the row to the table body
+		tbody.appendChild(row);
+	})
+	// Display the form now that it's populated
+	form.style.display = "block";
+};
+
+// To make date more readable 
+const formatDate = (dateString) => {
+	if (dateString === "?") {
+		return dateString;
+	}
+
+	const [datePart, timePart] = dateString.split('T');
+	const [hours, minutes, seconds] = timePart.replace('Z', '').split(':');
+
+	// Construct the formatted date with or without seconds
+	const formattedDate = `${datePart} ${hours}:${minutes}` + (seconds ? `:${seconds}` : '');
+
+	return formattedDate;
+};
+
+// Function to read message : 
+const readMessageButton = async (entryID) => {
+
+	document.forms["message-form"].style.display = "block";
+	document.forms["message-list"].style.display = "none";
+
+	const data = await getMessageFromID(entryID)
+	const message = data.message;
+	currentID = data.entryID;
+	currentDate = data.date;
+	currentCity = data.city;
+	currentCountry = data.country;
+
+	await showCommentOrMessage(message, "editor-content-message");
+
+	const currentDataMessageElement = document.forms["message-form"].querySelector('p[name="message-data"]');
+	currentDataMessageElement.innerHTML = `<strong>Tag:</strong> ${currentTag} <br> <strong>Date :</strong> ${formatDate(currentDate)} <br> <strong>City:</strong> ${currentCity} <br> <strong>Country:</strong> ${currentCountry}`;
 }

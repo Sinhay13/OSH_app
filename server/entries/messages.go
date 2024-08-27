@@ -8,6 +8,15 @@ import (
 	"strconv"
 )
 
+// Entries in function of id struct
+type EntriesID struct {
+	Message string `json:"message"`
+	Date    string `json:"date"`
+	Country string `json:"country"`
+	City    string `json:"city"`
+	EntryID int    `Json:"entry_id"`
+}
+
 func GetMessageFromID(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 	// Get data
@@ -38,8 +47,8 @@ func GetMessageFromID(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	query := entriesJson.GetMessageFromID
 
 	// Request SQL
-	var message string
-	err = db.QueryRow(query, entryIdInt).Scan(&message)
+	var entry EntriesID
+	err = db.QueryRow(query, entryIdInt).Scan(&entry.Message, &entry.Date, &entry.Country, &entry.City, &entry.EntryID)
 	if err != nil {
 		utils.Logger.Println("Error getting message from ID:", err)
 		http.Error(w, "Message not found", http.StatusNotFound)
@@ -52,7 +61,11 @@ func GetMessageFromID(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	// Prepare the response
 	response := map[string]interface{}{
 		"ok":      true,
-		"message": message,
+		"message": entry.Message,
+		"date":    entry.Date,
+		"country": entry.Country,
+		"city":    entry.City,
+		"entryID": entry.EntryID,
 	}
 
 	// Write the response
@@ -66,8 +79,8 @@ func GetMessageFromID(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 type MessagesList struct {
 	EntryID     int    `json:"entry_id"`
 	ChapterName string `json:"chapter_name"`
-	Country     string `json:"country"`
 	City        string `json:"city"`
+	Country     string `json:"country"`
 	Date        string `json:"date"`
 }
 
@@ -105,11 +118,8 @@ func GetMessagesList(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	// Prepare query
-	query := entriesJson.GetMessagesList
-
 	// Execute the query
-	rows, err := db.Query(query, tag, offset)
+	rows, err := db.Query(entriesJson.GetMessagesList, tag, offset)
 	if err != nil {
 		utils.Logger.Println("Error executing query:", err)
 		http.Error(w, "Error executing query", http.StatusInternalServerError)
@@ -121,7 +131,7 @@ func GetMessagesList(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var messagesList []MessagesList
 	for rows.Next() {
 		var messageList MessagesList
-		if err := rows.Scan(&messageList.EntryID, &messageList.ChapterName, &messageList.Country, &messageList.City, &messageList.Date); err != nil {
+		if err := rows.Scan(&messageList.EntryID, &messageList.ChapterName, &messageList.City, &messageList.Country, &messageList.Date); err != nil {
 			utils.Logger.Println("Error scanning rows:", err)
 			http.Error(w, "Error processing results", http.StatusInternalServerError)
 			return

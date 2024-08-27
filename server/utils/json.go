@@ -41,7 +41,7 @@ type Queries struct {
 	NextMessageAfterDate   string `json:"next_message_after_date"`
 	CountAllEntries        string `json:"count_all_entries"`
 	CountEntriesPerChapter string `json:"count_entries_per_chapter"`
-	GetMessagesList        string `json:"get_message_list"`
+	GetMessagesList        string `json:"get_messages_list"`
 	GetMessageFromID       string `json:"get_message_from_id"`
 }
 

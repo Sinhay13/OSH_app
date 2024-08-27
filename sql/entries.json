@@ -5,7 +5,7 @@
 	"next_message_after_date": "SELECT message, date, country, city, entry_id FROM entries WHERE tag = ? AND datetime(date) > datetime(?) ORDER BY datetime(date) ASC LIMIT 1;",
 	"count_all_entries":"SELECT COUNT(*) AS total_entries FROM entries;",
 	"count_entries_per_chapter": "SELECT COUNT(*) AS entries_per_chapter FROM entries WHERE chapter_name = ?;",
-	"get_messages_list": " SELECT entry_id, chapter_name, city, country, date FROM entries WHERE tag = ? ORDER BY datetime(date) DESC LIMIT 5 OFFSET ?; ",
-	"get_message_from_id": "SELECT message FROM entries WHERE entry_id = ?; "
+	"get_messages_list": "SELECT entry_id, chapter_name, city, country, date FROM entries WHERE tag = ? ORDER BY datetime(date) DESC LIMIT 5 OFFSET ?; ",
+	"get_message_from_id": "SELECT message, date, country, city, entry_id FROM entries WHERE entry_id = ?; "
 }
 
