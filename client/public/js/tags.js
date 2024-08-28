@@ -684,7 +684,7 @@ const commentTagButton = async (tag) => {
 	//Prepare  form for comment
 	closeMessageInput.style.display = "none";
 	nextMessageButton.style.display = "none";
-	PreviousMessageButton.style.display = "none";
+	previousMessageButton.style.display = "none";
 	paragraphCommentMessage.innerHTML = `<strong> Tag :</strong> ${tag}`;
 	headerCommentMessage.innerHTML = `Comment :`;
 
