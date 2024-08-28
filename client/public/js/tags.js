@@ -1,3 +1,4 @@
+
 // Init variables:
 let principlesList;
 let params;
@@ -8,6 +9,28 @@ let currentID;
 let currentCity;
 let currentCountry;
 
+// Buttons and elements :
+const saveCommentInput = document.querySelector('input[name="comment-save"]')
+const closeMessageInput = document.querySelector('input[name="message-close"]')
+const nextMessageButton = document.querySelector('button[name="message-next"]');
+const previousMessageButton = document.querySelector('button[name="message-previous"]');
+const paragraphCommentMessage = document.querySelector('p[name="paragraph-message-comment"]');
+const headerCommentMessage = document.querySelector('h3[name="header-message-comment"]');
+
+const enabledTagsButton = document.querySelector('button[name="enabled-tags-button"]');
+const disabledTagsButton = document.querySelector('button[name="disabled-tags-button"]');
+const allTagsButton = document.querySelector('button[name="all-tags-button"]');
+const returnButtons = document.querySelectorAll('button[name="return"]');
+const applyFiltersButton = document.querySelector('button[name="apply-filters-tags"]');
+const countElement = document.querySelector('p[name="count-tags"]');
+const isPrincipleFilter = document.querySelector('select[name="is-principle-filter"]');
+const principleFilter = document.querySelector('select[name="principle-filter"]');
+const currentEnabledFilter = document.querySelector('p[name="current-enabled-filter"]');;
+const filtersTagsButton = document.querySelector('button[name="back-to-filter"]');
+const firstPageButton = document.querySelector('input[name="message-list-first"]');
+const previousPageButton = document.querySelector('input[name="message-list-back"]');
+const nextPageButton = document.querySelector('input[name="message-list-next"]');
+
 document.addEventListener('DOMContentLoaded', async () => {
 
 	// hide form : 
@@ -16,25 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	document.forms["enabled-tags"].style.display = "none";
 	document.forms["full-tags"].style.display = "none";
 	document.forms["message-list"].style.display = "none";
-	document.forms["comment-form"].style.display = "none";
-	document.forms["message-form"].style.display = "none";
-	document.forms["comment-form-disabled"].style.display = "none";
-
-	// Buttons and elements :
-	const enabledTagsButton = document.querySelector('button[name="enabled-tags-button"]');
-	const disabledTagsButton = document.querySelector('button[name="disabled-tags-button"]');
-	const allTagsButton = document.querySelector('button[name="all-tags-button"]');
-	const returnButtons = document.querySelectorAll('button[name="return"]');
-	const applyFiltersButton = document.querySelector('button[name="apply-filters-tags"]');
-	const countElement = document.querySelector('p[name="count-tags"]');
-	const isPrincipleFilter = document.querySelector('select[name="is-principle-filter"]');
-	const principleFilter = document.querySelector('select[name="principle-filter"]');
-	const currentEnabledFilter = document.querySelector('p[name="current-enabled-filter"]');
-	const saveCommentInput = document.querySelector('input[name="comment-save"]');
-	const filtersTagsButton = document.querySelector('button[name="back-to-filter"]');
-	const firstPageButton = document.querySelector('input[name="message-list-first"]');
-	const previousPageButton = document.querySelector('input[name="message-list-back"]');
-	const nextPageButton = document.querySelector('input[name="message-list-next"]');
+	document.forms["message-comment-form"].style.display = "none";
 
 	// Count Tags //
 	await countAndShowTags(countElement);
@@ -118,7 +123,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 			await feedTableEnabledTags(newDataTagsEnabled, principlesList, params, countElement);
 
 			document.forms["enabled-tags"].style.display = "block";
-			document.forms["comment-form"].style.display = "none";
+			document.forms["message-comment-form"].style.display = "none";
+
+			//Reset for for message / comment
+			closeMessageInput.style.display = "block";
+			nextMessageButton.style.display = "block";
+			PreviousMessageButton.style.display = "block";
+
 		} else {
 			return
 		};
@@ -161,6 +172,55 @@ document.addEventListener('DOMContentLoaded', async () => {
 		} else {
 			alert(" No more data available.")
 		}
+	});
+
+	// Close message form
+	closeMessageInput.addEventListener('click', async (event) => {
+		event.preventDefault();
+
+		document.forms["message-comment-form"].style.display = "none";
+		document.forms["message-list"].style.display = "block";
+		saveCommentInput.style.display = "block";
+	});
+
+	// Get Previous message 
+	previousMessageButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+
+		data = await getLastMessageWithDate(currentTag, currentDate, "previous");
+		const message = data.message;
+
+		if (message != "No message") {
+			currentID = data.entryID;
+			currentDate = data.date;
+			currentCity = data.city;
+			currentCountry = data.country;
+			paragraphCommentMessage.innerHTML = `<strong>Tag:</strong> ${currentTag} <br> <strong>Date :</strong> ${formatDate(currentDate)} <br> <strong>City:</strong> ${currentCity} <br> <strong>Country:</strong> ${currentCountry}`;
+			await showCommentOrMessage(message);
+		} else {
+			alert('No more previous message');
+		}
+	});
+
+	// Get next message 
+	nextMessageButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+
+		data = await getLastMessageWithDate(currentTag, currentDate, "next");
+		const message = data.message;
+
+		if (message != "No message") {
+			currentID = data.entryID;
+			currentDate = data.date;
+			currentCity = data.city;
+			currentCountry = data.country;
+			paragraphCommentMessage.innerHTML = `<strong>Tag:</strong> ${currentTag} <br> <strong>Date :</strong> ${formatDate(currentDate)} <br> <strong>City:</strong> ${currentCity} <br> <strong>Country:</strong> ${currentCountry}`;
+			await showCommentOrMessage(message);
+		} else {
+			alert('No more message');
+		}
+
+
 	});
 });
 
@@ -614,15 +674,23 @@ const updateTag = async (tag, is_principle, is_system, principle_tag) => {
 // function for comment button: 
 const commentTagButton = async (tag) => {
 
+	// set current tag
 	currentTag = tag;
 
+	// organize current form
 	document.forms["enabled-tags"].style.display = "none";
-	document.forms["comment-form"].style.display = "block";
-	const commentTagName = document.querySelector('p[name="comment-tag-name"]');
-	commentTagName.innerHTML = `<strong> Tag :</strong> ${tag}`;
+	document.forms["message-comment-form"].style.display = "block";
 
+	//Prepare  form for comment
+	closeMessageInput.style.display = "none";
+	nextMessageButton.style.display = "none";
+	PreviousMessageButton.style.display = "none";
+	paragraphCommentMessage.innerHTML = `<strong> Tag :</strong> ${tag}`;
+	headerCommentMessage.innerHTML = `Comment :`;
+
+	// get and show comment
 	const comment = await readComment(tag);
-	await showCommentOrMessage(comment, "editor-content-comment");
+	await showCommentOrMessage(comment);
 };
 
 // Function to get comment 
@@ -676,15 +744,16 @@ const saveComment = async (tag, comment) => {
 };
 
 // Show last message in the form
-const showCommentOrMessage = async (message, textareaId) => {
-	const textarea = document.getElementById(textareaId);
-	if (window.editor && textarea) {
+const showCommentOrMessage = async (message) => {
+	if (window.editor) {
 		try {
 			if (message) {
 				let dataToRender;
 				try {
+					// Try to parse the message as JSON
 					dataToRender = JSON.parse(message);
 				} catch (error) {
+					// If parsing fails, treat the message as plain text
 					dataToRender = {
 						blocks: [
 							{
@@ -696,22 +765,19 @@ const showCommentOrMessage = async (message, textareaId) => {
 						]
 					};
 				}
+				// Render the content
 				await window.editor.render(dataToRender);
-
-				textarea.value = JSON.stringify(dataToRender);
 			} else {
 				console.log('No message content to display.');
-				await window.editor.render({});
-				textarea.value = '';
+				await window.editor.render({}); // Renders an empty editor
 			}
 		} catch (error) {
 			console.error('Error rendering message in Editor.js:', error);
 		}
 	} else {
-		console.error('Editor.js instance or textarea not found.');
+		console.error('Editor.js instance not found.');
 	}
 };
-
 // Get message from the form
 const getMessageOrCommentForm = async () => {
 	if (window.editor) {
@@ -915,7 +981,7 @@ const formatDate = (dateString) => {
 // Function to read message : 
 const readMessageButton = async (entryID) => {
 
-	document.forms["message-form"].style.display = "block";
+	document.forms["message-comment-form"].style.display = "block";
 	document.forms["message-list"].style.display = "none";
 
 	const data = await getMessageFromID(entryID)
@@ -925,8 +991,30 @@ const readMessageButton = async (entryID) => {
 	currentCity = data.city;
 	currentCountry = data.country;
 
-	await showCommentOrMessage(message, "editor-content-message");
+	// Prepare form to read message
+	saveCommentInput.style.display = "none";
+	paragraphCommentMessage.innerHTML = `<strong>Tag:</strong> ${currentTag} <br> <strong>Date :</strong> ${formatDate(currentDate)} <br> <strong>City:</strong> ${currentCity} <br> <strong>Country:</strong> ${currentCountry}`;
+	headerCommentMessage.innerHTML = `Message :`;
+	await showCommentOrMessage(message);
 
-	const currentDataMessageElement = document.forms["message-form"].querySelector('p[name="message-data"]');
-	currentDataMessageElement.innerHTML = `<strong>Tag:</strong> ${currentTag} <br> <strong>Date :</strong> ${formatDate(currentDate)} <br> <strong>City:</strong> ${currentCity} <br> <strong>Country:</strong> ${currentCountry}`;
-}
+};
+
+// get the last message in function of the tag and date
+const getLastMessageWithDate = async (tag, date, action) => {
+	const tag_string = encodeURIComponent(tag);
+	const date_string = encodeURIComponent(date);
+	const action_string = encodeURIComponent(action);
+	const url = `http://127.0.0.1:2323/entries/last?tag=${tag_string}&date=${date_string}&action=${action_string}`;
+
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		const data = await response.json();
+		return data; // Return just the message
+	} catch (error) {
+		console.error('Error fetching last message:', error);
+		return null; // Or handle the error as needed
+	}
+};
