@@ -16,3 +16,4 @@ cp "${SOURCE_PATH}" "${DEST_PATH}/oltar.db"
 
 # Print a confirmation message
 echo "Backup completed: ${DEST_PATH}/oltar.db"
+
