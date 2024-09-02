@@ -1,0 +1,78 @@
+<h1>Entries</h1>
+
+<button type="button" name="reset-button">Reset</button>
+
+<form name="tag-form">
+	<h3>Tag selection :</h3>
+	<table>
+		<thead>
+			<tr>
+				<th>Tag</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					<select name="tag-list"></select>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<input type="submit" name="valid-tag" value="next">
+	<p class="right">.SO</p>
+</form>
+<br>
+<form name="city-country-form">
+	<h3>Where ?</h3>
+	<table>
+		<thead>
+			<tr>
+				<th>City</th>
+				<th>Country</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="city"></td>
+				<td><input type="text" name="country"></td>
+			</tr>
+		</tbody>
+	</table>
+	<input type="submit" name="valid-city-country" value="next">
+	<p class="right">.SO</p>
+</form>
+<br>
+<form name="message-form">
+	<h3>Message :</h3>
+	<p name="tag-city-country"></p>
+	<p name="previous-data"></p>
+	<textarea id="markdown"></textarea>
+	<div class="button-container">
+		<button type="button" name="previous">Previous</button>
+		<button type="button" name="next">Next</button>
+	</div>
+	<button type="button" name="clear-text">New</button>
+	<input type="submit" name="valid-message" value="next">
+	<p class="right">.SO</p>
+</form>
+<br>
+<form name="date-form">
+	<h3>Time and sending :</h3>
+	<table>
+		<thead>
+			<tr>
+				<th>Date</th>
+				<th>Now</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="message-date"></td>
+				<td><input type="button" name="time-now" value="time-now"></td>
+			</tr>
+		</tbody>
+	</table>
+	<input type="submit" name="send-message" value="sign">
+	<p class="right">.SO</p>
+</form>
+<script src="js/entries.js" defer></script>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title><%- title %></title>
+	<link rel="stylesheet" href="css/base.css">
+	<link rel="icon" href="img/favicon/android-icon-192x192.png" type="image/x-icon">
+	<!-- Include EasyMDE CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+</head>
+
+<body>
+
+	<nav>
+		<div>
+			<img src="img/logo_1.jpg" alt="Logo" class="logo">
+		</div>
+		<div>
+			<a href="/chapters"><button>Chapters</button></a>
+		</div>
+		<br>
+		<div>
+			<a href="/entries"><button>Entries</button></a>
+		</div>
+		<br>
+		<div>
+			<a href="/tags"><button>Tags</button></a>
+		</div>
+		<br>
+		<div>
+			<a href="/reminds"><button>Reminds</button></a>
+		</div>
+		<br>
+		<div>
+			<a href="/system"><button>System</button></a>
+		</div>
+	</nav>
+	<div>
+		<main><%- body %></main>
+	</div>
+	<script src="js/base.js" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+</body>
+
+</html>

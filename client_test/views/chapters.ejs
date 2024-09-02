@@ -1,0 +1,56 @@
+<h1>Chapters</h1>
+
+<section name="count-all-section">
+	<p name="count-all"></p>
+</section>
+
+<form name="current-chapter">
+	<h3>Current Chapter</h3>
+	<table>
+		<thead>
+			<tr>
+				<th>ChapterName</th>
+				<th>Entries</th>
+				<th>Opened</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="chapter-name"></td>
+				<td><input type="text" name="entries"></td>
+				<td><input type="text" name="opened"></td>
+			</tr>
+		</tbody>
+	</table>
+</form>
+
+<form name="previous-chapters">
+	<h3>Previous Chapters</h3>
+	<table>
+		<thead>
+			<tr>
+				<th>ChapterName</th>
+				<th>Title</th>
+				<th>Entries</th>
+				<th>Opened</th>
+
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="chapter-name-list"></td>
+				<td><input type="text" name="title-list"></td>
+				<td><input type="text" name="entries-list"></td>
+				<td><input type="text" name="opened-list"></td>
+			</tr>
+		</tbody>
+	</table>
+</form>
+
+<form name="new-chapter">
+	<h3>New Chapter</h3>
+	<input type="text" placeholder="title for previous chapter" name="new-title">
+	<input type="submit" name='new' value="new">
+</form>
+
+<script src="js/chapters.js" defer></script>
