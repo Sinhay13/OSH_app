@@ -150,3 +150,12 @@ button[name="return"]:hover {
     background-color: #45a049; /* Darker green on hover */
 }
 
+input[type=button], input[type=submit], input[type=reset] {
+	background-color: #D2BE76;
+	border: none;
+	color: black;
+	padding: 8px 16px;
+	text-decoration: none;
+	margin: 4px 2px;
+	cursor: pointer;
+  }
