@@ -160,3 +160,27 @@ input[type=button], input[type=submit], input[type=reset] {
     flex-wrap: nowrap;
     justify-content: flex-start;
 }
+
+
+/* Customize the background color of the editor */
+.EasyMDEContainer .CodeMirror {
+    background-color: #f0f0f0; /* Light grey background */
+    color: #333333; /* Dark text color */
+}
+
+/* Customize the toolbar button colors */
+.EasyMDEContainer .editor-toolbar button {
+    background-color: #E8DDB5; /* Green button background */
+    color: black; /* White icon color */
+}
+
+.EasyMDEContainer .editor-toolbar button:hover {
+    background-color: #E8DDB5; /* Darker green on hover */
+}
+
+
+/* Customize the status bar */
+.EasyMDEContainer .editor-statusbar {
+    background-color: #ecf0f1; /* Light grey status bar */
+    color: #2c3e50; /* Dark grey text color */
+}

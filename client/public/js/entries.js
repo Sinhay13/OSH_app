@@ -16,11 +16,32 @@ let lastCountry;
 let oldEntryID;
 let lastEntryID;
 
+
+//buttons and elements 
+const validMessageButton = document.querySelector('form[name="message-form"] input[name="valid-message"]');
+const previousButton = document.querySelector('button[name="previous"]');
+const resetButton = document.querySelector('button[name="reset-button"]');
+const nextButton = document.querySelector('button[name="next"]');
+const readButton = document.querySelector('button[name="clear-text"]');
+const timeNowButton = document.querySelector('input[name="time-now"]');
+const messageDateInput = document.querySelector('input[name="message-date"]');
+const previousDataElement = document.forms["message-form"].querySelector('p[name="previous-data"]');
+const tagCityCountryElement = document.forms["message-form"].querySelector('p[name="tag-city-country"]');
+const saveCommentButton = document.querySelector('button[name="save-comment"]');
+
 document.addEventListener('DOMContentLoaded', async () => {
-	const markdownElement = document.getElementById('markdown');
-	if (markdownElement) {
-		window.easyMDE = new EasyMDE({
-			element: markdownElement,
+
+	//EasyMDE instance
+	const markdownElement1 = document.getElementById('markdown');
+	const markdownElement2 = document.getElementById('markdown-comment');
+	if (markdownElement1) {
+		window.easyMDE1 = new EasyMDE({
+			element: markdownElement1,
+		});
+	};
+	if (markdownElement2) {
+		window.easyMDE2 = new EasyMDE({
+			element: markdownElement2,
 		});
 	}
 
@@ -29,17 +50,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 	document.forms["city-country-form"].style.display = "none";
 	document.forms["message-form"].style.display = "none";
 	document.forms["date-form"].style.display = "none";
-
-	//buttons and elements 
-	const validMessageButton = document.querySelector('form[name="message-form"] input[name="valid-message"]');
-	const previousButton = document.querySelector('button[name="previous"]');
-	const resetButton = document.querySelector('button[name="reset-button"]');
-	const nextButton = document.querySelector('button[name="next"]');
-	const readButton = document.querySelector('button[name="clear-text"]');
-	const timeNowButton = document.querySelector('input[name="time-now"]');
-	const messageDateInput = document.querySelector('input[name="message-date"]');
-	const previousDataElement = document.forms["message-form"].querySelector('p[name="previous-data"]');
-	const tagCityCountryElement = document.forms["message-form"].querySelector('p[name="tag-city-country"]');
 
 	// reset button :
 	resetButton.addEventListener('click', async (event) => {
@@ -97,8 +107,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 		lastCountry = oldCountry;
 		lastEntryID = oldEntryID;
 
+		//Show comment 
+		const comment = await readComment(tag)
+		await showLastMessageOrComment(window.easyMDE2, comment);
+
 		//Show last message 
-		await showLastMessage(lastMessage);
+		await showLastMessageOrComment(window.easyMDE1, lastMessage);
 
 		// Update the <p> element inside message-form with the selected tag, city, and country
 		tagCityCountryElement.innerHTML = `<strong>Tag:</strong> ${tag} <br> <strong>New City:</strong> ${city} <br> <strong>New Country:</strong> ${country}`;
@@ -111,7 +125,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	// previous message : 
 	previousButton.addEventListener('click', async (event) => {
-
 		event.preventDefault(); // Prevent the default form submission
 
 		// get the last message
@@ -124,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 			oldEntryID = dataMessage2.entryID;
 
 			//Show last message 
-			await showLastMessage(lastMessage);
+			await showLastMessageOrComment(window.easyMDE1, lastMessage);
 
 			let newFormatDate = formatDate(oldDate);
 			oldDate = newFormatDate;
@@ -151,7 +164,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 			oldEntryID = dataMessage3.entryID;
 
 			//Show last message 
-			await showLastMessage(lastMessage);
+			await showLastMessageOrComment(window.easyMDE1, lastMessage);
 
 			let newFormatDate = formatDate(oldDate);
 			oldDate = newFormatDate;
@@ -181,7 +194,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	document.forms["message-form"].addEventListener("submit", async function (event) {
 		event.preventDefault(); // Prevent the default form submission
 
-		const formData2 = await getMessageForm();
+		const formData2 = await getMessageForm(window.easyMDE1);
 
 		const isValid = formData2.isValid;
 		message = formData2.message
@@ -210,6 +223,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 		await sendNewMessage(tag, city, country, message, date);
 
 	});
+
+	// Save comment : 
+	saveCommentButton.addEventListener('click', async (event) => {
+
+		event.preventDefault(); // Prevent the default form submission
+
+		const newComment = await getMessageForm(window.easyMDE2);
+
+		await saveComment(tag, newComment)
+	})
 
 });
 
@@ -442,8 +465,8 @@ const formatDate = (dateString) => {
 };
 
 // Show last message in the form
-const showLastMessage = async (lastMessage) => {
-	if (window.easyMDE) {
+const showLastMessageOrComment = async (mark, lastMessage) => {
+	if (mark) {
 		try {
 			if (lastMessage) {
 				let markdownContent;
@@ -457,11 +480,11 @@ const showLastMessage = async (lastMessage) => {
 					markdownContent = lastMessage;
 				}
 				// Set the Markdown content in EasyMDE
-				window.easyMDE.value(markdownContent);
+				mark.value(markdownContent);
 			} else {
 				console.log('No message content to display.');
-				window.easyMDE.clearAutosavedValue(); // Clears any autosaved value
-				window.easyMDE.value(''); // Clears the editor
+				mark.clearAutosavedValue(); // Clears any autosaved value
+				mark.value(''); // Clears the editor
 			}
 		} catch (error) {
 			console.error('Error rendering message in EasyMDE:', error);
@@ -474,9 +497,9 @@ const showLastMessage = async (lastMessage) => {
 
 // clear text area
 const clearTextArea = async () => {
-	if (window.easyMDE) {
+	if (window.easyMDE1) {
 		try {
-			window.easyMDE.value(''); // Clear the EasyMDE content
+			window.easyMDE1.value(''); // Clear the EasyMDE content
 		} catch (error) {
 			console.error('Error clearing EasyMDE content:', error);
 		}
@@ -486,11 +509,11 @@ const clearTextArea = async () => {
 };
 
 // Get message from the form
-const getMessageForm = async () => {
-	if (window.easyMDE) {
+const getMessageForm = async (mark) => {
+	if (mark) {
 		try {
 			// Get the content from EasyMDE
-			const markdownContent = window.easyMDE.value();
+			const markdownContent = mark.value();
 
 			// Check if the content is empty
 			const isEmpty = !markdownContent.trim();
@@ -582,6 +605,55 @@ const sendNewMessage = async (tag, city, country, message, date) => {
 
 };
 
+// Function to get comment 
+const readComment = async (tag) => {
+
+	const tag_string = encodeURIComponent(tag);
+
+	try {
+		const url = `http://127.0.0.1:2323/tags/comments/read?tag=${tag_string}`;
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const result = await response.json();
+		return result.comment
+
+	} catch (error) {
+		console.error('Error getting comment:', error);
+		alert("Error getting comment");
+	}
+};
+
+// Function to save comment 
+const saveComment = async (tag, comment) => {
+
+	const url = `http://127.0.0.1:2323/tags/comments/save`
+
+	const body = JSON.stringify({
+		tag,
+		comment,
+	})
+
+	const reqOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: body,
+	};
+
+	try {
+		const response = await fetch(url, reqOptions);
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		const data = await response.json();
+		alert("Comment saved !");
+	} catch (error) {
+		console.error('Error fetching data:', error);
+	}
+};
 
 
 
