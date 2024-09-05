@@ -32,6 +32,12 @@ const previousPageButton = document.querySelector('input[name="message-list-back
 const nextPageButton = document.querySelector('input[name="message-list-next"]');
 
 document.addEventListener('DOMContentLoaded', async () => {
+	const markdownElement = document.getElementById('markdown');
+	if (markdownElement) {
+		window.easyMDE = new EasyMDE({
+			element: markdownElement,
+		});
+	};
 
 	// hide form : 
 	document.forms["disabled-tags"].style.display = "none";
@@ -128,7 +134,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 			//Reset for for message / comment
 			closeMessageInput.style.display = "block";
 			nextMessageButton.style.display = "block";
-			PreviousMessageButton.style.display = "block";
+			previousMessageButton.style.display = "block";
 
 		} else {
 			return
@@ -745,69 +751,61 @@ const saveComment = async (tag, comment) => {
 
 // Show last message in the form
 const showCommentOrMessage = async (message) => {
-	if (window.editor) {
+	if (window.easyMDE) {
 		try {
 			if (message) {
-				let dataToRender;
+				let markdownContent;
 				try {
 					// Try to parse the message as JSON
-					dataToRender = JSON.parse(message);
+					const parsedData = JSON.parse(message);
+					// Convert parsed JSON to Markdown (assuming 'text' is the key for Markdown content)
+					markdownContent = parsedData.text || message;
 				} catch (error) {
-					// If parsing fails, treat the message as plain text
-					dataToRender = {
-						blocks: [
-							{
-								type: 'paragraph',
-								data: {
-									text: message
-								}
-							}
-						]
-					};
+					// If parsing fails, treat the message as plain text (assuming it's already Markdown)
+					markdownContent = message;
 				}
-				// Render the content
-				await window.editor.render(dataToRender);
+				// Set the Markdown content in EasyMDE
+				window.easyMDE.value(markdownContent);
 			} else {
 				console.log('No message content to display.');
-				await window.editor.render({}); // Renders an empty editor
+				window.easyMDE.clearAutosavedValue(); // Clears any autosaved value
+				window.easyMDE.value(''); // Clears the editor
 			}
 		} catch (error) {
-			console.error('Error rendering message in Editor.js:', error);
+			console.error('Error rendering message in EasyMDE:', error);
 		}
 	} else {
-		console.error('Editor.js instance not found.');
+		console.error('EasyMDE instance not found.');
 	}
 };
 // Get message from the form
 const getMessageOrCommentForm = async () => {
-	if (window.editor) {
+	if (window.easyMDE) {
 		try {
-			const savedData = await window.editor.save(); // Save the content of Editor.js
+			// Get the content from EasyMDE
+			const markdownContent = window.easyMDE.value();
 
-			// Check if the editor content is empty
-			const isEmpty = savedData.blocks.length === 0 || savedData.blocks.every(block => !block.data.text.trim());
+			// Check if the content is empty
+			const isEmpty = !markdownContent.trim();
 
 			if (isEmpty) {
-				alert("The message or comment content cannot be empty.");
+				alert("The message content cannot be empty.");
 				return { isValid: false, message: null }; // Indicate that the form is not valid
 			}
 
-			// Convert the saved data to JSON string
-			const message = JSON.stringify(savedData);
-
-			// Update the hidden textarea with the JSON content
+			// Update the hidden textarea with the Markdown content
 			const textarea = document.getElementById('editor-content');
 			if (textarea) {
-				textarea.value = message;
+				textarea.value = markdownContent;
 			}
 
-			return { isValid: true, message }; // Indicate that the form is valid
+			return { isValid: true, message: markdownContent }; // Indicate that the form is valid
 		} catch (error) {
-			console.error('Error getting message from Editor.js:', error);
+			console.error('Error getting message from EasyMDE:', error);
 			return { isValid: false, message: null }; // Indicate that the form is not valid
 		}
 	} else {
-		console.error('Editor.js instance not found.');
+		console.error('EasyMDE instance not found.');
 		return { isValid: false, message: null }; // Handle this case as needed
 	}
 };

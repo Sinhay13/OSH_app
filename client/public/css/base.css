@@ -1,6 +1,5 @@
 body {
     display: flex;
-    flex-direction: row; /* Arrange children in a row */
     font-family: Arial, sans-serif;
     min-height: 100vh;
     margin: 0; /* Remove default margin */
@@ -11,7 +10,7 @@ nav {
     flex-direction: column; /* Stack items vertically */
     padding: 20px;
     border-right: 1px solid black;
-    width: 200px; /* Adjust width as needed */
+    width: 10%; /* Adjust width as needed */
     align-items: center; /* Center items horizontally */
     background-color: #E8DDB5; /* Optional: Add background color */
 }
@@ -40,8 +39,8 @@ button:hover {
 }
 
 main {
+    flex-grow: 1; /* Allow main to take up remaining space */
     padding: 20px;
-    flex: 1; /* Allow main to take remaining space */
     margin-left: 20px; /* Add space between nav and main */
     overflow: auto; /* Add scroll if content overflows */
 }
@@ -63,7 +62,7 @@ li {
 }
 
 table {
-    width: 100%; /* Full width of the container */
+    width: auto; /* Full width of the container */
     border-collapse: separate; /* Allow separation between cells */
     border-spacing: 0; /* Remove extra spacing between cells */
     margin: 20px 0; /* Space around the table */
@@ -110,17 +109,12 @@ input[type="text"] {
     box-sizing: border-box; /* Ensures padding is included in the width */
 }
 
-/* editor js */
-#editorjs {
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    height: 800px; /* Take up most of the viewport height */
-    width: 800px; /* Take up most of the viewport width */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #f9f9f9;
-    margin: 0 auto; /* Center horizontally */
-    overflow-y: auto; /* Enable scrolling inside the editor if needed */
+textarea {
+    width: 100% !important; /* Make sure it takes up full width */
+    max-width: 100% !important; /* Prevent it from exceeding its container’s width */
+    height: 500px !important; /* Increase height as needed */
+    box-sizing: border-box !important; /* Include padding/border in width/height */
+    resize: vertical !important; /* Allow vertical resizing if needed */
 }
 
 /* .SO */
@@ -159,3 +153,10 @@ input[type=button], input[type=submit], input[type=reset] {
 	margin: 4px 2px;
 	cursor: pointer;
   }
+
+
+  .editor-toolbar {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}

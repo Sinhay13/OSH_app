@@ -1,3 +1,4 @@
+
 // init variables
 let tag;
 let tags;
@@ -16,6 +17,13 @@ let oldEntryID;
 let lastEntryID;
 
 document.addEventListener('DOMContentLoaded', async () => {
+	const markdownElement = document.getElementById('markdown');
+	if (markdownElement) {
+		window.easyMDE = new EasyMDE({
+			element: markdownElement,
+		});
+	}
+
 
 	// hide forms 
 	document.forms["city-country-form"].style.display = "none";
@@ -435,88 +443,76 @@ const formatDate = (dateString) => {
 
 // Show last message in the form
 const showLastMessage = async (lastMessage) => {
-	if (window.editor) {
+	if (window.easyMDE) {
 		try {
 			if (lastMessage) {
-				let dataToRender;
+				let markdownContent;
 				try {
 					// Try to parse the lastMessage as JSON
-					dataToRender = JSON.parse(lastMessage);
+					const parsedData = JSON.parse(lastMessage);
+					// Convert parsed JSON to Markdown (assuming 'text' is the key for Markdown content)
+					markdownContent = parsedData.text || lastMessage;
 				} catch (error) {
-					// If parsing fails, treat the lastMessage as plain text
-					dataToRender = {
-						blocks: [
-							{
-								type: 'paragraph',
-								data: {
-									text: lastMessage
-								}
-							}
-						]
-					};
+					// If parsing fails, treat the lastMessage as plain text (assuming it's already Markdown)
+					markdownContent = lastMessage;
 				}
-				// Render the content
-				await window.editor.render(dataToRender);
+				// Set the Markdown content in EasyMDE
+				window.easyMDE.value(markdownContent);
 			} else {
 				console.log('No message content to display.');
-				await window.editor.render({}); // Renders an empty editor
+				window.easyMDE.clearAutosavedValue(); // Clears any autosaved value
+				window.easyMDE.value(''); // Clears the editor
 			}
 		} catch (error) {
-			console.error('Error rendering message in Editor.js:', error);
+			console.error('Error rendering message in EasyMDE:', error);
 		}
 	} else {
-		console.error('Editor.js instance not found.');
+		console.error('EasyMDE instance not found.');
 	}
 };
 
 
 // clear text area
 const clearTextArea = async () => {
-	const textarea = document.getElementById('editor-content');
-	if (textarea) {
-		textarea.value = ''; // Clear the textarea
+	if (window.easyMDE) {
+		try {
+			window.easyMDE.value(''); // Clear the EasyMDE content
+		} catch (error) {
+			console.error('Error clearing EasyMDE content:', error);
+		}
 	} else {
-		console.error('Textarea not found');
+		console.error('EasyMDE instance not found.');
 	}
-
-	if (window.editor) {
-		window.editor.clear(); // Clear the Editor.js content
-	} else {
-		console.error('Editor.js instance not found.');
-	}
-
 };
 
 // Get message from the form
 const getMessageForm = async () => {
-	if (window.editor) {
+	if (window.easyMDE) {
 		try {
-			const savedData = await window.editor.save(); // Save the content of Editor.js
+			// Get the content from EasyMDE
+			const markdownContent = window.easyMDE.value();
 
-			// Check if the editor content is empty
-			const isEmpty = savedData.blocks.length === 0 || savedData.blocks.every(block => !block.data.text.trim());
+			// Check if the content is empty
+			const isEmpty = !markdownContent.trim();
 
 			if (isEmpty) {
 				alert("The message content cannot be empty.");
 				return { isValid: false, message: null }; // Indicate that the form is not valid
 			}
 
-			// Convert the saved data to JSON string
-			const message = JSON.stringify(savedData);
-
-			// Update the hidden textarea with the JSON content
+			// Update the hidden textarea with the Markdown content
 			const textarea = document.getElementById('editor-content');
 			if (textarea) {
-				textarea.value = message;
+				textarea.value = markdownContent;
 			}
 
-			return { isValid: true, message }; // Indicate that the form is valid
+			return { isValid: true, message: markdownContent }; // Indicate that the form is valid
 		} catch (error) {
-			console.error('Error getting message from Editor.js:', error);
+			console.error('Error getting message from EasyMDE:', error);
 			return { isValid: false, message: null }; // Indicate that the form is not valid
 		}
 	} else {
-		console.error('Editor.js instance not found.');
+		console.error('EasyMDE instance not found.');
 		return { isValid: false, message: null }; // Handle this case as needed
 	}
 };

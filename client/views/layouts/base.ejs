@@ -6,8 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title><%- title %></title>
 	<link rel="stylesheet" href="css/base.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
 	<link rel="icon" href="img/favicon/android-icon-192x192.png" type="image/x-icon">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest/dist/editor.css">
 </head>
 
 <body>
@@ -36,19 +36,9 @@
 			<a href="/system"><button>System</button></a>
 		</div>
 	</nav>
-	<div>
-		<main><%- body %></main>
-	</div>
-	<script src="js/editor.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@editorjs/code@latest"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@editorjs/checklist"></script>
+	<main><%- body %></main>
 	<script src="js/base.js" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
 </body>
 
 </html>
