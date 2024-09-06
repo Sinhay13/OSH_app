@@ -229,9 +229,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 		event.preventDefault(); // Prevent the default form submission
 
-		const newComment = await getMessageForm(window.easyMDE2);
-
-		await saveComment(tag, newComment)
+		const formData = await getMessageForm(window.easyMDE2);
+		newComment = formData.message
+		valid = formData.isValid
+		if (valid) {
+			await saveComment(tag, newComment)
+		} else {
+			console.log("Comment is empty, not proceeding to the next step.");
+		}
 	})
 
 });
@@ -294,14 +299,14 @@ const getTagForm = async (tags) => {
 		let isValid = false;
 
 		while (!isValid) {
-			newTag = prompt("Enter a new tag (must start with '#', be followed by a digit or an uppercase letter, be a single word without spaces, and not be empty):");
+			newTag = prompt("Enter a new tag (must start with '侍', be followed by a digit or an uppercase letter, be a single word without spaces, and not be empty):");
 
 			if (newTag === null) {
 				location.reload();
 			}
 
 			newTag = newTag.trim();
-			if (newTag.length > 0 && newTag.startsWith("#") && /^[#][A-Z0-9][^\s]*$/.test(newTag)) {
+			if (newTag.length > 0 && newTag.startsWith("侍") && /^[侍][A-Z0-9][^\s]*$/.test(newTag)) {
 				const isDuplicate = tags && tags.some(tagObj => tagObj.tag === newTag);
 
 				if (!isDuplicate) {
@@ -318,7 +323,7 @@ const getTagForm = async (tags) => {
 					location.reload();
 				}
 			} else {
-				alert("Tag must start with '#', be followed by a digit or an uppercase letter, be a single word without spaces, and cannot be empty.");
+				alert("Tag must start with '侍', be followed by a digit or an uppercase letter, be a single word without spaces, and cannot be empty.");
 				location.reload();
 			}
 		}
