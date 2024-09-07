@@ -16,21 +16,23 @@ let lastCountry;
 let oldEntryID;
 let lastEntryID;
 
-
 //buttons and elements 
 const validMessageButton = document.querySelector('form[name="message-form"] input[name="valid-message"]');
 const previousButton = document.querySelector('button[name="previous"]');
 const resetButton = document.querySelector('button[name="reset-button"]');
+const seeMessageButton = document.querySelector('button[name="see-message"]');
 const nextButton = document.querySelector('button[name="next"]');
 const readButton = document.querySelector('button[name="clear-text"]');
 const timeNowButton = document.querySelector('input[name="time-now"]');
 const messageDateInput = document.querySelector('input[name="message-date"]');
 const previousDataElement = document.forms["message-form"].querySelector('p[name="previous-data"]');
 const tagCityCountryElement = document.forms["message-form"].querySelector('p[name="tag-city-country"]');
+const infosMessageElement = document.forms["date-form"].querySelector('p[name="infos-message"]');
 const saveCommentButton = document.querySelector('button[name="save-comment"]');
+const selectPrinciple = document.forms["tag-form"].elements["principle-list"];
+const selectTag = document.forms["tag-form"].elements["tag-list"];
 
 document.addEventListener('DOMContentLoaded', async () => {
-
 	//EasyMDE instance
 	const markdownElement1 = document.getElementById('markdown');
 	const markdownElement2 = document.getElementById('markdown-comment');
@@ -45,7 +47,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 		});
 	}
 
-
 	// hide forms 
 	document.forms["city-country-form"].style.display = "none";
 	document.forms["message-form"].style.display = "none";
@@ -58,11 +59,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 		location.reload();
 	});
 
-	//get tags list
-	tags = await getTagList();
+	// return to see message button :
+	seeMessageButton.addEventListener('click', async (event) => {
+		event.preventDefault();
 
+		document.forms["message-form"].style.display = "block";
+		document.forms["date-form"].style.display = "none";
+	});
+
+	//get principle list
+	const principles = await getPrincipleList();
+	//populate select principle
+	await populatePrincipleSelect(principles);
+
+
+	//get first list tags
+	tags = await getTagList();
 	//populate select tag
 	await populateTagSelect(tags);
+
+	selectPrinciple.addEventListener('change', async function () {
+		const selectedPrinciple = selectPrinciple.value;
+
+		selectTag.innerHTML = '';
+
+		//get tags list
+		tags = await getTagList(selectedPrinciple);
+
+		//populate select tag
+		await populateTagSelect(tags);
+
+	});
 
 	// Add event listener for the "submit" event on the tag form
 	document.forms["tag-form"].addEventListener("submit", async function (event) {
@@ -203,6 +230,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 			// Only proceed if the message is valid
 			document.forms["message-form"].style.display = "none";
 			document.forms["date-form"].style.display = "block";
+			infosMessageElement.innerHTML = `<strong>Tag:</strong> ${tag} <br> <strong>City:</strong> ${city} <br> <strong>Country:</strong> ${country}`;
 		} else {
 			// Provide feedback to the user if the message is empty
 			console.log("Message is empty, not proceeding to the next step.");
@@ -215,13 +243,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 	});
 
 	document.forms["date-form"].addEventListener("submit", async function (event) {
-
 		event.preventDefault(); // Prevent the default form submission
 
 		date = await getDateForm(messageDateInput);
 
 		await sendNewMessage(tag, city, country, message, date);
-
 	});
 
 	// Save comment : 
@@ -241,12 +267,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 });
 
+// get principle list 
+const getPrincipleList = async () => {
 
-// get tag list 
-const getTagList = async () => {
-
-	const url = `http://127.0.0.1:2323/tags/list/active`;
-
+	const url = `http://127.0.0.1:2323/tags/principles`;
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {
@@ -255,13 +279,66 @@ const getTagList = async () => {
 		const data = await response.json();
 		return data;
 	} catch (error) {
+	}
+};
 
+// Function to populate the select principle 
+const populatePrincipleSelect = async (principles) => {
+
+	// Clear any existing options
+	selectPrinciple.innerHTML = '';
+
+	if (principles && principles.length > 0) {
+
+		// Add an "All" option at the first
+		const allOption = document.createElement("option");
+		allOption.value = "all";
+		allOption.textContent = "all";
+		selectPrinciple.appendChild(allOption);
+
+		// If principle are available, add each principle  as an option
+		principles.forEach(principleObj => {
+			const option = document.createElement("option");
+			option.value = principleObj.tag; // Using the principle name as the value
+			option.textContent = principleObj.tag; // Displaying the principle name
+			selectPrinciple.appendChild(option);
+		});
+
+		// Add an "none" option at the end
+		const noneOption = document.createElement("option");
+		noneOption.value = "none";
+		noneOption.textContent = "none";
+		selectPrinciple.appendChild(noneOption);
+
+	} else {
+		// If no tags are available, just add the "none" option
+		const allOption = document.createElement("option");
+		allOption.value = "All";
+		allOption.textContent = "All";
+		selectPrinciple.appendChild(allOption);
+	}
+};
+
+
+// get tag list 
+const getTagList = async (principle = 'all') => {
+
+	const principle_string = encodeURIComponent(principle);
+
+	const url = `http://127.0.0.1:2323/tags/list/active?principle=${principle_string}`;
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		const data = await response.json();
+		return data;
+	} catch (error) {
 	}
 };
 
 // Function to populate the select tag
 const populateTagSelect = async (tags) => {
-	const selectTag = document.forms["tag-form"].elements["tag-list"];
 
 	// Clear any existing options
 	selectTag.innerHTML = '';
@@ -291,8 +368,9 @@ const populateTagSelect = async (tags) => {
 };
 
 const getTagForm = async (tags) => {
-	const selectTag = document.forms["tag-form"].elements["tag-list"];
+
 	let selectedTag = selectTag.value;
+	let selectedPrinciple = selectPrinciple.value
 
 	if (selectedTag === "other") {
 		let newTag;
@@ -315,7 +393,7 @@ const getTagForm = async (tags) => {
 						alert(`${newTag} already exists but is disabled. Please enable it to use.`);
 						location.reload();
 					} else {
-						await addNewTag(newTag);
+						await addNewTag(selectedPrinciple, newTag);
 						isValid = true;
 					}
 				} else {
@@ -354,11 +432,13 @@ const checkIfTagDisabled = async (tag) => {
 }
 
 // add new tag
-const addNewTag = async (tag) => {
+const addNewTag = async (principle, tag) => {
+
+	const principle_string = encodeURIComponent(principle);
 	const tag_string = encodeURIComponent(tag);
 
 	try {
-		const url = `http://127.0.0.1:2323/tags/new?tag=${tag_string}`;
+		const url = `http://127.0.0.1:2323/tags/new?principle=${principle_string}&tag=${tag_string}`;
 		const response = await fetch(url)
 
 		if (!response.ok) {

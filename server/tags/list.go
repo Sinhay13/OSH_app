@@ -7,12 +7,12 @@ import (
 	"server/utils"
 )
 
-// tag struct
+// Tag struct
 type Tags struct {
 	Tag string `json:"tag"`
 }
 
-func getTags(db *sql.DB, listType string) ([]Tags, error) {
+func getTags(db *sql.DB, principle string) ([]Tags, error) {
 	// Load JSON query configurations
 	tagsJson, err := utils.LoadQueries("tags.json")
 	if err != nil {
@@ -23,17 +23,21 @@ func getTags(db *sql.DB, listType string) ([]Tags, error) {
 	var query string
 
 	// Determine the query based on listType
-	switch listType {
-	case "full":
-		query = tagsJson.FullList
-	case "active":
+	if principle == "all" {
 		query = tagsJson.ActiveList
-	default:
-		query = tagsJson.NonList
+	} else if principle == "none" {
+		query = tagsJson.ActiveListNone
+	} else {
+		query = tagsJson.ActiveListPrinciple
 	}
 
 	// Execute the query
-	rows, err := db.Query(query)
+	var rows *sql.Rows
+	if principle == "all" || principle == "none" {
+		rows, err = db.Query(query)
+	} else {
+		rows, err = db.Query(query, principle)
+	}
 	if err != nil {
 		utils.Logger.Print(err)
 		return nil, err
@@ -58,34 +62,17 @@ func getTags(db *sql.DB, listType string) ([]Tags, error) {
 	return tags, nil
 }
 
-// Get all Tags
-func TagsListFull(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-
-	var lisType = "full"
-
-	tagsList, err := getTags(db, lisType)
-	if err != nil {
-		http.Error(w, "Server error", http.StatusInternalServerError)
-		utils.Logger.Printf("Error getting tags: %v", err)
-		return
-	}
-
-	// Define Content-Type
-	w.Header().Set("Content-Type", "application/json")
-
-	err = json.NewEncoder(w).Encode(tagsList)
-	if err != nil {
-		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
-		utils.Logger.Printf("Error encoding JSON: %v", err)
-	}
-}
-
 // Get active Tags
 func TagsListActive(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
-	var lisType = "active"
+	principle := r.URL.Query().Get("principle")
+	if principle == "" {
+		utils.Logger.Println("principle name is needed")
+		http.Error(w, "principle name is needed", http.StatusBadRequest)
+		return
+	}
 
-	tagsList, err := getTags(db, lisType)
+	tagsList, err := getTags(db, principle)
 	if err != nil {
 		http.Error(w, "Server error", http.StatusInternalServerError)
 		utils.Logger.Printf("Error getting tags: %v", err)
@@ -100,28 +87,4 @@ func TagsListActive(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
 		utils.Logger.Printf("Error encoding JSON: %v", err)
 	}
-
-}
-
-// Get non active tags
-func TagsListNon(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-
-	var lisType = "non"
-
-	tagsList, err := getTags(db, lisType)
-	if err != nil {
-		http.Error(w, "Server error", http.StatusInternalServerError)
-		utils.Logger.Printf("Error getting tags: %v", err)
-		return
-	}
-
-	// Define Content-Type
-	w.Header().Set("Content-Type", "application/json")
-
-	err = json.NewEncoder(w).Encode(tagsList)
-	if err != nil {
-		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
-		utils.Logger.Printf("Error encoding JSON: %v", err)
-	}
-
 }

@@ -7,7 +7,7 @@ import (
 	"server/utils"
 )
 
-func sendTagToDB(db *sql.DB, tag string) error {
+func sendTagToDB(db *sql.DB, principle string, tag string) error {
 
 	timeNow := utils.TimeNow()
 
@@ -17,10 +17,16 @@ func sendTagToDB(db *sql.DB, tag string) error {
 
 		return err
 	}
-
-	_, err = db.Exec(tagsJson.InsertNewTag, tag, timeNow, timeNow)
-	if err != nil {
-		return err
+	if principle == "all" || principle == "none" {
+		_, err = db.Exec(tagsJson.InsertNewTag, tag, timeNow, timeNow)
+		if err != nil {
+			return err
+		}
+	} else {
+		_, err = db.Exec(tagsJson.InsertNewTagPrinciple, tag, timeNow, timeNow, principle)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -28,13 +34,19 @@ func sendTagToDB(db *sql.DB, tag string) error {
 
 func InsertNewTag(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
+	principle := r.URL.Query().Get("principle")
+	if principle == "" {
+		utils.Logger.Println("principle name is missing to create a new tag")
+		return
+	}
+
 	tag := r.URL.Query().Get("tag")
 	if tag == "" {
 		utils.Logger.Println("tag name is missing to create a new tag")
 		return
 	}
 
-	err := sendTagToDB(db, tag)
+	err := sendTagToDB(db, principle, tag)
 	if err != nil {
 		utils.Logger.Printf("Error to insert new tag inside db : %v\n", err)
 	}
