@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 		window.easyMDE = new EasyMDE({
 			element: markdownElement,
 		});
+		// Start in preview mode for the first editor
+		window.easyMDE.togglePreview();
 	};
 
 	// hide form : 

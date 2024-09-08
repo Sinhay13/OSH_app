@@ -27,6 +27,7 @@ const timeNowButton = document.querySelector('input[name="time-now"]');
 const messageDateInput = document.querySelector('input[name="message-date"]');
 const previousDataElement = document.forms["message-form"].querySelector('p[name="previous-data"]');
 const tagCityCountryElement = document.forms["message-form"].querySelector('p[name="tag-city-country"]');
+const currentTagElement = document.forms["city-country-form"].querySelector('p[name="current-tag"]');
 const infosMessageElement = document.forms["date-form"].querySelector('p[name="infos-message"]');
 const saveCommentButton = document.querySelector('button[name="save-comment"]');
 const selectPrinciple = document.forms["tag-form"].elements["principle-list"];
@@ -40,11 +41,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 		window.easyMDE1 = new EasyMDE({
 			element: markdownElement1,
 		});
+		// Start in preview mode for the first editor
+		window.easyMDE1.togglePreview();
 	};
 	if (markdownElement2) {
 		window.easyMDE2 = new EasyMDE({
 			element: markdownElement2,
 		});
+		// Start in preview mode for the first editor
+		window.easyMDE2.togglePreview();
 	}
 
 	// hide forms 
@@ -100,6 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 		// Show the next form, for example the "city-country-form"
 		document.forms["city-country-form"].style.display = "block";
+		currentTagElement.innerHTML = `<strong>Tag:</strong> ${tag}`;
 
 		// Hide the tag form
 		document.forms["tag-form"].style.display = "none";
