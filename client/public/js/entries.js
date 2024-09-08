@@ -198,7 +198,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 			alert('No more message');
 		}
 	});
-
 	// clear text area
 	readButton.addEventListener('click', async (event) => {
 		event.preventDefault(); // Prevent the default form submission
@@ -215,7 +214,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 		nextButton.style.display = "none";
 		validMessageButton.style.display = "block";
 	});
-
 	// Get the message: 
 	document.forms["message-form"].addEventListener("submit", async function (event) {
 		event.preventDefault(); // Prevent the default form submission
@@ -273,7 +271,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 			console.log("Comment is empty, not proceeding to the next step.");
 		}
 	})
-
 });
 
 //  Functions // 
@@ -291,6 +288,7 @@ const getPrincipleList = async () => {
 	} catch (error) {
 	}
 };
+
 // Function to populate the select principle 
 const populatePrincipleSelect = async (principles) => {
 	// Clear any existing options
@@ -325,6 +323,7 @@ const populatePrincipleSelect = async (principles) => {
 		selectPrinciple.appendChild(allOption);
 	}
 };
+
 // get tag list 
 const getTagList = async (principle = 'all') => {
 	const principle_string = encodeURIComponent(principle);
