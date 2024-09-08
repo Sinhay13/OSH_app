@@ -41,29 +41,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 		window.easyMDE1 = new EasyMDE({
 			element: markdownElement1,
 		});
-		// Start in preview mode for the first editor
-		window.easyMDE1.togglePreview();
+		window.easyMDE1.togglePreview(); //preview mode
 	};
 	if (markdownElement2) {
 		window.easyMDE2 = new EasyMDE({
 			element: markdownElement2,
 		});
-		// Start in preview mode for the first editor
-		window.easyMDE2.togglePreview();
+		window.easyMDE2.togglePreview(); // preview mode
 	}
-
 	// hide forms 
 	document.forms["city-country-form"].style.display = "none";
 	document.forms["message-form"].style.display = "none";
 	document.forms["date-form"].style.display = "none";
-
 	// reset button :
 	resetButton.addEventListener('click', async (event) => {
 		event.preventDefault();
-
 		location.reload();
 	});
-
 	// return to see message button :
 	seeMessageButton.addEventListener('click', async (event) => {
 		event.preventDefault();
@@ -74,12 +68,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	//get principle list
 	const principles = await getPrincipleList();
+
 	//populate select principle
 	await populatePrincipleSelect(principles);
 
-
 	//get first list tags
 	tags = await getTagList();
+
 	//populate select tag
 	await populateTagSelect(tags);
 
@@ -93,9 +88,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 		//populate select tag
 		await populateTagSelect(tags);
-
 	});
-
 	// Add event listener for the "submit" event on the tag form
 	document.forms["tag-form"].addEventListener("submit", async function (event) {
 		event.preventDefault(); // Prevent the default form submission
@@ -103,15 +96,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 		// get tag from form and add it if necessary
 		tag = await getTagForm(tags);
 
-		// Show the next form, for example the "city-country-form"
+		// Show the next form
 		document.forms["city-country-form"].style.display = "block";
-		currentTagElement.innerHTML = `<strong>Tag:</strong> ${tag}`;
 
 		// Hide the tag form
 		document.forms["tag-form"].style.display = "none";
 
+		// Show current tag
+		currentTagElement.innerHTML = `<strong>Tag:</strong> ${tag}`;
 	});
-
 	// Add event listener for the "submit" event on the city / country form 
 	document.forms["city-country-form"].addEventListener("submit", async function (event) {
 		event.preventDefault(); // Prevent the default form submission
@@ -151,11 +144,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 		tagCityCountryElement.innerHTML = `<strong>Tag:</strong> ${tag} <br> <strong>New City:</strong> ${city} <br> <strong>New Country:</strong> ${country}`;
 
 		// Update the <p> element inside message-form with the selected tag, previous date
-		let newFormatDate = formatDate(oldDate);
+		let newFormatDate = formatDate(oldDate); // Change date format 
 		oldDate = newFormatDate;
+
+		// Show last ID + date + city + country
 		previousDataElement.innerHTML = `<strong>Last ID :</strong> ${lastEntryID} <br><strong>Last Date:</strong> ${lastDate} <br> <strong>Last City :</strong> ${lastCity} <br>  <strong>Last Country :</strong> ${lastCountry}`;
 	});
-
 	// previous message : 
 	previousButton.addEventListener('click', async (event) => {
 		event.preventDefault(); // Prevent the default form submission
@@ -172,19 +166,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 			//Show last message 
 			await showLastMessageOrComment(window.easyMDE1, lastMessage);
 
-			let newFormatDate = formatDate(oldDate);
+			let newFormatDate = formatDate(oldDate);// change date format
 			oldDate = newFormatDate;
+			// Show infos 
 			previousDataElement.innerHTML = `<strong> ID :</strong> ${oldEntryID} <br><strong>Date:</strong> ${oldDate} <br> <strong>City :</strong> ${oldCity} <br> <strong>Country :</strong> ${oldCountry}`;
 		} else {
 			alert('No more previous message');
 		}
-
-
 	});
-
 	// next message : 
 	nextButton.addEventListener('click', async (event) => {
-
 		event.preventDefault(); // Prevent the default form submission
 
 		// get the last message
@@ -199,24 +190,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 			//Show last message 
 			await showLastMessageOrComment(window.easyMDE1, lastMessage);
 
-			let newFormatDate = formatDate(oldDate);
+			let newFormatDate = formatDate(oldDate); // New format date
 			oldDate = newFormatDate;
+			// Show infos 
 			previousDataElement.innerHTML = `<strong> ID :</strong> ${oldEntryID} <br><strong>Date:</strong> ${oldDate} <br> <strong>City :</strong> ${oldCity} <br> <strong>Country :</strong> ${oldCountry}`;
 		} else {
 			alert('No more message');
 		}
-
 	});
 
 	// clear text area
 	readButton.addEventListener('click', async (event) => {
-
-		previousDataElement.innerHTML = `<strong>Last ID :</strong> ${lastEntryID} <br><strong>Last Date:</strong> ${lastDate} <br> <strong>Last City :</strong> ${lastCity} <br>  <strong>Last Country :</strong> ${lastCountry}`;
-
 		event.preventDefault(); // Prevent the default form submission
 
+		// Show infos of the last message
+		previousDataElement.innerHTML = `<strong>Last ID :</strong> ${lastEntryID} <br><strong>Last Date:</strong> ${lastDate} <br> <strong>Last City :</strong> ${lastCity} <br>  <strong>Last Country :</strong> ${lastCountry}`;
+
+		// Clear text area
 		await clearTextArea();
 
+		// Hide buttons and show only validate button
 		readButton.style.display = "none";
 		previousButton.style.display = "none";
 		nextButton.style.display = "none";
@@ -227,15 +220,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 	document.forms["message-form"].addEventListener("submit", async function (event) {
 		event.preventDefault(); // Prevent the default form submission
 
+		//Get message from the form
 		const formData2 = await getMessageForm(window.easyMDE1);
 
+		// Separate results
 		const isValid = formData2.isValid;
 		message = formData2.message
 
+		// is valid 
 		if (isValid) {
 			// Only proceed if the message is valid
-			document.forms["message-form"].style.display = "none";
-			document.forms["date-form"].style.display = "block";
+			document.forms["message-form"].style.display = "none"; // Hide message form 
+			document.forms["date-form"].style.display = "block"; // show date-form
+
+			// Show final data
 			infosMessageElement.innerHTML = `<strong>Tag:</strong> ${tag} <br> <strong>City:</strong> ${city} <br> <strong>Country:</strong> ${country}`;
 		} else {
 			// Provide feedback to the user if the message is empty
@@ -247,23 +245,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 	timeNowButton.addEventListener('click', async () => {
 		messageDateInput.value = await getTimeNow();
 	});
-
+	// Save new message 
 	document.forms["date-form"].addEventListener("submit", async function (event) {
 		event.preventDefault(); // Prevent the default form submission
 
+		// Get date
 		date = await getDateForm(messageDateInput);
 
+		// send data to the API 
 		await sendNewMessage(tag, city, country, message, date);
 	});
-
 	// Save comment : 
 	saveCommentButton.addEventListener('click', async (event) => {
-
 		event.preventDefault(); // Prevent the default form submission
 
+		// Get comment
 		const formData = await getMessageForm(window.easyMDE2);
+
+		//Separate result
 		newComment = formData.message
 		valid = formData.isValid
+
+		//If valid
 		if (valid) {
 			await saveComment(tag, newComment)
 		} else {
@@ -273,9 +276,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 });
 
+//  Functions // 
+
 // get principle list 
 const getPrincipleList = async () => {
-
 	const url = `http://127.0.0.1:2323/tags/principles`;
 	try {
 		const response = await fetch(url);
@@ -287,15 +291,12 @@ const getPrincipleList = async () => {
 	} catch (error) {
 	}
 };
-
 // Function to populate the select principle 
 const populatePrincipleSelect = async (principles) => {
-
 	// Clear any existing options
 	selectPrinciple.innerHTML = '';
 
 	if (principles && principles.length > 0) {
-
 		// Add an "All" option at the first
 		const allOption = document.createElement("option");
 		allOption.value = "all";
@@ -324,11 +325,8 @@ const populatePrincipleSelect = async (principles) => {
 		selectPrinciple.appendChild(allOption);
 	}
 };
-
-
 // get tag list 
 const getTagList = async (principle = 'all') => {
-
 	const principle_string = encodeURIComponent(principle);
 
 	const url = `http://127.0.0.1:2323/tags/list/active?principle=${principle_string}`;
@@ -345,7 +343,6 @@ const getTagList = async (principle = 'all') => {
 
 // Function to populate the select tag
 const populateTagSelect = async (tags) => {
-
 	// Clear any existing options
 	selectTag.innerHTML = '';
 
@@ -373,8 +370,8 @@ const populateTagSelect = async (tags) => {
 	}
 };
 
+// Get tag from the for or create a new one. 
 const getTagForm = async (tags) => {
-
 	let selectedTag = selectTag.value;
 	let selectedPrinciple = selectPrinciple.value
 
@@ -417,8 +414,8 @@ const getTagForm = async (tags) => {
 	}
 };
 
+// Check if tag inactive
 const checkIfTagDisabled = async (tag) => {
-
 	const tag_string = encodeURIComponent(tag);
 
 	try {
@@ -439,7 +436,6 @@ const checkIfTagDisabled = async (tag) => {
 
 // add new tag
 const addNewTag = async (principle, tag) => {
-
 	const principle_string = encodeURIComponent(principle);
 	const tag_string = encodeURIComponent(tag);
 
@@ -458,8 +454,7 @@ const addNewTag = async (principle, tag) => {
 		console.error('Error adding new tag:', error);
 		alert("Error adding new tag. Please check if this tag already exists in the disabled list.");
 	}
-
-}
+};
 
 // get city and country from form
 const getCityCountryForm = async () => {
@@ -562,16 +557,20 @@ const showLastMessageOrComment = async (mark, lastMessage) => {
 			if (lastMessage) {
 				let markdownContent;
 				try {
+
 					// Try to parse the lastMessage as JSON
 					const parsedData = JSON.parse(lastMessage);
+
 					// Convert parsed JSON to Markdown (assuming 'text' is the key for Markdown content)
 					markdownContent = parsedData.text || lastMessage;
+
 				} catch (error) {
 					// If parsing fails, treat the lastMessage as plain text (assuming it's already Markdown)
 					markdownContent = lastMessage;
-				}
+				};
 				// Set the Markdown content in EasyMDE
 				mark.value(markdownContent);
+
 			} else {
 				console.log('No message content to display.');
 				mark.clearAutosavedValue(); // Clears any autosaved value
@@ -584,7 +583,6 @@ const showLastMessageOrComment = async (mark, lastMessage) => {
 		console.error('EasyMDE instance not found.');
 	}
 };
-
 
 // clear text area
 const clearTextArea = async () => {
@@ -693,12 +691,10 @@ const sendNewMessage = async (tag, city, country, message, date) => {
 	} catch (error) {
 		console.error('Error fetching data:', error);
 	}
-
 };
 
 // Function to get comment 
 const readComment = async (tag) => {
-
 	const tag_string = encodeURIComponent(tag);
 
 	try {
@@ -720,7 +716,6 @@ const readComment = async (tag) => {
 
 // Function to save comment 
 const saveComment = async (tag, comment) => {
-
 	const url = `http://127.0.0.1:2323/tags/comments/save`
 
 	const body = JSON.stringify({
