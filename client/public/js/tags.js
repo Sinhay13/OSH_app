@@ -17,9 +17,7 @@ const previousMessageButton = document.querySelector('button[name="message-previ
 const paragraphCommentMessage = document.querySelector('p[name="paragraph-message-comment"]');
 const headerCommentMessage = document.querySelector('h3[name="header-message-comment"]');
 
-const enabledTagsButton = document.querySelector('button[name="enabled-tags-button"]');
-const disabledTagsButton = document.querySelector('button[name="disabled-tags-button"]');
-const allTagsButton = document.querySelector('button[name="all-tags-button"]');
+const filterTagButton = document.querySelector('button[name="tags-filtered-button"]');
 const returnButtons = document.querySelectorAll('button[name="return"]');
 const applyFiltersButton = document.querySelector('button[name="apply-filters-tags"]');
 const countElement = document.querySelector('p[name="count-tags"]');
@@ -42,29 +40,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 	};
 
 	// hide form : 
-	document.forms["disabled-tags"].style.display = "none";
-	document.forms["enabled-tags-filters"].style.display = "none";
-	document.forms["enabled-tags"].style.display = "none";
-	document.forms["full-tags"].style.display = "none";
+	document.forms["tags-filtered"].style.display = "none";
 	document.forms["message-list"].style.display = "none";
 	document.forms["message-comment-form"].style.display = "none";
 
 	// Count Tags //
 	await countAndShowTags(countElement);
 
-	// Form "status-tag" //
+	// filters for tags //
 
-	// for enabled tags
-	enabledTagsButton.addEventListener('click', async (event) => {
-		event.preventDefault();
-
-		// get principle List
-		principlesList = await principles();
-		await feedPrinciple(principlesList);
-
-		document.forms["enabled-tags-filters"].style.display = "block";
-		document.forms["status-tags"].style.display = "none";
-	});
+	// get principle List
+	principlesList = await principles();
+	await feedPrinciple(principlesList);
 
 	// Handle is-principle-filter change
 	isPrincipleFilter.addEventListener('change', () => {
@@ -74,18 +61,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 		} else {
 			principleFilter.disabled = false;
 		}
-	});
-
-	disabledTagsButton.addEventListener('click', async (event) => {
-		event.preventDefault();
-		document.forms["disabled-tags"].style.display = "block";
-		document.forms["status-tags"].style.display = "none";
-	});
-
-	allTagsButton.addEventListener('click', async (event) => {
-		event.preventDefault();
-		document.forms["full-tags"].style.display = "block";
-		document.forms["status-tags"].style.display = "none";
 	});
 
 	// Return button //
@@ -98,21 +73,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 	// go back filters enabled 
 	filtersTagsButton.addEventListener('click', async (event) => {
 		event.preventDefault();
-		document.forms["enabled-tags-filters"].style.display = "block";
-		document.forms["enabled-tags"].style.display = "none";
+		document.forms["tags-filters"].style.display = "block";
+		document.forms["tags-filtered"].style.display = "none";
 	});
 
 
-	// Form "enabled-tags-filters" //
+	// Form "tags-filters" //
 	applyFiltersButton.addEventListener('click', async (event) => {
 		event.preventDefault();
 
-		params = await getParamsForFilteringTagsEnabled();
-		const dataTagsEnabled = await getListTagsEnabledFiltered(params);
-		await feedTableEnabledTags(dataTagsEnabled, principlesList, params, countElement);
+		params = await getParamsForFilteringTags();
+		const dataTags = await getListTagsFiltered(params);
+		await feedTableTags(dataTags, principlesList, params, countElement);
 
-		document.forms["enabled-tags-filters"].style.display = "none";
-		document.forms["enabled-tags"].style.display = "block";
+		document.forms["tags-filters"].style.display = "none";
+		document.forms["tags-filtered"].style.display = "block";
 
 		await showFilterEnabled(params, currentEnabledFilter);
 	});
@@ -127,10 +102,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 			const newComment = formData.message;
 			await saveComment(currentTag, newComment);
 
-			const newDataTagsEnabled = await getListTagsEnabledFiltered(params);
-			await feedTableEnabledTags(newDataTagsEnabled, principlesList, params, countElement);
+			const newDataTags = await getListTagsFiltered(params);
+			await feedTableTags(newDataTags, principlesList, params, countElement);
 
-			document.forms["enabled-tags"].style.display = "block";
+			document.forms["tags-filtered"].style.display = "block";
 			document.forms["message-comment-form"].style.display = "none";
 
 			//Reset for for message / comment
@@ -305,11 +280,13 @@ const feedPrinciple = async (principlesList) => {
 	});
 };
 
-// Function form "enabled-tags-filters" //
+// Function form "tags-filters" //
 
-const getParamsForFilteringTagsEnabled = async () => {
+const getParamsForFilteringTags = async () => {
 	// Get the form elements
-	const form = document.forms["enabled-tags-filters"];
+	const form = document.forms["tags-filters"];
+
+	let isActive = form.querySelector('select[name="is-active-filter"]').value;
 
 	// Retrieve values from the form fields
 	let isSystem = form.querySelector('select[name="is-system-filter"]').value;
@@ -334,17 +311,19 @@ const getParamsForFilteringTagsEnabled = async () => {
 
 	// Return the parameters as an object
 	return {
+		isActive,
 		isSystem,
 		isPrinciple,
 		principle
 	};
 };
 
-const getListTagsEnabledFiltered = async (params) => {
+const getListTagsFiltered = async (params) => {
 
 	const url = `http://127.0.0.1:2323/tags/list/filtered`;
 
 	const body = JSON.stringify({
+		isActive: params.isActive,
 		isSystem: params.isSystem,
 		isPrinciple: params.isPrinciple,
 		principle: params.principle
@@ -402,8 +381,8 @@ const showFilterEnabled = async (params, currentEnabledFilter) => {
 }
 
 // feed table for filtered enabled tags 
-const feedTableEnabledTags = async (data, principlesList, params, countElement) => {
-	const form = document.forms["enabled-tags"];
+const feedTableTags = async (data, principlesList, params, countElement) => {
+	const form = document.forms["tags-filtered"];
 	const tbody = form.querySelector('tbody');
 
 	// Clear existing rows
@@ -594,8 +573,8 @@ const disableTagButton = async (tag, principlesList, params, countElement) => {
 
 			await disableTag(tag);
 			await countAndShowTags(countElement);
-			const newDataTagsEnabled = await getListTagsEnabledFiltered(params);
-			await feedTableEnabledTags(newDataTagsEnabled, principlesList, params, countElement);
+			const newDataTags = await getListTagsFiltered(params);
+			await feedTableTags(newDataTags, principlesList, params, countElement);
 		}
 	} else {
 		return;
@@ -643,9 +622,9 @@ const updateTagButton = async (tag, is_principle, is_system, principle_tag, prin
 		return;
 	} else {
 		await updateTag(tag, is_principle, is_system, principle_tag);
-		const newDataTagsEnabled = await getListTagsEnabledFiltered(params);
+		const newDataTags = await getListTagsFiltered(params);
 		principlesList = await principles();
-		await feedTableEnabledTags(newDataTagsEnabled, principlesList, params, countElement);
+		await feedTableTags(newDataTags, principlesList, params, countElement);
 	}
 };
 
@@ -686,7 +665,7 @@ const commentTagButton = async (tag) => {
 	currentTag = tag;
 
 	// organize current form
-	document.forms["enabled-tags"].style.display = "none";
+	document.forms["tags-filtered"].style.display = "none";
 	document.forms["message-comment-form"].style.display = "block";
 
 	//Prepare  form for comment
@@ -824,7 +803,7 @@ const messagesTagButton = async (tag) => {
 	const data = await getMessageList(currentTag, currentPage)
 	await feedTableMessageList(data);
 
-	document.forms["enabled-tags"].style.display = "none";
+	document.forms["tags-filtered"].style.display = "none";
 };
 
 // Function to get list of message : 
