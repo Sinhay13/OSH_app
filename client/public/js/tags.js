@@ -31,6 +31,7 @@ const nextPageButton = document.querySelector('input[name="message-list-next"]')
 const goBackTagFilteredButtons = document.querySelectorAll('button[name="go-back-tag-filtered"]');
 const goBackMessageListButton = document.querySelector('button[name="go-back-message-list"]');
 const resetButton = document.querySelector('button[name="reset"]');
+const seeCommentButton = document.querySelector('button[name="see-comment"]');
 
 document.addEventListener('DOMContentLoaded', async () => {
 	const markdownElement = document.getElementById('markdown');
@@ -89,10 +90,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 	// go back message list
 	goBackMessageListButton.addEventListener('click', async (event) => {
 		event.preventDefault();
+		await messagesTagButton(currentTag);
 		document.forms["tags-filters"].style.display = "none";
 		document.forms["tags-filtered"].style.display = "none";
 		document.forms["message-list"].style.display = "block";
 		document.forms["message-comment-form"].style.display = "none";
+	});
+
+	// see comment
+	seeCommentButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+		await commentTagButton(currentTag);
+		document.forms["tags-filters"].style.display = "none";
+		document.forms["tags-filtered"].style.display = "none";
+		document.forms["message-list"].style.display = "none";
+		document.forms["message-comment-form"].style.display = "block";
 	});
 
 	// reset button

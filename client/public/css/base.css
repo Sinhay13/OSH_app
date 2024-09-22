@@ -127,6 +127,7 @@ textarea {
 }
 
 /* return button Tags */
+button[name="see-comment"],
 button[name="reset"],
 button[name="go-back-tag-filtered"],
 button[name="go-back-message-list"],
