@@ -5,14 +5,11 @@
 
 <form name="tags-filters">
 	<h3>Filters Tags:</h3>
-	<div name="return-button">
-		<button type="button" name="return">Return</button>
-	</div>
 	<br>
 	<table>
 		<thead>
 			<tr>
-				<th>is-active</th>
+				<th>active</th>
 				<th>is-system</th>
 				<th>is-principle</th>
 				<th>principle</th>
@@ -22,7 +19,7 @@
 		<tbody>
 			<tr>
 				<td>
-					<select name="is-active-filter">
+					<select name="active-filter">
 						<option value="all">all</option>
 						<option value="yes">yes</option>
 						<option value="no">no</option>
@@ -55,8 +52,7 @@
 </form>
 
 <form name="tags-filtered">
-	<h3>Enabled Tags List : </h3>
-	<p name="current-enabled-filter"></p>
+	<p name="current-filter"></p>
 	<div name="return-button">
 		<button type="button" name="back-to-filter">Filters</button>
 	</div>
@@ -66,7 +62,7 @@
 			<thead>
 				<tr>
 					<th>Name</th>
-					<th>is-active</th>
+					<th>active</th>
 					<th>is-system</th>
 					<th>is-principle</th>
 					<th>principle</th>
@@ -79,9 +75,9 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td><input type="text" name="name-enabled-tag"></td>
+					<td><input type="text" name="name-tag"></td>
 					<td>
-						<select name="is-active">
+						<select name="active">
 							<option value="no">No</option>
 							<option value="yes">Yes</option>
 						</select>
@@ -99,17 +95,16 @@
 						</select>
 					</td>
 					<td>
-						<select name="principle">
+						<select name="principle" ƒ>
 							<option value="none">null</option>
 						</select>
 					</td>
-					<td><input type="text" name="created-enabled-tag"></td>
-					<td><input type="text" name="updated-enabled-tag"></td>
-					<td><button type="button" name="see-messages-list-enabled-tag">Messages</button></td>
-					<td><button type="button" name="see-comments-enabled-tag">Comment</button></td>
+					<td><input type="text" name="created-tag"></td>
+					<td><input type="text" name="updated-tag"></td>
+					<td><button type="button" name="see-messages-list-tag">Messages</button></td>
+					<td><button type="button" name="see-comments-tag">Comment</button></td>
 					<td>
-						<button type="button" name="enabled-tag-update">Update</button>
-						<button type="button" name="disable-tag">Disable</button>
+						<button type="button" name="tag-update">Update</button>
 					</td>
 				</tr>
 			</tbody>
@@ -122,7 +117,7 @@
 	<h3> Messages Found : </h3>
 	<p name="tag-name-message-list"></p>
 	<div name="return-button">
-		<button type="button" name="return">Return</button>
+		<button type="button" name="go-back-tag-filtered">Return</button>
 	</div>
 	<br>
 
@@ -154,15 +149,26 @@
 </form>
 
 <form name="message-comment-form">
+
 	<h3 name="header-message-comment"></h3>
+
+	<div>
+		<button type="button" name="go-back-message-list">Messages</button>
+		<button type="button" name="go-back-tag-filtered">Tags</button>
+	</div>
+
 	<p name="paragraph-message-comment"></p>
+
 	<textarea id="markdown"></textarea>
+
 	<div class="button-container">
 		<button type="button" name="message-previous">Previous</button>
 		<button type="button" name="message-next">Next</button>
 	</div>
+
 	<input type="submit" name="comment-save" value="Save">
 	<input type="submit" name="message-close" value="Close">
+
 	<p class="right">.SO</p>
 </form>
 

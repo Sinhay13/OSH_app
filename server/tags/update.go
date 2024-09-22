@@ -9,58 +9,69 @@ import (
 	"strconv"
 )
 
-func extractDataToUpdate(w http.ResponseWriter, r *http.Request) (int, int, string, string, error) {
+func extractDataToUpdate(w http.ResponseWriter, r *http.Request) (int, int, int, string, string, error) {
 
 	data, err := utils.ExtractData(w, r)
 	if err != nil {
 		utils.Logger.Print("Error extracting data: ", err)
-		return 0, 0, "", "", err
+		return 0, 0, 0, "", "", err
 	}
 
-	var isSystem, isPrinciple int
+	var active, isSystem, isPrinciple int
 	var principleTag, tag string
+
+	if val, ok := data["active"]; ok {
+		active, err = strconv.Atoi(fmt.Sprintf("%v", val))
+		if err != nil {
+			utils.Logger.Print("Error converting active to int: ", err)
+			return 0, 0, 0, "", "", err
+		}
+	} else {
+		utils.Logger.Println("isSystem not found in data")
+		return 0, 0, 0, "", "", err
+	}
 
 	if val, ok := data["is_system"]; ok {
 		isSystem, err = strconv.Atoi(fmt.Sprintf("%v", val))
 		if err != nil {
 			utils.Logger.Print("Error converting isSystem to int: ", err)
-			return 0, 0, "", "", err
+			return 0, 0, 0, "", "", err
 		}
 	} else {
 		utils.Logger.Println("isSystem not found in data")
-		return 0, 0, "", "", err
+		return 0, 0, 0, "", "", err
 	}
 
 	if val, ok := data["is_principle"]; ok {
 		isPrinciple, err = strconv.Atoi(fmt.Sprintf("%v", val))
 		if err != nil {
 			utils.Logger.Print("Error converting isPrinciple to int: ", err)
-			return 0, 0, "", "", err
+			return 0, 0, 0, "", "", err
 		}
 	} else {
 		utils.Logger.Println("isPrinciple not found in data")
-		return 0, 0, "", "", err
+		return 0, 0, 0, "", "", err
 	}
 
 	if val, ok := data["principle_tag"]; ok {
 		principleTag = fmt.Sprintf("%v", val)
 	} else {
 		utils.Logger.Println("principle not found in data")
-		return 0, 0, "", "", err
+		return 0, 0, 0, "", "", err
 	}
 
 	if val, ok := data["tag"]; ok {
 		tag = fmt.Sprintf("%v", val)
 	} else {
 		utils.Logger.Println("tag not found in data")
-		return 0, 0, "", "", err
+		return 0, 0, 0, "", "", err
 	}
 
-	return isSystem, isPrinciple, principleTag, tag, nil
+	return active, isSystem, isPrinciple, principleTag, tag, nil
 
 }
 
-func updateTagSQL(db *sql.DB, isSystem int, isPrinciple int, principleTag string, tag string) error {
+func updateTagSQL(db *sql.DB, active int, isSystem int, isPrinciple int, principleTag string, tag string) error {
 
 	tagsJson, err := utils.LoadQueries("tags.json")
 	if err != nil {
@@ -71,7 +82,7 @@ func updateTagSQL(db *sql.DB, isSystem int, isPrinciple int, principleTag string
 
 	timeNow := utils.TimeNow()
 
-	_, err = db.Exec(query, isPrinciple, isSystem, sql.NullString{
+	_, err = db.Exec(query, active, isPrinciple, isSystem, sql.NullString{
 		String: principleTag,
 		Valid:  principleTag != "none",
 	}, timeNow, tag)
@@ -83,12 +94,12 @@ func updateTagSQL(db *sql.DB, isSystem int, isPrinciple int, principleTag string
 
 func UpdateTag(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
-	isSystem, isPrinciple, principleTag, tag, err := extractDataToUpdate(w, r)
+	active, isSystem, isPrinciple, principleTag, tag, err := extractDataToUpdate(w, r)
 	if err != nil {
 		return
 	}
 
-	err = updateTagSQL(db, isSystem, isPrinciple, principleTag, tag)
+	err = updateTagSQL(db, active, isSystem, isPrinciple, principleTag, tag)
 	if err != nil {
 		utils.Logger.Printf("Error to update tag in SQL : %v\n", err)
 	}

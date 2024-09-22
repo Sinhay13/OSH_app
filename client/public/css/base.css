@@ -127,7 +127,8 @@ textarea {
 }
 
 /* return button Tags */
-button[name="return"], 
+button[name="go-back-tag-filtered"],
+button[name="go-back-message-list"],
 button[name="back-to-filter"], 
 button[name="reset-button"] {
     width: 100px;    /* Set a fixed width */

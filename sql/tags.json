@@ -6,10 +6,9 @@
 "insert_new_tag_principle":"INSERT INTO tags (tag, created_time, updated_time, principle_tag) VALUES (?,?,?,?);",
 "principles": "SELECT tag FROM tags WHERE is_principle = 1;",
 "count_tags":"SELECT COUNT(*) FROM tags WHERE active = ?;",
-"filtered_tags_enabled":"SELECT * FROM tags WHERE active = 1",
+"filtered_tags":"SELECT * FROM tags",
 "check_principles_tags":"SELECT COUNT(*) FROM tags WHERE principle_tag = ?;",
-"disable_tag":"UPDATE tags SET active = 0, updated_time = ? WHERE tag = ?;",
-"update_tag":"UPDATE tags SET is_principle = ?, is_system = ?, principle_tag = ? , updated_time = ? WHERE tag =?;",
+"update_tag":"UPDATE tags SET active = ?, is_principle = ?, is_system = ?, principle_tag = ? , updated_time = ? WHERE tag =?;",
 "check_if_tag_inactive":"SELECT COUNT(*) FROM tags WHERE tag = ? AND active = 0;",
 "read_comment":"SELECT comment FROM tags WHERE tag = ?;",
 "save_comment": "UPDATE tags SET comment = ?, updated_time = ? WHERE tag = ?;"

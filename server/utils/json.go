@@ -27,9 +27,10 @@ type Queries struct {
 	InsertNewTagPrinciple string `json:"insert_new_tag_principle"`
 	Principles            string `json:"principles"`
 	CountTags             string `json:"count_tags"`
-	FilteredTagsEnabled   string `json:"filtered_tags_enabled"`
+	FilteredTags          string `json:"filtered_tags"`
 	CheckPrinciplesTags   string `json:"check_principles_tags"`
 	DisableTag            string `json:"disable_tag"`
+	EnableTag             string `json:"enable_tag"`
 	UpdateTag             string `json:"update_tag"`
 	CheckIfTagInactive    string `json:"check_if_tag_inactive"`
 	ReadComment           string `json:"read_comment"`
