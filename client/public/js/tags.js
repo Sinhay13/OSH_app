@@ -101,7 +101,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 		location.reload();
 	});
 
-
 	// Form "tags-filters" //
 	applyFiltersButton.addEventListener('click', async (event) => {
 		event.preventDefault();
@@ -136,7 +135,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 			closeMessageInput.style.display = "block";
 			nextMessageButton.style.display = "block";
 			previousMessageButton.style.display = "block";
-
 		} else {
 			return
 		};
@@ -243,7 +241,6 @@ const countAndShowTags = async (countElement) => {
 
 // Call API
 const countTags = async () => {
-
 	const url = `http://127.0.0.1:2323/tags/count`;
 
 	try {
@@ -263,7 +260,6 @@ const countTags = async () => {
 
 // get principles list
 const principles = async () => {
-
 	const url = `http://127.0.0.1:2323/tags/principles`;
 
 	try {
@@ -348,7 +344,6 @@ const getParamsForFilteringTags = async () => {
 };
 
 const getListTagsFiltered = async (params) => {
-
 	const url = `http://127.0.0.1:2323/tags/list/filtered`;
 
 	const body = JSON.stringify({
@@ -380,7 +375,6 @@ const getListTagsFiltered = async (params) => {
 
 // show current filter
 const showFilter = async (params, currentFilter) => {
-
 	let active;
 	let isSystem;
 	let isPrinciple;
@@ -580,7 +574,6 @@ const feedTableTags = async (data, principlesList, params, countElement) => {
 
 // check if it is principle and is using. 
 const checkPrincipleTags = async (tag) => {
-
 	const tag_string = encodeURIComponent(tag);
 
 	const url = `http://127.0.0.1:2323/tags/principles/check?tag=${tag_string}`;
@@ -600,7 +593,6 @@ const checkPrincipleTags = async (tag) => {
 
 // deal with update button 
 const updateTagButton = async (tag, active, is_principle, is_system, principle_tag, principlesList, params, countElement) => {
-
 	let count = 0;
 	let messageError;
 
@@ -631,7 +623,6 @@ const updateTagButton = async (tag, active, is_principle, is_system, principle_t
 
 // Function to update tag : 
 const updateTag = async (tag, active, is_principle, is_system, principle_tag) => {
-
 	const url = `http://127.0.0.1:2323/tags/update`
 
 	const body = JSON.stringify({
@@ -662,7 +653,6 @@ const updateTag = async (tag, active, is_principle, is_system, principle_tag) =>
 
 // function for comment button: 
 const commentTagButton = async (tag) => {
-
 	// set current tag
 	currentTag = tag;
 
@@ -684,7 +674,6 @@ const commentTagButton = async (tag) => {
 
 // Function to get comment 
 const readComment = async (tag) => {
-
 	const tag_string = encodeURIComponent(tag);
 
 	try {
@@ -706,7 +695,6 @@ const readComment = async (tag) => {
 
 // Function to save comment 
 const saveComment = async (tag, comment) => {
-
 	const url = `http://127.0.0.1:2323/tags/comments/save`
 
 	const body = JSON.stringify({
@@ -795,7 +783,6 @@ const getMessageOrCommentForm = async () => {
 
 // Function to get message list
 const messagesTagButton = async (tag) => {
-
 	currentTag = tag;
 	currentPage = 1;
 
@@ -810,8 +797,6 @@ const messagesTagButton = async (tag) => {
 
 // Function to get list of message : 
 const getMessageList = async (tag, page) => {
-
-
 	const tag_string = encodeURIComponent(tag);
 	const page_string = encodeURIComponent(page);
 
@@ -834,7 +819,6 @@ const getMessageList = async (tag, page) => {
 
 // Function to get message in function of a entry_id
 const getMessageFromID = async (entryID) => {
-
 	const id_string = encodeURIComponent(entryID);
 
 	try {
@@ -856,7 +840,6 @@ const getMessageFromID = async (entryID) => {
 
 // Function to feed table for message list: 
 const feedTableMessageList = async (data) => {
-
 	const form = document.forms["message-list"];
 	const tbody = form.querySelector('tbody');
 
@@ -961,7 +944,6 @@ const formatDate = (dateString) => {
 
 // Function to read message : 
 const readMessageButton = async (entryID) => {
-
 	document.forms["message-comment-form"].style.display = "block";
 	document.forms["message-list"].style.display = "none";
 
