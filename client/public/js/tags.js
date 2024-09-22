@@ -30,6 +30,7 @@ const previousPageButton = document.querySelector('input[name="message-list-back
 const nextPageButton = document.querySelector('input[name="message-list-next"]');
 const goBackTagFilteredButtons = document.querySelectorAll('button[name="go-back-tag-filtered"]');
 const goBackMessageListButton = document.querySelector('button[name="go-back-message-list"]');
+const resetButton = document.querySelector('button[name="reset"]');
 
 document.addEventListener('DOMContentLoaded', async () => {
 	const markdownElement = document.getElementById('markdown');
@@ -92,6 +93,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 		document.forms["tags-filtered"].style.display = "none";
 		document.forms["message-list"].style.display = "block";
 		document.forms["message-comment-form"].style.display = "none";
+	});
+
+	// reset button
+	resetButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+		location.reload();
 	});
 
 
