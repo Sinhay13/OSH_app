@@ -148,6 +148,17 @@ button[name="see-message"]{
     height: 50px;    /* Set a fixed height */
 }
 
+button[name="reminds-entries"]{
+	width: auto;    /* Set a fixed width */
+    height: auto;    /* Set a fixed height */
+	background-color: #C71585;
+	color: black;
+	border: none;    /* Remove borders */
+    border-radius: 5px;  /* Rounded corners */
+    font-size: 14px; /* Font size */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
 button[name="return"]:hover {
     background-color: #45a049; /* Darker green on hover */
 }
