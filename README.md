@@ -53,3 +53,18 @@
    ```
    http://127.0.0.1:3232/chapters
    ```
+
+   #### 1. Chapters
+
+Chapters serve as the starting point for your journey. They are essential to begin your first adventure as a Samurai.
+
+**Example:** 
+
+![image](https://github.com/user-attachments/assets/6ee30174-124c-48da-90df-ced641bbd4c9)
+
+
+**Important Rules:**
+
+• A new chapter can only be created at least one year after the last chapter was opened.
+
+• When creating a new chapter (except for the first one), you must choose a title for the previous chapter. This title should be a single sentence summarizing its content.
