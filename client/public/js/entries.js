@@ -294,34 +294,19 @@ const populatePrincipleSelect = async (principles) => {
 	// Clear any existing options
 	selectPrinciple.innerHTML = '';
 
-	if (principles && principles.length > 0) {
-		// Add an "All" option at the first
-		const allOption = document.createElement("option");
-		allOption.value = "all";
-		allOption.textContent = "all";
-		selectPrinciple.appendChild(allOption);
+	// Add an "All" option at the first
+	const allOption = document.createElement("option");
+	allOption.value = "all";
+	allOption.textContent = "all";
+	selectPrinciple.appendChild(allOption);
 
-		// If principle are available, add each principle  as an option
-		principles.forEach(principleObj => {
-			const option = document.createElement("option");
-			option.value = principleObj.tag; // Using the principle name as the value
-			option.textContent = principleObj.tag; // Displaying the principle name
-			selectPrinciple.appendChild(option);
-		});
+	principles.forEach(principleObj => {
+		const option = document.createElement("option");
+		option.value = principleObj.tag; // Using the principle name as the value
+		option.textContent = principleObj.tag; // Displaying the principle name
+		selectPrinciple.appendChild(option);
+	});
 
-		// Add an "none" option at the end
-		const noneOption = document.createElement("option");
-		noneOption.value = "none";
-		noneOption.textContent = "none";
-		selectPrinciple.appendChild(noneOption);
-
-	} else {
-		// If no tags are available, just add the "none" option
-		const allOption = document.createElement("option");
-		allOption.value = "All";
-		allOption.textContent = "All";
-		selectPrinciple.appendChild(allOption);
-	}
 };
 
 // get tag list 
