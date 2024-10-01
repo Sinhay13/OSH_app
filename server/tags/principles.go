@@ -46,11 +46,6 @@ func getPrinciples(db *sql.DB) ([]Principles, error) {
 		return nil, err
 	}
 
-	// If no rows were found, return a slice with a single "none" value
-	if len(principles) == 0 {
-		return []Principles{{Tag: "none"}}, nil
-	}
-
 	return principles, nil
 }
 
@@ -62,6 +57,7 @@ func TagsPrinciples(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.Logger.Printf("Error getting principles: %v", err)
 		return
 	}
+	principles = append(principles, Principles{Tag: "none"})
 
 	// Define Content-Type
 	w.Header().Set("Content-Type", "application/json")

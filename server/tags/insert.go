@@ -18,17 +18,18 @@ func sendTagToDB(db *sql.DB, principle string, tag string) error {
 		return err
 	}
 	if principle == "all" || principle == "none" {
-		_, err = db.Exec(tagsJson.InsertNewTag, tag, timeNow, timeNow)
+		query := tagsJson.InsertNewTag
+		_, err = db.Exec(query, tag, timeNow, timeNow)
 		if err != nil {
 			return err
 		}
 	} else {
-		_, err = db.Exec(tagsJson.InsertNewTagPrinciple, tag, timeNow, timeNow, principle)
+		query := tagsJson.InsertNewTagPrinciple
+		_, err = db.Exec(query, tag, timeNow, timeNow, principle)
 		if err != nil {
 			return err
 		}
 	}
-
 	return nil
 }
 

@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	await populatePrincipleSelect(principles);
 
 	//get first list tags
-	tags = await getTagList();
+	tags = await getTagList('all');
 
 	//populate select tag
 	await populateTagSelect(tags);
@@ -306,11 +306,10 @@ const populatePrincipleSelect = async (principles) => {
 		option.textContent = principleObj.tag; // Displaying the principle name
 		selectPrinciple.appendChild(option);
 	});
-
 };
 
 // get tag list 
-const getTagList = async (principle = 'all') => {
+const getTagList = async (principle) => {
 	const principle_string = encodeURIComponent(principle);
 
 	const url = `http://127.0.0.1:2323/tags/list/active?principle=${principle_string}`;
@@ -669,7 +668,6 @@ const sendNewMessage = async (tag, city, country, message, date) => {
 			throw new Error('Network response was not ok');
 		}
 		const data = await response.json();
-		console.log(data);
 		alert("New message sent !");
 		location.reload();
 	} catch (error) {

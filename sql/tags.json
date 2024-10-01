@@ -1,7 +1,7 @@
 {
 "active_list": "SELECT tag FROM tags WHERE active = 1 ORDER BY tag ASC;",
 "active_list_principle": "SELECT tag FROM tags WHERE active = 1 AND principle_tag = ? ORDER BY tag ASC;",
-"active_list_none": "SELECT tag FROM tags WHERE active = 1 AND principle_tag = NULL ORDER BY tag ASC;",
+"active_list_none": "SELECT tag FROM tags WHERE active = 1 AND principle_tag IS NULL ORDER BY tag ASC;",
 "insert_new_tag":"INSERT INTO tags (tag, created_time, updated_time) VALUES (?,?,?);",
 "insert_new_tag_principle":"INSERT INTO tags (tag, created_time, updated_time, principle_tag) VALUES (?,?,?,?);",
 "principles": "SELECT tag FROM tags WHERE is_principle = 1;",
