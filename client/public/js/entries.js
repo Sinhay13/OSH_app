@@ -363,35 +363,43 @@ const getTagForm = async (tags) => {
 		let isValid = false;
 
 		while (!isValid) {
-			newTag = prompt("Enter a new tag (must start with '侍', be followed by a digit or an uppercase letter, be a single word without spaces, and not be empty):");
+			newTag = prompt("Enter a new tag (the '侍' prefix will be added automatically). The tag must be followed by a digit or an uppercase letter, be a single word without spaces, and cannot be empty:");
 
 			if (newTag === null) {
 				location.reload();
 			}
 
-			newTag = newTag.trim();
-			if (newTag.length > 0 && newTag.startsWith("侍") && /^[侍][A-Z0-9][^\s]*$/.test(newTag)) {
-				const isDuplicate = tags && tags.some(tagObj => tagObj.tag === newTag);
+			let newTagSamurai;
+
+			if (newTag[0] != "侍") {
+				newTagSamurai = "侍" + newTag;
+			} else {
+				newTagSamurai = newTag;
+			}
+
+			newTagSamurai = newTagSamurai.trim();
+			if (newTagSamurai.length > 0 && newTagSamurai.startsWith("侍") && /^[侍][A-Z0-9][^\s]*$/.test(newTagSamurai)) {
+				const isDuplicate = tags && tags.some(tagObj => tagObj.tag === newTagSamurai);
 
 				if (!isDuplicate) {
-					const count = await checkIfTagDisabled(newTag);
+					const count = await checkIfTagDisabled(newTagSamurai);
 					if (count > 0) {
-						alert(`${newTag} already exists but is disabled. Please enable it to use.`);
+						alert(`${newTagSamurai} already exists but is disabled. Please enable it to use.`);
 						location.reload();
 					} else {
-						await addNewTag(selectedPrinciple, newTag);
+						await addNewTag(selectedPrinciple, newTagSamurai);
 						isValid = true;
 					}
 				} else {
-					alert(`${newTag} tag already exists. Please enter a different tag.`);
+					alert(`${newTagSamurai} tag already exists. Please enter a different tag.`);
 					location.reload();
 				}
 			} else {
-				alert("Tag must start with '侍', be followed by a digit or an uppercase letter, be a single word without spaces, and cannot be empty.");
+				alert("Enter a new tag (the '侍' prefix will be added automatically). The tag must be followed by a digit or an uppercase letter, be a single word without spaces, and cannot be empty:");
 				location.reload();
 			}
+			return newTagSamurai;
 		}
-		return newTag;
 	} else {
 		return selectedTag;
 	}
