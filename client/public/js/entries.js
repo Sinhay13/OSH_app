@@ -53,6 +53,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 	document.forms["city-country-form"].style.display = "none";
 	document.forms["message-form"].style.display = "none";
 	document.forms["date-form"].style.display = "none";
+
+	// Check if chapter opened
+	await checkChapterOpened();
+
 	// reset button :
 	resetButton.addEventListener('click', async (event) => {
 		event.preventDefault();
@@ -732,6 +736,23 @@ const saveComment = async (tag, comment) => {
 };
 
 
-
+// Check if chapter opened
+const checkChapterOpened = async () => {
+	const url = 'http://127.0.0.1:2323/chapters/check';
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		const data = await response.json();
+		if (data.status === "closed") {
+			alert("No chapter open yet. Please open a chapter first.");
+			// go to chapters page 
+			window.location.href = "/chapters";
+		}
+	} catch (error) {
+		console.error('Error fetching data:', error);
+	}
+}
 
 

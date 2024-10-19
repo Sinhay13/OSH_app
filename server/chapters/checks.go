@@ -71,3 +71,35 @@ func IsOneYearAgo(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.Logger.Printf("Error encoding response: %v\n", err)
 	}
 }
+
+// check if chapter exists
+func CheckChapter(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	chaptersJson, err := utils.LoadQueries("chapters.json")
+	if err != nil {
+		utils.Logger.Printf("Error loading queries: %v\n", err)
+		return
+	}
+
+	query := chaptersJson.Count
+
+	var count int
+	err = db.QueryRow(query).Scan(&count)
+	if err != nil {
+		utils.Logger.Printf("Error running query: %v\n", err)
+		return
+	}
+
+	var result string
+
+	if count == 0 {
+		result = "closed"
+	} else {
+		result = "opened"
+	}
+
+	response := map[string]string{"status": result}
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		utils.Logger.Printf("Error encoding response: %v\n", err)
+	}
+}

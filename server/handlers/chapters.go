@@ -30,4 +30,9 @@ func RegisterChaptersEndpoints(mux *http.ServeMux, db *sql.DB) {
 		chapters.ListChapters(w, r, db)
 	}))
 
+	// check if chapter exists + CORS (checks.go)
+	mux.HandleFunc("/chapters/check", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		chapters.CheckChapter(w, r, db)
+	}))
+
 }
