@@ -16,6 +16,9 @@ let lastCountry;
 let oldEntryID;
 let lastEntryID;
 
+//List of tags not allowed
+const listTagNotAllowed = ["侍Samurai", "Samurai", "侍System", "System", "侍Reminds", "Reminds"];
+
 //buttons and elements 
 const validMessageButton = document.querySelector('form[name="message-form"] input[name="valid-message"]');
 const previousButton = document.querySelector('button[name="previous"]');
@@ -369,10 +372,17 @@ const getTagForm = async (tags) => {
 		while (!isValid) {
 			newTag = prompt("Enter a new tag (the '侍' prefix will be added automatically). The tag must be followed by a digit or an uppercase letter, be a single word without spaces, and cannot be empty:");
 
-			if (newTag === null) {
+			// Check if the new tag is allowed
+			const isNotAllowed = await checkIfTagNotAllowed(listTagNotAllowed, newTag);
+			if (isNotAllowed) {
 				location.reload();
+				return;
 			}
 
+			if (newTag === null) {
+				location.reload();
+				return;
+			}
 			let newTagSamurai;
 
 			if (newTag[0] != "侍") {
@@ -755,4 +765,12 @@ const checkChapterOpened = async () => {
 	}
 }
 
+// Check if new tag not in the list of tag name not allowed
+const checkIfTagNotAllowed = async (list, tag) => {
+	if (list.includes(tag)) {
+		alert("This tag is not allowed. Please choose another one.");
+		return true;
+	}
+	return false;
+}
 
