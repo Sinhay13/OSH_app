@@ -33,6 +33,7 @@ const goBackMessageListButton = document.querySelector('button[name="go-back-mes
 const resetButton = document.querySelector('button[name="reset"]');
 const seeCommentButton = document.querySelector('button[name="see-comment"]');
 
+
 document.addEventListener('DOMContentLoaded', async () => {
 	const markdownElement = document.getElementById('markdown');
 	if (markdownElement) {
@@ -42,6 +43,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 		// Start in preview mode for the first editor
 		window.easyMDE.togglePreview();
 	};
+
+	// feed chapter name select
+	const chaptersNameList = await getChaptersName();
+	await feedChapterName(chaptersNameList);
 
 	// hide form : 
 	document.forms["tags-filtered"].style.display = "none";
@@ -993,3 +998,32 @@ const getLastMessageWithDate = async (tag, date, action) => {
 		return null; // Or handle the error as needed
 	}
 };
+
+// feed chapter name select 
+const feedChapterName = async (chapterNameList) => {
+	const chapterNameSelect = document.querySelector('select[name="chapter-filter"]');
+
+
+	// Check if the chapterNameList contains anything 
+	if (chapterNameList.length < 1) {
+		return; // Do nothing
+	}
+
+	// Add options to the select element
+	chapterNameList.forEach(name => {
+		if (name.tag !== 'all') {
+			const option = document.createElement('option');
+			option.value = name;
+			option.textContent = name
+			chapterNameSelect.appendChild(option);
+		}
+	});
+};
+
+// get chapters name list
+const getChaptersName = async () => {
+	const url = `http://127.0.0.1:2323/chapters/list/names`;
+	const response = await fetch(url);
+	const data = await response.json();
+	return data;
+}

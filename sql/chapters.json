@@ -3,6 +3,7 @@
 	"insert_chapters":"INSERT INTO chapters (chapter_name, opened) VALUES (?,?);",
 	"get_last_chapter":"SELECT chapter_name FROM chapters ORDER BY chapter_name DESC LIMIT 1;",
 	"title_chapters":"UPDATE chapters SET title = ? WHERE chapter_name = ?;",
-	"select":"SELECT * FROM chapters"
+	"select":"SELECT * FROM chapters",
+	"get_list_chapters":"SELECT chapter_name FROM chapters ORDER BY chapter_name ASC;"
 }
 

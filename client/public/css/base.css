@@ -35,7 +35,8 @@ button {
 }
 
 button:hover {
-    background-color: #D2BE76; /* Change color on hover */
+    background-color: #c4b16d; /* Darker shade of the default #E8DDB5 */
+    transition: background-color 0.2s ease; /* Smooth transition */
 }
 
 main {
@@ -58,7 +59,7 @@ li {
 .table-container {
     max-height: 1000px; /* Set desired height */
     overflow-y: auto;  /* Enable vertical scrolling */
-	border: 1px solid #ddd; /* Optional: Add a border around the container */
+    border: 1px solid #ddd; /* Optional: Add a border around the container */
 }
 
 table {
@@ -80,6 +81,7 @@ thead th {
     z-index: 2; /* Ensure the header stays above the body */
     padding: 16px; /* Increased padding for more space */
 }
+
 tbody td {
     padding: 12px; /* Space within cells */
     text-align: left; /* Align text to the left */
@@ -111,7 +113,7 @@ input[type="text"] {
 
 textarea {
     width: 100% !important; /* Make sure it takes up full width */
-    max-width: 100% !important; /* Prevent it from exceeding its container’s width */
+    max-width: 100% !important; /* Prevent it from exceeding its container's width */
     height: 500px !important; /* Increase height as needed */
     box-sizing: border-box !important; /* Include padding/border in width/height */
     resize: vertical !important; /* Allow vertical resizing if needed */
@@ -143,20 +145,37 @@ button[name="reset-button"] {
     cursor: pointer; /* Pointer cursor on hover */
 }
 
+button[name="see-comment"]:hover,
+button[name="reset"]:hover,
+button[name="go-back-tag-filtered"]:hover,
+button[name="go-back-message-list"]:hover,
+button[name="back-to-filter"]:hover, 
+button[name="reset-button"]:hover {
+    background-color: #45a049; /* Darker green */
+    transform: translateY(-1px); /* Slight lift effect */
+    transition: all 0.2s ease;
+}
+
 button[name="see-message"]{
-	width: 120px;    /* Set a fixed width */
+    width: 120px;    /* Set a fixed width */
     height: 50px;    /* Set a fixed height */
 }
 
 button[name="reminds-entries"]{
-	width: auto;    /* Set a fixed width */
+    width: auto;    /* Set a fixed width */
     height: auto;    /* Set a fixed height */
-	background-color: #C71585;
-	color: black;
-	border: none;    /* Remove borders */
+    background-color: #C71585;
+    color: black;
+    border: none;    /* Remove borders */
     border-radius: 5px;  /* Rounded corners */
     font-size: 14px; /* Font size */
     cursor: pointer; /* Pointer cursor on hover */
+}
+
+button[name="reminds-entries"]:hover {
+    background-color: #a01368; /* Darker pink */
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
 }
 
 button[name="return"]:hover {
@@ -164,22 +183,28 @@ button[name="return"]:hover {
 }
 
 input[type=button], input[type=submit], input[type=reset] {
-	background-color: #D2BE76;
-	border: none;
-	color: black;
-	padding: 8px 16px;
-	text-decoration: none;
-	margin: 4px 2px;
-	cursor: pointer;
-  }
+    background-color: #D2BE76;
+    border: none;
+    color: black;
+    padding: 8px 16px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+}
 
+input[type=button]:hover, 
+input[type=submit]:hover, 
+input[type=reset]:hover {
+    background-color: #c4b16d; /* Darker gold */
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
 
-  .editor-toolbar {
+.editor-toolbar {
     display: flex;
     flex-wrap: nowrap;
     justify-content: flex-start;
 }
-
 
 /* Customize the background color of the editor */
 .EasyMDEContainer .CodeMirror {
@@ -194,12 +219,30 @@ input[type=button], input[type=submit], input[type=reset] {
 }
 
 .EasyMDEContainer .editor-toolbar button:hover {
-    background-color: #E8DDB5; /* Darker green on hover */
+    background-color: #c4b16d !important; /* Darker shade */
+    transition: background-color 0.2s ease;
 }
-
 
 /* Customize the status bar */
 .EasyMDEContainer .editor-statusbar {
     background-color: #ecf0f1; /* Light grey status bar */
     color: #2c3e50; /* Dark grey text color */
 }
+
+button[name="apply-chapter-filter"] {
+    background-color: #D2BE76;
+    border: none;
+    color: black;
+    width: auto;
+    padding: 4px 8px; /* Reduced padding */
+    margin: 2px 1px; /* Reduced margin */
+    font-size: 12px; /* Added smaller font size */
+    cursor: pointer;
+}
+
+button[name="apply-chapter-filter"]:hover {
+    background-color: #c4b16d;
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+

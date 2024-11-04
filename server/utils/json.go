@@ -12,11 +12,12 @@ type Queries struct {
 	Schema string `json:"schema"`
 
 	//chapters:
-	Count            string `json:"count"`
-	Insert_chapters  string `json:"insert_chapters"`
-	Get_last_chapter string `json:"get_last_chapter"`
-	Title_chapters   string `json:"title_chapters"`
-	Select           string `json:"select"`
+	Count             string `json:"count"`
+	Insert_chapters   string `json:"insert_chapters"`
+	Get_last_chapter  string `json:"get_last_chapter"`
+	Title_chapters    string `json:"title_chapters"`
+	Select            string `json:"select"`
+	Get_list_chapters string `json:"get_list_chapters"`
 
 	//tags:
 	ActiveList            string `json:"active_list"`

@@ -30,4 +30,9 @@ func RegisterChaptersEndpoints(mux *http.ServeMux, db *sql.DB) {
 		chapters.CheckChapter(w, r, db)
 	}))
 
+	// chapter name list (list.go)
+	mux.HandleFunc("/chapters/list/names", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		chapters.GetChaptersNameList(w, r, db)
+	}))
+
 }
