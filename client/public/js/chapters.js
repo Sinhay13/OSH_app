@@ -35,21 +35,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 	} else {
 		newChapterForm.addEventListener('submit', async (event) => {
 			event.preventDefault();
-			const isOneYear = await isOneYearAgo();
-			if (isOneYear) {
-				const title = newChapterForm.elements['new-title'].value
-				if (title === "") {
-					alert('Title for the previous chapter is needed !')
-				} else {
-					await newChapter(title);
-					alert('New chapter created !')
-					await getAndDisplayData();
-					newChapterForm.elements['new'].disabled = true;
-					newChapterForm.elements['new-title'].disabled = true;
-				}
+			const title = newChapterForm.elements['new-title'].value
+			if (title === "") {
+				alert('Title for the previous chapter is needed !')
 			} else {
-				alert('You can only start a new chapter at least one year after the previous one began!')
+				await newChapter(title);
+				alert('New chapter created !')
+				location.reload();
 			}
+
 		});
 	}
 
@@ -59,6 +53,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 	countEntriesElement.innerHTML = `<strong>Total Entries: </strong> ${entriesNb}`;
 });
 
+// create a new chapter 
+const newChapter = async (title) => {
+	const title_string = encodeURIComponent(title);
+
+	try {
+		const url = `http://127.0.0.1:2323/chapters/new?title=${title_string}`;
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const result = await response.json();
+		console.log('New chapter created:', result);
+
+	} catch (error) {
+		console.error('Error creating new chapter:', error);
+	}
+};
 
 // Check if it is the first chapter
 const isFirstChapter = async () => {
@@ -95,43 +108,6 @@ const firstChapter = async () => {
 	}
 };
 
-// Check if it is one year
-const isOneYearAgo = async () => {
-	try {
-		const url = `http://127.0.0.1:2323/chapters/year`;
-		const response = await fetch(url);
-
-		if (!response.ok) {
-			throw new Error(`HTTP error! Status: ${response.status}`);
-		}
-
-		const data = await response.json();
-		return data.found;  // Directly return the boolean value from the response
-
-	} catch (error) {
-		return false;  // Return false in case of error
-	}
-};
-
-// create a new chapter 
-const newChapter = async (title) => {
-	const title_string = encodeURIComponent(title);
-
-	try {
-		const url = `http://127.0.0.1:2323/chapters/new?title=${title_string}`;
-		const response = await fetch(url)
-
-		if (!response.ok) {
-			throw new Error(`HTTP error! Status: ${response.status}`);
-		}
-
-		const result = await response.json();
-		console.log('New chapter created:', result);
-
-	} catch (error) {
-		console.error('Error creating new chapter:', error);
-	}
-};
 
 // get data from server : 
 const getData = async () => {
@@ -231,6 +207,3 @@ const getEntriesNB = async (chapterName = "") => {
 		return null; // Or handle the error as needed
 	}
 }
-
-
-

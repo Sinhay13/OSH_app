@@ -3,7 +3,6 @@
 	"insert_chapters":"INSERT INTO chapters (chapter_name, opened) VALUES (?,?);",
 	"get_last_chapter":"SELECT chapter_name FROM chapters ORDER BY chapter_name DESC LIMIT 1;",
 	"title_chapters":"UPDATE chapters SET title = ? WHERE chapter_name = ?;",
-	"one_year_ago":"SELECT chapter_name FROM chapters WHERE opened <= DATE('now', '-1 year') AND title IS NULL ORDER BY opened DESC LIMIT 1;",
 	"select":"SELECT * FROM chapters"
 }
 

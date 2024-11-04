@@ -33,45 +33,6 @@ func IsFirstChapter(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}
 }
 
-// check if is one year ago
-func IsOneYearAgo(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	count, err := CountRows(db)
-	if err != nil {
-		utils.Logger.Printf("countRows isOneYearAgo : %v\n", err)
-		return
-	}
-
-	if count != 0 {
-		chaptersJson, err := utils.LoadQueries("chapters.json")
-		if err != nil {
-			utils.Logger.Printf("Error loading queries: %v\n", err)
-			return
-		}
-
-		var row sql.NullString
-
-		err = db.QueryRow(chaptersJson.One_year_ago).Scan(&row)
-		if err != nil {
-			utils.Logger.Printf("isOneYearAgo error running query: %v\n", err)
-			return
-		}
-
-		response := map[string]bool{"found": row.Valid}
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(response); err != nil {
-			utils.Logger.Printf("Error encoding response: %v\n", err)
-		}
-		return
-	}
-
-	// If no rows were found or count is 0
-	response := map[string]bool{"found": false}
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-		utils.Logger.Printf("Error encoding response: %v\n", err)
-	}
-}
-
 // check if chapter exists
 func CheckChapter(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	chaptersJson, err := utils.LoadQueries("chapters.json")

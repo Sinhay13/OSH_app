@@ -20,11 +20,6 @@ func RegisterChaptersEndpoints(mux *http.ServeMux, db *sql.DB) {
 		chapters.IsFirstChapter(w, r, db)
 	}))
 
-	// check is one year ago+ CORS (checks.go)
-	mux.HandleFunc("/chapters/year", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
-		chapters.IsOneYearAgo(w, r, db)
-	}))
-
 	// get list of chapter + CORS (list.go)
 	mux.HandleFunc("/chapters/list", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		chapters.ListChapters(w, r, db)

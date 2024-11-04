@@ -16,7 +16,6 @@ type Queries struct {
 	Insert_chapters  string `json:"insert_chapters"`
 	Get_last_chapter string `json:"get_last_chapter"`
 	Title_chapters   string `json:"title_chapters"`
-	One_year_ago     string `json:"one_year_ago"`
 	Select           string `json:"select"`
 
 	//tags:
