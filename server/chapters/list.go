@@ -114,3 +114,27 @@ func GetChaptersNameList(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 }
+
+func GetChapterTitle(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+
+	//Call Json
+	chaptersJson, err := utils.LoadQueries("chapters.json")
+	if err != nil {
+		utils.Logger.Print(err)
+	}
+
+	chapterName := r.URL.Query().Get("chapter")
+
+	var title string
+	err = db.QueryRow(chaptersJson.Get_title, chapterName).Scan(&title)
+	if err != nil {
+		utils.Logger.Print(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(title)
+	if err != nil {
+		utils.Logger.Print(err)
+	}
+
+}

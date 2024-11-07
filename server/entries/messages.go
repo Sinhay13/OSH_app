@@ -38,6 +38,7 @@ func GetMessageFromID(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	// Load the JSON with queries
 	entriesJson, err := utils.LoadQueries("entries.json")
 	if err != nil {
+
 		utils.Logger.Println("Error loading queries:", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
@@ -101,6 +102,13 @@ func GetMessagesList(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
+	chapterName := r.URL.Query().Get("chapter")
+	if chapterName == "" {
+		utils.Logger.Println("chapter name is missing")
+		http.Error(w, "chapter name is missing", http.StatusBadRequest)
+		return
+	}
+
 	// Convert page to int
 	pageNumber, err := strconv.Atoi(page)
 	if err != nil {
@@ -118,8 +126,20 @@ func GetMessagesList(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 
-	// Execute the query
-	rows, err := db.Query(entriesJson.GetMessagesList, tag, offset)
+	// Prepare query
+	var rows *sql.Rows
+	var query string
+	if chapterName == "all" {
+		query = entriesJson.GetMessagesList
+		// Execute the query
+		rows, err = db.Query(query, tag, offset)
+
+	} else {
+		query = entriesJson.GetMessagesListFilteredByChapter
+		// Execute the query
+		rows, err = db.Query(query, tag, chapterName, offset)
+
+	}
 	if err != nil {
 		utils.Logger.Println("Error executing query:", err)
 		http.Error(w, "Error executing query", http.StatusInternalServerError)

@@ -79,11 +79,11 @@ thead th {
     border-bottom: 1px solid #ddd; /* Light border below each cell */
     border-right: 1px solid #ddd; /* Visible border between cells */
     z-index: 2; /* Ensure the header stays above the body */
-    padding: 16px; /* Increased padding for more space */
+    padding: 8px; /* Increased padding for more space */
 }
 
 tbody td {
-    padding: 12px; /* Space within cells */
+    padding: 8px; /* Space within cells */
     text-align: left; /* Align text to the left */
     border-bottom: 1px solid #ddd; /* Light border below each cell */
     border-right: 1px solid #ddd; /* Visible border between cells */
@@ -245,4 +245,3 @@ button[name="apply-chapter-filter"]:hover {
     transform: translateY(-1px);
     transition: all 0.2s ease;
 }
-

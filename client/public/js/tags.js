@@ -9,6 +9,7 @@ let currentID;
 let currentCity;
 let currentCountry;
 let currentActive;
+let chapterName = 'all';
 
 // Buttons and elements :
 const saveCommentInput = document.querySelector('input[name="comment-save"]')
@@ -32,7 +33,8 @@ const goBackTagFilteredButtons = document.querySelectorAll('button[name="go-back
 const goBackMessageListButton = document.querySelector('button[name="go-back-message-list"]');
 const resetButton = document.querySelector('button[name="reset"]');
 const seeCommentButton = document.querySelector('button[name="see-comment"]');
-
+const chapterFilterButton = document.querySelector('button[name="apply-chapter-filter"]');
+const chapterFilter = document.querySelector('select[name="chapter-filter"]');
 
 document.addEventListener('DOMContentLoaded', async () => {
 	const markdownElement = document.getElementById('markdown');
@@ -163,7 +165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 		currentPage = 1;
 
-		const data = await getMessageList(currentTag, currentPage)
+		const data = await getMessageList(currentTag, currentPage, chapterName)
 		await feedTableMessageList(data);
 	});
 
@@ -176,7 +178,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		if (page > 1) {
 			currentPage = page;
 
-			const data = await getMessageList(currentTag, currentPage)
+			const data = await getMessageList(currentTag, currentPage, chapterName)
 			await feedTableMessageList(data);
 		}
 	});
@@ -187,12 +189,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 		let page = currentPage + 1;
 
-		const data = await getMessageList(currentTag, page)
+		const data = await getMessageList(currentTag, page, chapterName)
 		if (data) {
 			await feedTableMessageList(data);
 			currentPage = page;
 		} else {
 			alert(" No more data available.")
+		}
+	});
+
+	// Handle chapter filter change
+	chapterFilterButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+		chapterName = chapterFilter.value;
+
+		let page = 1;
+
+		const data = await getMessageList(currentTag, page, chapterName)
+		if (data) {
+			await feedTableMessageList(data);
+			currentPage = page;
+		} else {
+			alert(" No data available.")
+			const form = document.forms["message-list"];
+			const tbody = form.querySelector('tbody');
+			// Clear existing rows
+			tbody.innerHTML = '';
 		}
 	});
 
@@ -806,19 +828,20 @@ const messagesTagButton = async (tag) => {
 	const messageTagName = document.querySelector('p[name="tag-name-message-list"]');
 	messageTagName.innerHTML = `<strong> Tag :</strong> ${tag}`;
 
-	const data = await getMessageList(currentTag, currentPage)
+	const data = await getMessageList(currentTag, currentPage, chapterName)
 	await feedTableMessageList(data);
 
 	document.forms["tags-filtered"].style.display = "none";
 };
 
 // Function to get list of message : 
-const getMessageList = async (tag, page) => {
+const getMessageList = async (tag, page, chapterName) => {
 	const tag_string = encodeURIComponent(tag);
 	const page_string = encodeURIComponent(page);
+	const chapterName_string = encodeURIComponent(chapterName);
 
 	try {
-		const url = `http://127.0.0.1:2323/entries/messages/list?tag=${tag_string}&page=${page_string}`;
+		const url = `http://127.0.0.1:2323/entries/messages/list?tag=${tag_string}&page=${page_string}&chapter=${chapterName_string}`;
 		const response = await fetch(url)
 
 		if (!response.ok) {
@@ -826,6 +849,7 @@ const getMessageList = async (tag, page) => {
 		}
 
 		const result = await response.json();
+		await getChapterTitle(chapterName);
 		return result
 
 	} catch (error) {
@@ -1026,4 +1050,24 @@ const getChaptersName = async () => {
 	const response = await fetch(url);
 	const data = await response.json();
 	return data;
+}
+
+//Get chapter title and show it
+const getChapterTitle = async (chapterName) => {
+	const chapterTitleElement = document.querySelector('h4[name="chapter-title"]');
+	if (chapterName != "all") {
+		chapterTitleElement.innerHTML = "";
+
+		const url = `http://127.0.0.1:2323/chapters/title?chapter=${chapterName}`;
+		const response = await fetch(url);
+		const data = await response.json();
+		const chapterTitle = data;
+		if (chapterTitle) {
+			chapterTitleElement.innerHTML = `<center> ${chapterName} : ${chapterTitle}</center>`;
+		} else {
+			chapterTitleElement.innerHTML = `<center>Current Chapter :  ${chapterName} :</center>`;
+		}
+	} else {
+		chapterTitleElement.innerHTML = `<center>All Chapters</center>`;
+	}
 }
