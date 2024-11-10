@@ -245,3 +245,35 @@ button[name="apply-chapter-filter"]:hover {
     transform: translateY(-1px);
     transition: all 0.2s ease;
 }
+
+.reminds-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 600px;
+}
+
+.reminds-buttons button {
+    flex: 1;
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #a01368;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reminds-buttons button:hover {
+    background-color: #a01368;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.reminds-buttons button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
