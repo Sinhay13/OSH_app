@@ -28,7 +28,32 @@
 		</tbody>
 	</table>
 </form>
-<form name="all"></form>
-<form name="edit"></form>
+<form name="all">
+	<table>
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>Message-id</th>
+				<th>Date-remind</th>
+				<th>Repeat</th>
+				<th>Edit</th>
+				<th>Delete</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="title"></td>
+				<td><input type="text" name="message-id"></td>
+				<td><input type="text" name="date-remind"></td>
+				<td><input type="text" name="repeat"></td>
+				<td><button name="edit">Edit</button></td>
+				<td><button name="delete">Delete</button></td>
+			</tr>
+		</tbody>
+	</table>
+</form>
+<form name="edit">
+
+</form>
 <form name="read"></form>
 <script src="js/reminds.js" defer></script>
