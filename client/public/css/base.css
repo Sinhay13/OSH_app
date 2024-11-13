@@ -129,6 +129,7 @@ textarea {
 }
 
 /* return button Tags */
+button[name="save-edit"],
 button[name="see-comment"],
 button[name="reset"],
 button[name="go-back-tag-filtered"],
