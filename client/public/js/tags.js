@@ -1066,7 +1066,7 @@ const getChapterTitle = async (chapterName) => {
 		if (chapterTitle) {
 			chapterTitleElement.innerHTML = `<center> ${chapterName} : ${chapterTitle}</center>`;
 		} else {
-			chapterTitleElement.innerHTML = `<center>Current Chapter :  ${chapterName} :</center>`;
+			chapterTitleElement.innerHTML = `<center> Current Chapter : ${chapterName}</center>`;
 		}
 	} else {
 		chapterTitleElement.innerHTML = `<center>All Chapters</center>`;

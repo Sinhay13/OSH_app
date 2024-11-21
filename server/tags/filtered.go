@@ -130,7 +130,8 @@ func prepareSQL(active int, isSystem int, isPrinciple int, principleTag string) 
 	}
 
 	// Add ORDER BY clause to sort results by tag name
-	query += "ORDER BY updated_time ASC"
+	query += " ORDER BY updated_time ASC"
+	utils.Logger.Print(" data: ", query)
 
 	return query, params, nil
 }
