@@ -700,6 +700,7 @@ const commentTagButton = async (tag) => {
 	document.forms["message-comment-form"].style.display = "block";
 
 	//Prepare  form for comment
+	saveCommentInput.style.display = "block"
 	closeMessageInput.style.display = "none";
 	nextMessageButton.style.display = "none";
 	previousMessageButton.style.display = "none";

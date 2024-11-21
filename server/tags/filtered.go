@@ -130,7 +130,7 @@ func prepareSQL(active int, isSystem int, isPrinciple int, principleTag string) 
 	}
 
 	// Add ORDER BY clause to sort results by tag name
-	query += " ORDER BY tag ASC"
+	query += "ORDER BY updated_time ASC"
 
 	return query, params, nil
 }
