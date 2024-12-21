@@ -11,6 +11,7 @@ let currentCountry;
 let currentActive;
 let chapterName = 'all';
 
+
 // Buttons and elements :
 const saveCommentInput = document.querySelector('input[name="comment-save"]')
 const closeMessageInput = document.querySelector('input[name="message-close"]')
@@ -362,6 +363,17 @@ const getParamsForFilteringTags = async () => {
 		isSystem = 10;
 	};
 
+	let systemType = form.querySelector('select[name="system-type-filter"]').value;
+	if (systemType === 'active') {
+		systemType = 'A';
+	} else if (systemType === 'none') {
+		systemType = 'N';
+	} else if (systemType === 'passive') {
+		systemType = 'P';
+	} else if (systemType === 'special') {
+		systemType = 'S';
+	}
+
 	let isPrinciple = form.querySelector('select[name="is-principle-filter"]').value;
 	if (isPrinciple === 'yes') {
 		isPrinciple = 1;
@@ -377,6 +389,7 @@ const getParamsForFilteringTags = async () => {
 	return {
 		active,
 		isSystem,
+		systemType,
 		isPrinciple,
 		principle
 	};
@@ -388,6 +401,7 @@ const getListTagsFiltered = async (params) => {
 	const body = JSON.stringify({
 		active: params.active,
 		isSystem: params.isSystem,
+		systemType: params.systemType,
 		isPrinciple: params.isPrinciple,
 		principle: params.principle
 	})
@@ -418,6 +432,7 @@ const showFilter = async (params, currentFilter) => {
 	let isSystem;
 	let isPrinciple;
 	let principleTag;
+	let systemType;
 
 	if (params.active === 0) {
 		active = 'No'
@@ -448,7 +463,22 @@ const showFilter = async (params, currentFilter) => {
 	} else {
 		principleTag = params.principle
 	}
-	currentFilter.innerHTML = `Current Filters :<br> <strong> Active Tag :</strong>${active} <br> <strong> Is System :</strong> ${isSystem} <br><strong> Is Principle :</strong> ${isPrinciple} <br> <strong> Principle Tag :</strong> ${principleTag}`;
+
+	if (params.systemType === 'all') {
+		systemType = "All";
+	} else {
+		systemType = params.systemType
+		if (systemType === 'A') {
+			systemType = 'Active'
+		} else if (systemType === 'N') {
+			systemType = 'None'
+		} else if (systemType === 'P') {
+			systemType = 'Passive'
+		} else if (systemType === 'S') {
+			systemType = 'Special'
+		}
+	}
+	currentFilter.innerHTML = `Current Filters :<br> <strong> Active Tag :</strong>${active} <br> <strong> Is System :</strong> ${isSystem} <br> <strong> System Type :</strong> ${systemType} <br><strong> Is Principle :</strong> ${isPrinciple} <br> <strong> Principle Tag :</strong> ${principleTag}`;
 }
 
 // feed table for filtered tags 
@@ -503,6 +533,23 @@ const feedTableTags = async (data, principlesList, params, countElement) => {
 		isSystemSelect.value = tag.is_system === 1 ? 'yes' : 'no';
 		isSystemCell.appendChild(isSystemSelect);
 		row.appendChild(isSystemCell);
+
+
+		// System type
+		const systemTypeCell = document.createElement('td');
+		const systemTypeSelect = document.createElement('select');
+		systemTypeSelect.name = "system-type";
+		const optionActive = new Option('active', 'A');
+		const optionNN = new Option('none', 'N');
+		const optionPassive = new Option('passive', 'P');
+		const optionSpecial = new Option('special', 'S');
+		systemTypeSelect.add(optionActive);
+		systemTypeSelect.add(optionNN);
+		systemTypeSelect.add(optionPassive);
+		systemTypeSelect.add(optionSpecial);
+		systemTypeSelect.value = tag.system_type;
+		systemTypeCell.appendChild(systemTypeSelect);
+		row.appendChild(systemTypeCell);
 
 		// Is-principle
 		const isPrincipleCell = document.createElement('td');
@@ -596,8 +643,9 @@ const feedTableTags = async (data, principlesList, params, countElement) => {
 			const active = row.querySelector('select[name="active"]').value === 'yes' ? 1 : 0;
 			const isSystem = row.querySelector('select[name="is-system"]').value === 'yes' ? 1 : 0;
 			const principleTag = row.querySelector('select[name="principle"]').value;
+			const systemType = row.querySelector('select[name="system-type"]').value;
 
-			await updateTagButton(tag.tag, active, isPrinciple, isSystem, principleTag, principlesList, params, countElement);
+			await updateTagButton(tag.tag, active, isPrinciple, isSystem, principleTag, systemType, principlesList, params, countElement);
 		});
 		actionsCell.appendChild(updateButton);
 
@@ -631,7 +679,7 @@ const checkPrincipleTags = async (tag) => {
 }
 
 // deal with update button 
-const updateTagButton = async (tag, active, is_principle, is_system, principle_tag, principlesList, params, countElement) => {
+const updateTagButton = async (tag, active, is_principle, is_system, principle_tag, system_type, principlesList, params, countElement) => {
 	let count = 0;
 	let messageError;
 
@@ -649,19 +697,26 @@ const updateTagButton = async (tag, active, is_principle, is_system, principle_t
 		principle_tag = "none";
 	}
 
-	if (count > 0) {
-		alert(messageError);
-		return;
-	} else {
-		await updateTag(tag, active, is_principle, is_system, principle_tag);
-		const newDataTags = await getListTagsFiltered(params);
-		principlesList = await principles();
-		await feedTableTags(newDataTags, principlesList, params, countElement);
-	}
-};
+	if (is_system === 1) {
+		if (system_type === "N") {
+			count = 1;
+			messageError = "If is system, system type must different from none.";
+		}
+
+		if (count > 0) {
+			alert(messageError);
+			return;
+		} else {
+			await updateTag(tag, active, is_principle, is_system, principle_tag, system_type);
+			const newDataTags = await getListTagsFiltered(params);
+			principlesList = await principles();
+			await feedTableTags(newDataTags, principlesList, params, countElement);
+		}
+	};
+}
 
 // Function to update tag : 
-const updateTag = async (tag, active, is_principle, is_system, principle_tag) => {
+const updateTag = async (tag, active, is_principle, is_system, principle_tag, system_type) => {
 	const url = `http://127.0.0.1:2323/tags/update`
 
 	const body = JSON.stringify({
@@ -669,7 +724,8 @@ const updateTag = async (tag, active, is_principle, is_system, principle_tag) =>
 		active,
 		is_principle,
 		is_system,
-		principle_tag
+		principle_tag,
+		system_type
 	})
 
 	const reqOptions = {

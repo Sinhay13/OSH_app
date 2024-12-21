@@ -13,6 +13,7 @@
 			<tr>
 				<th>active</th>
 				<th>is-system</th>
+				<th>system-type</th>
 				<th>is-principle</th>
 				<th>principle</th>
 				<th>action</th>
@@ -32,6 +33,15 @@
 						<option value="all">all</option>
 						<option value="yes">yes</option>
 						<option value="no">no</option>
+					</select>
+				</td>
+				<td>
+					<select name="system-type-filter">
+						<option value="all">all</option>
+						<option value="none">none</option>
+						<option value="active">active</option>
+						<option value="passive">passive</option>
+						<option value="special">special</option>
 					</select>
 				</td>
 				<td>
@@ -67,6 +77,7 @@
 					<th>Name</th>
 					<th>active</th>
 					<th>is-system</th>
+					<th>system-type</th>
 					<th>is-principle</th>
 					<th>principle</th>
 					<th>Created</th>
@@ -81,14 +92,22 @@
 					<td><input type="text" name="name-tag"></td>
 					<td>
 						<select name="active">
-							<option value="no">No</option>
-							<option value="yes">Yes</option>
+							<option value="no">no</option>
+							<option value="yes">yes</option>
 						</select>
 					</td>
 					<td>
 						<select name="is-system">
-							<option value="no">No</option>
-							<option value="yes">Yes</option>
+							<option value="no">no</option>
+							<option value="yes">yes</option>
+						</select>
+					</td>
+					<td>
+						<select name="system-type">
+							<option value="none">none</option>
+							<option value="active">active</option>
+							<option value="passive">passive</option>
+							<option value="special">special</option>
 						</select>
 					</td>
 					<td>
@@ -98,7 +117,7 @@
 						</select>
 					</td>
 					<td>
-						<select name="principle" ƒ>
+						<select name="principle">
 							<option value="none">null</option>
 						</select>
 					</td>
