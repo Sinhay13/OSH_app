@@ -162,6 +162,11 @@ button[name="see-message"]{
     height: 50px;    /* Set a fixed height */
 }
 
+button[name="start-system"]{
+    width: 100px;    /* Set a fixed width */
+    height: 40px;    /* Set a fixed height */
+}
+
 button[name="reminds-entries"]{
     width: auto;    /* Set a fixed width */
     height: auto;    /* Set a fixed height */

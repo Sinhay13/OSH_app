@@ -1,1 +1,69 @@
-console.log("Hello System page");
+let currentDate = 'None';
+let nowDate = new Date().toISOString().split('T')[0];
+
+const datePicker = document.querySelector('input[name="datePicker"]');
+const selectedDate = document.querySelector('span[name="selectedDate"]');
+const goToPrinciplesList = document.querySelector('button[name="start-system"]');
+const resetButton = document.querySelector('button[name="reset"]');
+
+document.addEventListener('DOMContentLoaded', async () => {
+
+	// reset button
+	resetButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+		location.reload();
+	});
+
+
+	// Selector Date : 
+	datePicker.addEventListener('change', function () {
+		if (datePicker.value <= nowDate) {
+			selectedDate.textContent = this.value; // The value is already in yyyy-mm-dd format
+			currentDate = this.value;
+		} else {
+			selectedDate.textContent = "None";
+			alert("You can't select Today or a future date");
+		}
+	});
+
+	// Get principles list and go to the next step.
+	goToPrinciplesList.addEventListener('click', async () => {
+
+		if (currentDate != 'None') {
+			datePicker.disabled = true;
+			// Call the principles function
+			const principlesList = await principles();
+			//Create buttons
+			await feedButtons(principlesList);
+		} else {
+			alert('Select compatible data first');
+		}
+	});
+});
+
+// Get list of principles
+const principles = async () => {
+
+	const url = `http://127.0.0.1:2323/tags/principles`;
+
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error ! Status: ${response.status}`);
+		}
+		const data = await response.json();
+		const principlesList = data.map(item => item.tag);
+		const listFinal = principlesList.filter(item => item !== "侍Samurai" && item !== "none")
+		return listFinal;
+	} catch (error) {
+		console.error('Error fetching principles:', error);
+		return null;
+	}
+}
+
+// Create buttons : 
+const feedButtons = async (list) => {
+	alert(list);
+
+}
+
