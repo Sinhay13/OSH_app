@@ -5,8 +5,14 @@ const datePicker = document.querySelector('input[name="datePicker"]');
 const selectedDate = document.querySelector('span[name="selectedDate"]');
 const goToPrinciplesList = document.querySelector('button[name="start-system"]');
 const resetButton = document.querySelector('button[name="reset"]');
+const workingDate = document.getElementsByName('working-date')[0];
+const divDate = document.getElementsByName("date-picker")[0];
+const divButtonPrinciples = document.getElementsByName("buttons-principles")[0];
 
 document.addEventListener('DOMContentLoaded', async () => {
+
+	// hide elements: 
+	divButtonPrinciples.style.display = "none";
 
 	// reset button
 	resetButton.addEventListener('click', async (event) => {
@@ -17,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	// Selector Date : 
 	datePicker.addEventListener('change', function () {
-		if (datePicker.value <= nowDate) {
+		if (datePicker.value < nowDate) {
 			selectedDate.textContent = this.value; // The value is already in yyyy-mm-dd format
 			currentDate = this.value;
 		} else {
@@ -33,8 +39,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 			datePicker.disabled = true;
 			// Call the principles function
 			const principlesList = await principles();
+			// Hide div date and show working date
+			divDate.style.display = "none";
+			workingDate.textContent = currentDate
 			//Create buttons
 			await feedButtons(principlesList);
+			divButtonPrinciples.style.display = 'block';
+
 		} else {
 			alert('Select compatible data first');
 		}
