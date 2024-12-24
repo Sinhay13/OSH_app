@@ -74,7 +74,16 @@ const principles = async () => {
 
 // Create buttons : 
 const feedButtons = async (list) => {
-	alert(list);
 
+	for (let i = 0; i < list.length; i++) {
+		const button = document.createElement('button');
+		button.textContent = list[i];
+		button.className = 'system-principle-buttons';
+		button.name = list[i];
+		button.addEventListener('click', () => {
+			alert(list[i])
+		});
+		divButtonPrinciples.appendChild(button);
+	}
 }
 
