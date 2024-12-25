@@ -70,7 +70,7 @@ const principles = async () => {
 		console.error('Error fetching principles:', error);
 		return null;
 	}
-}
+};
 
 // Create buttons : 
 const feedButtons = async (list) => {
@@ -80,10 +80,33 @@ const feedButtons = async (list) => {
 		button.textContent = list[i];
 		button.className = 'system-principle-buttons';
 		button.name = list[i];
-		button.addEventListener('click', () => {
-			alert(list[i])
+		button.addEventListener('click', async () => {
+			const listSystemTag = await systemTagsList(list[i])
+			if (listSystemTag != "") {
+				divButtonPrinciples.style.display = 'none';
+				// start checking 
+			} else {
+				alert(`No system tag available in ${list[i]} for this date`)
+				// desactive the principle button
+			}
 		});
 		divButtonPrinciples.appendChild(button);
 	}
-}
+};
 
+// get tag listSystem in function of principle
+const systemTagsList = async (principle) => {
+
+	const url = `http://127.0.0.1:2323/tags/system/list?principle=${principle}`;
+	const response = await fetch(url);
+	const data = await response.json();
+	const list = data.map(item => item.tag);
+	const listFinal = checkDate(list);
+	return listFinal;
+};
+
+const checkDate = (list) => {
+
+	// to continue 
+	return list;
+}

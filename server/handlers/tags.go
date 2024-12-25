@@ -60,4 +60,9 @@ func RegisterTagsEndpoints(mux *http.ServeMux, db *sql.DB) {
 		tags.SaveComments(w, r, db)
 	}))
 
+	// save comments tags inactive + CORS (system.go)
+	mux.HandleFunc("/tags/system/list", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		tags.TagSystemList(w, r, db)
+	}))
+
 }
