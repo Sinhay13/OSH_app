@@ -66,8 +66,8 @@ func CountEntries(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		}
 	}
 
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 
 	// Prepare the response
 	response := map[string]interface{}{

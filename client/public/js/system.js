@@ -84,7 +84,7 @@ const feedButtons = async (list) => {
 			const listSystemTag = await systemTagsList(list[i])
 			if (listSystemTag != "") {
 				divButtonPrinciples.style.display = 'none';
-				// start checking 
+				// Do the next 
 			} else {
 				alert(`No system tag available in ${list[i]} for this date`)
 				// desactive the principle button
@@ -101,12 +101,21 @@ const systemTagsList = async (principle) => {
 	const response = await fetch(url);
 	const data = await response.json();
 	const list = data.map(item => item.tag);
-	const listFinal = checkDate(list);
+	const listFinal = checkDate(list, currentDate);
 	return listFinal;
 };
 
-const checkDate = (list) => {
+const checkDate = async (list, date) => {
+	const listFinal = [];
 
-	// to continue 
-	return list;
+	for (let i = 0; i < list.length; i++) {
+		const tag = list[i];
+		const url = `http://127.0.0.1:2323/system/list/check?tag=${tag}&date=${date}`;
+		const response = await fetch(url);
+		const data = await response.json();
+		if (data.count === 0) {
+			listFinal.push(tag);
+		}
+	}
+	return listFinal;
 }

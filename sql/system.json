@@ -1,0 +1,3 @@
+{
+	"count_system_entries":"SELECT COUNT(tag) FROM system WHERE date = ? AND tag = ?;"
+}

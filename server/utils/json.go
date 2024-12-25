@@ -19,6 +19,18 @@ type Queries struct {
 	Select            string `json:"select"`
 	Get_list_chapters string `json:"get_list_chapters"`
 	Get_title         string `json:"get_title"`
+
+	// entries :
+	LastMessage                      string `json:"last_message"`
+	InsertNewEntry                   string `json:"insert_new_entry"`
+	LastMessageBeforeDate            string `json:"last_message_before_date"`
+	NextMessageAfterDate             string `json:"next_message_after_date"`
+	CountAllEntries                  string `json:"count_all_entries"`
+	CountEntriesPerChapter           string `json:"count_entries_per_chapter"`
+	GetMessagesList                  string `json:"get_messages_list"`
+	GetMessagesListFilteredByChapter string `json:"get_messages_list_filtered_by_chapter"`
+	GetMessageFromID                 string `json:"get_message_from_id"`
+
 	//tags:
 	ActiveList            string `json:"active_list"`
 	ActiveListPrinciple   string `json:"active_list_principle"`
@@ -37,16 +49,8 @@ type Queries struct {
 	SaveComment           string `json:"save_comment"`
 	TagSystem             string `json:"tag_system"`
 
-	// entries :
-	LastMessage                      string `json:"last_message"`
-	InsertNewEntry                   string `json:"insert_new_entry"`
-	LastMessageBeforeDate            string `json:"last_message_before_date"`
-	NextMessageAfterDate             string `json:"next_message_after_date"`
-	CountAllEntries                  string `json:"count_all_entries"`
-	CountEntriesPerChapter           string `json:"count_entries_per_chapter"`
-	GetMessagesList                  string `json:"get_messages_list"`
-	GetMessagesListFilteredByChapter string `json:"get_messages_list_filtered_by_chapter"`
-	GetMessageFromID                 string `json:"get_message_from_id"`
+	// system :
+	CountSystemEntries string `json:"count_system_entries"`
 }
 
 // To load queries :
