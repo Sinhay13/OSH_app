@@ -1,5 +1,7 @@
 let currentDate = 'None';
 let nowDate = new Date().toISOString().split('T')[0];
+let currentTag = 'None';
+let currentMonth = 'None';
 
 const datePicker = document.querySelector('input[name="datePicker"]');
 const selectedDate = document.querySelector('span[name="selectedDate"]');
@@ -8,11 +10,28 @@ const resetButton = document.querySelector('button[name="reset"]');
 const workingDate = document.getElementsByName('working-date')[0];
 const divDate = document.getElementsByName("date-picker")[0];
 const divButtonPrinciples = document.getElementsByName("buttons-principles")[0];
+const divProcessTag = document.getElementsByName("process-tag")[0];
+const showCurrentTag = document.getElementsByName("current-tag")[0];
+const formNewResult = document.getElementsByName("new-result")[0];
+const formPreviousResult = document.getElementsByName("previous-result")[0];
+const formCommentTag = document.getElementsByName("comment-tag")[0];
+const sendResult = document.getElementsByName("send-new-result")[0];
 
 document.addEventListener('DOMContentLoaded', async () => {
 
+	const markdownElement = document.getElementById('markdown');
+	if (markdownElement) {
+		window.easyMDE = new EasyMDE({
+			element: markdownElement,
+		});
+		// Start in preview mode for the first editor
+		window.easyMDE.togglePreview();
+	};
+
 	// hide elements: 
 	divButtonPrinciples.style.display = "none";
+	divProcessTag.style.display = "none";
+
 
 	// reset button
 	resetButton.addEventListener('click', async (event) => {
@@ -33,15 +52,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 	});
 
 	// Get principles list and go to the next step.
-	goToPrinciplesList.addEventListener('click', async () => {
-
+	goToPrinciplesList.addEventListener('click', async (event) => {
+		event.preventDefault();
 		if (currentDate != 'None') {
 			datePicker.disabled = true;
 			// Call the principles function
 			const principlesList = await principles();
 			// Hide div date and show working date
 			divDate.style.display = "none";
-			workingDate.textContent = currentDate
+			workingDate.textContent = `Current Date : ${currentDate}`
 			//Create buttons
 			await feedButtons(principlesList);
 			divButtonPrinciples.style.display = 'block';
@@ -50,6 +69,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 			alert('Select compatible data first');
 		}
 	});
+
+	// Check new result and insert data
+	sendResult.addEventListener('click', async (event) => {
+		event.preventDefault();
+
+		// prepare and check data
+		const dataAndCHeck = await prepareResults();
+		const data = dataAndCHeck.data;
+		const valid = dataAndCHeck.valid;
+		if (valid != false) {
+			// Check previous results in function of System type
+			await checkPreviousData(dataToSend);
+		}
+
+
+		// Send result in the database and go to the next step 
+		//await sendToDb(dataToSend);
+
+	})
 });
 
 // Get list of principles
@@ -80,11 +118,17 @@ const feedButtons = async (list) => {
 		button.textContent = list[i];
 		button.className = 'system-principle-buttons';
 		button.name = list[i];
-		button.addEventListener('click', async () => {
+		button.addEventListener('click', async (event) => {
+			event.preventDefault();
 			const listSystemTag = await systemTagsList(list[i])
 			if (listSystemTag != "") {
 				divButtonPrinciples.style.display = 'none';
-				// Do the next 
+				divProcessTag.style.display = "block";
+				formCommentTag.style.display = "none";
+				formPreviousResult.style.display = "none";
+				await insertResult(listSystemTag)
+
+
 			} else {
 				alert(`No system tag available in ${list[i]} for this date`)
 				// desactive the principle button
@@ -118,4 +162,49 @@ const checkDate = async (list, date) => {
 		}
 	}
 	return listFinal;
+}
+
+const insertResult = async (list) => {
+
+	currentListSystemTag = list;
+	currentTag = list[0];
+	showCurrentTag.textContent = `Current Tag: ${currentTag}`
+}
+
+// Prepare results from the form
+const prepareResults = async () => {
+
+	let valid = true;
+
+	const date = currentDate;
+	const tag = currentTag;
+
+	const form = document.forms['new-result'];
+	const result = parseInt(form['select-result'].value, 10);
+	let observations = form['Observations'].value;
+
+	if (result === 0) {
+		if (observations === "") {
+			alert('In this case observations are mandatory !')
+			valid = false;
+		}
+	}
+
+	if (observations === "") {
+		observations = "none";
+	}
+
+	const data = [
+		{ date },
+		{ tag },
+		{ result },
+		{ observations }
+	];
+
+	return { valid, data };
+}
+
+// Check previous results
+const checkPreviousData = async (data) => {
+	// continue here 
 }

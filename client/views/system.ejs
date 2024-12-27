@@ -16,6 +16,78 @@
 
 <div name="buttons-principles"></div>
 
+<div name="process-tag">
+
+	<h3 name="current-tag">Current Tag: </h3>
+
+	<div name="buttons-system">
+		<button name="comment-button">See comment</button>
+		<button name="result-button">See results</button>
+	</div>
+
+	<form name="new-result">
+		<h4>Insert new result:</h4>
+		<table>
+			<thead>
+				<tr>
+					<th>Result</th>
+					<th>Observations</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						<select name="select-result">
+							<option value="1">Succeeded</option>
+							<option value="0">Other</option>
+							<option value="-1">failed</option>
+						</select>
+					</td>
+					<td>
+						<input name="Observations" type="text">
+					</td>
+					<td name="send">
+						<button name="send-new-result">Send</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+
+	<form name="previous-result">
+
+		<h4>Previous result of the month: </h4>
+
+		<table>
+			<thead>
+				<tr>
+					<th>Tag</th>
+					<th>Date</th>
+					<th>observations</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><input type="text" name="result-tag"></td>
+					<td><input type="text" name="result-date"></td>
+					<td><input type="text" name="result-observations"></td>
+				</tr>
+			</tbody>
+		</table>
+
+	</form>
+
+	<form name="comment-tag">
+
+		<h4>Comment Tag: </h4>
+
+		<textarea id="markdown"></textarea>
+
+		<p class="right">.SO</p>
+	</form>
+</div>
+
 
 
 
