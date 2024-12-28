@@ -1,7 +1,10 @@
 let currentDate = 'None';
 let nowDate = new Date().toISOString().split('T')[0];
+let currentPrinciple = 'None';
 let currentTag = 'None';
 let currentMonth = 'None';
+let listPrinciples = [];
+let currentListSystemTag = [];
 
 const datePicker = document.querySelector('input[name="datePicker"]');
 const selectedDate = document.querySelector('span[name="selectedDate"]');
@@ -16,6 +19,7 @@ const formNewResult = document.getElementsByName("new-result")[0];
 const formPreviousResult = document.getElementsByName("previous-result")[0];
 const formCommentTag = document.getElementsByName("comment-tag")[0];
 const sendResult = document.getElementsByName("send-new-result")[0];
+const workingPrinciple = document.getElementsByName("current-principle")[0];
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -58,6 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 			datePicker.disabled = true;
 			// Call the principles function
 			const principlesList = await principles();
+			listPrinciples = principlesList;
 			// Hide div date and show working date
 			divDate.style.display = "none";
 			workingDate.textContent = `Current Date : ${currentDate}`
@@ -66,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 			divButtonPrinciples.style.display = 'block';
 
 		} else {
-			alert('Select compatible data first');
+			alert('Select compatible date first');
 		}
 	});
 
@@ -80,13 +85,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 		const valid = dataAndCHeck.valid;
 		if (valid != false) {
 			// Check previous results in function of System type
-			await checkPreviousData(dataToSend);
+			const dataToSend = await checkPreviousData(data);
+			console.log(dataToSend);
+			// Send result in the database and go to the next step 
+			//await sendToDb(dataToSend);
 		}
-
-
-		// Send result in the database and go to the next step 
-		//await sendToDb(dataToSend);
-
 	})
 });
 
@@ -110,7 +113,7 @@ const principles = async () => {
 	}
 };
 
-// Create buttons : 
+// Create buttons + add event listener on it : 
 const feedButtons = async (list) => {
 
 	for (let i = 0; i < list.length; i++) {
@@ -119,6 +122,8 @@ const feedButtons = async (list) => {
 		button.className = 'system-principle-buttons';
 		button.name = list[i];
 		button.addEventListener('click', async (event) => {
+			currentPrinciple = list[i]
+			workingPrinciple.textContent = `Current principle : ${currentPrinciple}`;
 			event.preventDefault();
 			const listSystemTag = await systemTagsList(list[i])
 			if (listSystemTag != "") {
@@ -131,7 +136,8 @@ const feedButtons = async (list) => {
 
 			} else {
 				alert(`No system tag available in ${list[i]} for this date`)
-				// desactive the principle button
+				await closePrinciple();
+
 			}
 		});
 		divButtonPrinciples.appendChild(button);
@@ -204,7 +210,45 @@ const prepareResults = async () => {
 	return { valid, data };
 }
 
+
+// delete principle of the current principle when complete 
+const closePrinciple = async () => {
+
+	const principle = currentPrinciple;
+	const list = listPrinciples
+	list = list.filter(item => item !== principle);
+	currentPrinciple = list;
+	divButtonPrinciples.textContent = " "
+	await feedButtons(list);
+}
+
 // Check previous results
 const checkPreviousData = async (data) => {
-	// continue here 
+
+	if (data.result === 0) {
+		alert('Ok for this time !');
+	} else if (data.result === 1) {
+		alert('Good Job Samurai !')
+	} else {
+		const type = await getTypeSystem(data.tag);
+		if (type === 'S') {
+			alert(' It is a special tag, you no excuses Samurai... Take action !')
+			data.result = 'red';
+		} else if (type === 'A') {
+			data.result = await checkActiveTag(data)
+			if (data.result === 'red') {
+				alert(' You failed samurai take actions !')
+			} else {
+				alert('You have a second chance Samurai, you can do it !')
+			}
+		} else if (type === 'P') {
+			data.result = await checkPassiveTag(data)
+			if (data.result === 'red') {
+				alert(' You failed samurai take actions !')
+			} else {
+				alert(' You failed this time, but do better next time ! ')
+			}
+		}
+	}
+	return data;
 }
