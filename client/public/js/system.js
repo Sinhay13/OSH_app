@@ -217,7 +217,7 @@ const closePrinciple = async () => {
 	const principle = currentPrinciple;
 	const list = listPrinciples
 	list = list.filter(item => item !== principle);
-	currentPrinciple = list;
+	listPrinciples = list;
 	divButtonPrinciples.textContent = " "
 	await feedButtons(list);
 }
