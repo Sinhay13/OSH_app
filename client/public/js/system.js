@@ -227,8 +227,10 @@ const checkPreviousData = async (data) => {
 
 	if (data.result === 0) {
 		alert('Ok for this time !');
+		data.result = 'blue';
 	} else if (data.result === 1) {
 		alert('Good Job Samurai !')
+		data.result = 'green';
 	} else {
 		const type = await getTypeSystem(data.tag);
 		if (type === 'S') {
