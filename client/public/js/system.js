@@ -86,9 +86,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 		if (valid != false) {
 			// Check previous results in function of System type
 			const dataToSend = await checkPreviousData(data);
-			console.log(dataToSend);
 			// Send result in the database and go to the next step 
-			//await sendToDb(dataToSend);
+			await sendToDb(dataToSend);
 		}
 	})
 });
@@ -108,8 +107,7 @@ const principles = async () => {
 		const listFinal = principlesList.filter(item => item !== "侍Samurai" && item !== "none")
 		return listFinal;
 	} catch (error) {
-		console.error('Error fetching principles:', error);
-		return null;
+
 	}
 };
 
@@ -148,27 +146,54 @@ const feedButtons = async (list) => {
 const systemTagsList = async (principle) => {
 
 	const url = `http://127.0.0.1:2323/tags/system/list?principle=${principle}`;
-	const response = await fetch(url);
-	const data = await response.json();
-	const list = data.map(item => item.tag);
-	const listFinal = checkDate(list, currentDate);
-	return listFinal;
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error ! Status: ${response.status} `)
+		}
+		const data = await response.json();
+		const list = data.map(item => item.tag);
+		const listFinal = await checkDate(list, currentDate);
+		return listFinal;
+	} catch (error) {
+		console.error('Error fetching tag list:', error);
+		return null;
+	}
 };
 
 const checkDate = async (list, date) => {
-	const listFinal = [];
+	const filteredTags = [];
 
-	for (let i = 0; i < list.length; i++) {
-		const tag = list[i];
+	// Map over the list and handle fetch requests concurrently
+	const promises = list.map(async (tag) => {
 		const url = `http://127.0.0.1:2323/system/list/check?tag=${tag}&date=${date}`;
-		const response = await fetch(url);
-		const data = await response.json();
-		if (data.count === 0) {
-			listFinal.push(tag);
+		try {
+			const response = await fetch(url);
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status} for tag: ${tag}`);
+			}
+			const data = await response.json();
+			if (data.count === 0) {
+				return tag;
+			}
+		} catch (error) {
+			console.error(`Error fetching for tag ${tag}:`, error);
 		}
-	}
-	return listFinal;
-}
+		return null;
+	});
+
+	// Resolve all promises
+	const results = await Promise.all(promises);
+
+	// Filter out null values
+	results.forEach((result) => {
+		if (result !== null) {
+			filteredTags.push(result);
+		}
+	});
+
+	return filteredTags;
+};
 
 const insertResult = async (list) => {
 
@@ -187,24 +212,24 @@ const prepareResults = async () => {
 
 	const form = document.forms['new-result'];
 	const result = parseInt(form['select-result'].value, 10);
-	let observations = form['Observations'].value;
+	let observation = form['observation'].value;
 
 	if (result === 0) {
-		if (observations === "") {
-			alert('In this case observations are mandatory !')
+		if (observation === "") {
+			alert('In this case observation are mandatory !')
 			valid = false;
 		}
 	}
 
-	if (observations === "") {
-		observations = "none";
+	if (observation === "") {
+		observation = "none";
 	}
 
 	const data = [
 		{ date },
 		{ tag },
 		{ result },
-		{ observations }
+		{ observation }
 	];
 
 	return { valid, data };
@@ -225,27 +250,27 @@ const closePrinciple = async () => {
 // Check previous results
 const checkPreviousData = async (data) => {
 
-	if (data.result === 0) {
+	if (data[2].result === 0) {
 		alert('Ok for this time !');
-		data.result = 'blue';
-	} else if (data.result === 1) {
+		data[2].result = 'blue';
+	} else if (data[2].result === 1) {
 		alert('Good Job Samurai !')
-		data.result = 'green';
+		data[2].result = 'green';
 	} else {
-		const type = await getTypeSystem(data.tag);
+		const type = await getTypeSystem(data[1].tag);
 		if (type === 'S') {
 			alert(' It is a special tag, you no excuses Samurai... Take action !')
-			data.result = 'red';
+			data[2].result = 'red';
 		} else if (type === 'A') {
-			data.result = await checkActiveTag(data)
-			if (data.result === 'red') {
+			data[2].result = await checkActiveTag(data)
+			if (data[2].result === 'red') {
 				alert(' You failed samurai take actions !')
 			} else {
 				alert('You have a second chance Samurai, you can do it !')
 			}
 		} else if (type === 'P') {
-			data.result = await checkPassiveTag(data)
-			if (data.result === 'red') {
+			data[2].result = await checkPassiveTag(data)
+			if (data[2].result === 'red') {
 				alert(' You failed samurai take actions !')
 			} else {
 				alert(' You failed this time, but do better next time ! ')
@@ -254,3 +279,117 @@ const checkPreviousData = async (data) => {
 	}
 	return data;
 }
+
+// Function to get the system type of the tag. 
+const getTypeSystem = async (tag) => {
+
+	const url = `http://127.0.0.1:2323/tags/system?tag=${tag}`;
+	try {
+
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error ! status: ${response.status}`);
+		}
+		const data = await response.json();
+		const type = data.type;
+		return type;
+	} catch (error) {
+		console.error(`Error fetching type system for tag "${tag}":`, error);
+		return null;
+
+	}
+}
+
+// Check Active tag
+const checkActiveTag = async (data) => {
+
+	const tag = data[1].tag;
+
+	const url = `http://127.0.0.1:2323/system/check/active?tag=${tag}`;
+
+	try {
+
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error ! status: ${response.status}`);
+		}
+		const data = await response.json();
+
+		if (data.result === 'green') {
+			return 'yellow';
+		} else {
+			return 'red';
+		}
+
+	} catch (error) {
+		console.error(`Error fetching check active tag for tag: "${tag}":`, error);
+		return null;
+
+	}
+}
+
+// Check Active tag
+const checkPassiveTag = async (data) => {
+
+	const tag = data[1].tag;
+
+	const url = `http://127.0.0.1:2323/system/check/passive?tag=${tag}`;
+
+	try {
+
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error ! status: ${response.status}`);
+		}
+		const data = await response.json();
+
+		if (data.count <= 2) {
+			return 'yellow';
+		} else {
+			return 'red';
+		}
+
+	} catch (error) {
+		console.error(`Error fetching check passive tag for tag: "${tag}":`, error);
+		return null;
+
+	}
+}
+
+// Send data 
+const sendToDb = async (dataArray) => {
+
+	const url = `http://127.0.0.1:2323/system/insert`;
+
+
+
+	const data = dataArray.reduce((acc, curr) => {
+		return { ...acc, ...curr };
+	}, {});
+
+	const body = JSON.stringify(data);
+
+	const reqOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: body,
+	};
+
+	try {
+		const response = await fetch(url, reqOptions);
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		const data = await response.json();
+		alert("system updated !");
+		// await goToNextTag();
+	} catch (error) {
+		console.error('Error fetching data:', error);
+	}
+}
+
+
+// delete tag of the current list
+// check the lenght of the current list
+// if still tag load new curent tag + reset all div
+// if finish hide and reset all div and show principle + update principle. 

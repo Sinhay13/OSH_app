@@ -77,3 +77,57 @@ func TagSystemList(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 }
+
+// Get the type of a tag
+func TagSystemType(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	// Close the request body when done
+	defer r.Body.Close()
+
+	// Get the tag from query parameters
+	tag := r.URL.Query().Get("tag")
+	if tag == "" {
+		utils.Logger.Println("tag is missing")
+		http.Error(w, "tag is missing", http.StatusBadRequest)
+		return
+	}
+
+	// Load queries from tags.json
+	tagsJson, err := utils.LoadQueries("tags.json")
+	if err != nil {
+		utils.Logger.Printf("Failed to load queries: %v", err)
+		http.Error(w, "Failed to load queries", http.StatusInternalServerError)
+		return
+	}
+
+	// Prepare and execute query
+	stmt, err := db.Prepare(tagsJson.TagType)
+	if err != nil {
+		utils.Logger.Printf("Error preparing query: %v", err)
+		http.Error(w, "Error preparing query", http.StatusInternalServerError)
+		return
+	}
+	defer stmt.Close()
+
+	// Execute query and fetch the result
+	var systemType string
+	err = stmt.QueryRow(tag).Scan(&systemType)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			utils.Logger.Printf("No results found for tag: %s", tag)
+			http.Error(w, "No results found", http.StatusNotFound)
+		} else {
+			utils.Logger.Printf("Error executing query: %v", err)
+			http.Error(w, "Error executing query", http.StatusInternalServerError)
+		}
+		return
+	}
+
+	// Return the result as a response
+	w.Header().Set("Content-Type", "application/json")
+	response := map[string]string{"type": systemType}
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		utils.Logger.Printf("Error encoding response: %v", err)
+		http.Error(w, "Error encoding response", http.StatusInternalServerError)
+		return
+	}
+}

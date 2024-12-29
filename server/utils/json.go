@@ -48,9 +48,13 @@ type Queries struct {
 	ReadComment           string `json:"read_comment"`
 	SaveComment           string `json:"save_comment"`
 	TagSystem             string `json:"tag_system"`
+	TagType               string `json:"tag_type"`
 
 	// system :
 	CountSystemEntries string `json:"count_system_entries"`
+	ActiveTagCheck     string `json:"active_tag_check"`
+	PassiveTagCheck    string `json:"passive_tag_check"`
+	UpdateSystem       string `json:"update_system"`
 }
 
 // To load queries :

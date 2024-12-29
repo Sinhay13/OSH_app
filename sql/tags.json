@@ -12,7 +12,8 @@
 "check_if_tag_inactive":"SELECT COUNT(*) FROM tags WHERE tag = ? AND active = 0;",
 "read_comment":"SELECT comment FROM tags WHERE tag = ?;",
 "save_comment": "UPDATE tags SET comment = ?, updated_time = ? WHERE tag = ?;",
-"tag_system": "SELECT tag FROM tags WHERE is_system = 1 AND principle_tag = ?;"
+"tag_system": "SELECT tag FROM tags WHERE is_system = 1 AND principle_tag = ?;",
+"tag_type":"SELECT system_type FROM tags WHERE tag = ?"
 }
 
 

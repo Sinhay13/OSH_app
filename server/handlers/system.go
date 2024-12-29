@@ -14,4 +14,19 @@ func RegisterSystemEndpoints(mux *http.ServeMux, db *sql.DB) {
 	mux.HandleFunc("/system/list/check", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		system.CheckDateTag(w, r, db)
 	}))
+
+	// check active tag + CORS (check.go)
+	mux.HandleFunc("/system/check/active", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		system.CheckActiveTag(w, r, db)
+	}))
+
+	// check passive tag + CORS (check.go)
+	mux.HandleFunc("/system/check/passive", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		system.CheckPassiveTag(w, r, db)
+	}))
+
+	// insert new entry in system + CORS (check.go)
+	mux.HandleFunc("/system/insert", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		system.UpdateSystem(w, r, db)
+	}))
 }

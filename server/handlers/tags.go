@@ -65,4 +65,8 @@ func RegisterTagsEndpoints(mux *http.ServeMux, db *sql.DB) {
 		tags.TagSystemList(w, r, db)
 	}))
 
+	// get the system tag of a tag + CORS (system.go)
+	mux.HandleFunc("/tags/system", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		tags.TagSystemType(w, r, db)
+	}))
 }
