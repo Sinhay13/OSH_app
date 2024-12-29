@@ -30,7 +30,7 @@ func getDataToUpdateSystem(w http.ResponseWriter, r *http.Request) (date, tag, o
 		errMsg := fmt.Sprintf("Missing fields: %v", missingFields)
 		utils.Logger.Print(errMsg)
 		http.Error(w, errMsg, http.StatusBadRequest)
-		return "", "", "", "", fmt.Errorf(errMsg)
+		return "", "", "", "", fmt.Errorf("%s", errMsg)
 	}
 
 	return data["date"].(string), data["tag"].(string), data["observation"].(string), data["result"].(string), nil
