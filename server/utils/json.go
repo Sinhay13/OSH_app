@@ -51,10 +51,11 @@ type Queries struct {
 	TagType               string `json:"tag_type"`
 
 	// system :
-	CountSystemEntries string `json:"count_system_entries"`
-	ActiveTagCheck     string `json:"active_tag_check"`
-	PassiveTagCheck    string `json:"passive_tag_check"`
-	UpdateSystem       string `json:"update_system"`
+	CountSystemEntries    string `json:"count_system_entries"`
+	ActiveTagCheck        string `json:"active_tag_check"`
+	PassiveTagCheck       string `json:"passive_tag_check"`
+	UpdateSystem          string `json:"update_system"`
+	SelectPreviousResults string `json:"select_previous_results"`
 }
 
 // To load queries :

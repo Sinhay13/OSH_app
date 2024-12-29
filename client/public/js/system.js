@@ -16,10 +16,10 @@ const divButtonPrinciples = document.getElementsByName("buttons-principles")[0];
 const divProcessTag = document.getElementsByName("process-tag")[0];
 const showCurrentTag = document.getElementsByName("current-tag")[0];
 const formNewResult = document.getElementsByName("new-result")[0];
-const formPreviousResult = document.getElementsByName("previous-result")[0];
-const formCommentTag = document.getElementsByName("comment-tag")[0];
 const sendResult = document.getElementsByName("send-new-result")[0];
 const workingPrinciple = document.getElementsByName("current-principle")[0];
+const inputObservation = document.getElementsByName("observation")[0];
+const selectResult = document.getElementsByName("select-result")[0];
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -127,8 +127,6 @@ const feedButtons = async (list) => {
 			if (listSystemTag != "") {
 				divButtonPrinciples.style.display = 'none';
 				divProcessTag.style.display = "block";
-				formCommentTag.style.display = "none";
-				formPreviousResult.style.display = "none";
 				await insertResult(listSystemTag)
 
 
@@ -200,6 +198,7 @@ const insertResult = async (list) => {
 	currentListSystemTag = list;
 	currentTag = list[0];
 	showCurrentTag.textContent = `Current Tag: ${currentTag}`
+	await updateCommentAndPastResults();
 }
 
 // Prepare results from the form
@@ -238,14 +237,17 @@ const prepareResults = async () => {
 
 // delete principle of the current principle when complete 
 const closePrinciple = async () => {
-
 	const principle = currentPrinciple;
-	const list = listPrinciples
-	list = list.filter(item => item !== principle);
-	listPrinciples = list;
-	divButtonPrinciples.textContent = " "
-	await feedButtons(list);
-}
+	listPrinciples = listPrinciples.filter(item => item !== principle); // Directly reassign listPrinciples
+	divButtonPrinciples.textContent = ""; // Clear the div content
+	if (listPrinciples.length > 0) {
+		await feedButtons(listPrinciples); // Feed updated listPrinciples
+	} else {
+		alert('Update of the system complete !')
+		location.reload();
+	}
+
+};
 
 // Check previous results
 const checkPreviousData = async (data) => {
@@ -361,8 +363,6 @@ const sendToDb = async (dataArray) => {
 
 	const url = `http://127.0.0.1:2323/system/insert`;
 
-
-
 	const data = dataArray.reduce((acc, curr) => {
 		return { ...acc, ...curr };
 	}, {});
@@ -382,14 +382,183 @@ const sendToDb = async (dataArray) => {
 		}
 		const data = await response.json();
 		alert("system updated !");
-		// await goToNextTag();
+		await goToNextTag();
 	} catch (error) {
 		console.error('Error fetching data:', error);
 	}
 }
 
+// Go to the next tag
+const goToNextTag = async () => {
 
-// delete tag of the current list
-// check the lenght of the current list
-// if still tag load new curent tag + reset all div
-// if finish hide and reset all div and show principle + update principle. 
+	// Reset elements
+	inputObservation.value = " ";
+	selectResult.value = "1";
+
+	const list = currentListSystemTag;
+	list.shift();
+	currentListSystemTag = list;
+	if (list.length > 0) {
+		currentTag = list[0];
+		showCurrentTag.textContent = `Current Tag: ${currentTag}`;
+		await updateCommentAndPastResults();
+
+	} else {
+		// hide elements
+		divProcessTag.style.display = "none";
+		divButtonPrinciples.style.display = 'block';
+		await closePrinciple();
+	}
+
+}
+
+// Function to get comment 
+const readComment = async (tag) => {
+	const tag_string = encodeURIComponent(tag);
+
+	try {
+		const url = `http://127.0.0.1:2323/tags/comments/read?tag=${tag_string}`;
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const result = await response.json();
+		return result.comment
+
+	} catch (error) {
+		console.error('Error getting comment:', error);
+		alert("Error getting comment");
+	}
+};
+
+// Function to show comment 
+const showComment = async (message) => {
+	if (window.easyMDE) {
+		try {
+			if (message) {
+				let markdownContent;
+				try {
+					// Try to parse the message as JSON
+					const parsedData = JSON.parse(message);
+					// Convert parsed JSON to Markdown (assuming 'text' is the key for Markdown content)
+					markdownContent = parsedData.text || message;
+				} catch (error) {
+					// If parsing fails, treat the message as plain text (assuming it's already Markdown)
+					markdownContent = message;
+				}
+				// Set the Markdown content in EasyMDE
+				window.easyMDE.value(markdownContent);
+			} else {
+				console.log('No message content to display.');
+				window.easyMDE.clearAutosavedValue(); // Clears any autosaved value
+				window.easyMDE.value(''); // Clears the editor
+			}
+		} catch (error) {
+			console.error('Error rendering message in EasyMDE:', error);
+		}
+	} else {
+		console.error('EasyMDE instance not found.');
+	}
+};
+
+
+// get the 30 last results : 
+const getPreviousResults = async () => {
+	const tag = currentTag;
+
+	try {
+		const url = `http://127.0.0.1:2323/system/select?tag=${tag}`;
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const results = await response.json();
+		return results
+
+	} catch (error) {
+		console.error('Error getting comment:', error);
+		alert("Error getting comment");
+	}
+
+}
+
+// Feed table with previous result :
+const showPreviousResults = async (results) => {
+
+	// Get the table
+	const tbody = document.querySelector('form[name="previous-result"] tbody');
+
+	// delete all the lines except the first one.
+	while (tbody.rows.length > 1) {
+		tbody.deleteRow(1);
+	}
+
+	// Reset the date of the first line
+	const firstRowInputs = tbody.rows[0].querySelectorAll('input');
+	firstRowInputs.forEach(input => {
+		input.value = '';
+		input.style.backgroundColor = '';
+	});
+
+	// If no data disabled input of the first line
+	if (!results || results.length === 0) {
+		firstRowInputs.forEach(input => {
+			input.disabled = true;
+		});
+		return;
+	}
+
+	// add lines
+	results.forEach((result, index) => {
+		let row;
+		if (index === 0) {
+			row = tbody.rows[0];
+		} else {
+			row = tbody.insertRow();
+			row.innerHTML = `
+                <td><input type="text" name="result-tag"></td>
+                <td><input type="text" name="result-date"></td>
+                <td><input type="text" name="result-observation"></td>
+            `;
+		}
+
+		// feed table
+		const inputs = row.querySelectorAll('input');
+		inputs[0].value = result.tag;
+		inputs[1].value = result.date;
+		inputs[2].value = result.observation;
+
+		// Put colors to observation in function of result
+		const observationInput = inputs[2];
+		if (result.result === 'green') {
+			observationInput.style.backgroundColor = '#90EE90';
+		} else if (result.result === 'red') {
+			observationInput.style.backgroundColor = '#FFB6C1';
+		} else if (result.result === 'blue') {
+			observationInput.style.backgroundColor = '#FFFF00';
+		}
+		else {
+			observationInput.style.backgroundColor = '#87CEEB';
+		}
+
+		// disabled all result ! 
+		inputs.forEach(input => {
+			input.disabled = true;
+		});
+	});
+};
+
+// update comment + message in function of the current tag: 
+const updateCommentAndPastResults = async () => {
+
+	const message = await readComment(currentTag)
+	await showComment(message);
+
+	const results = await getPreviousResults();
+	await showPreviousResults(results);
+}
+

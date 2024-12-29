@@ -29,4 +29,10 @@ func RegisterSystemEndpoints(mux *http.ServeMux, db *sql.DB) {
 	mux.HandleFunc("/system/insert", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		system.UpdateSystem(w, r, db)
 	}))
+
+	// get previous results + CORS (select.go)
+	mux.HandleFunc("/system/select", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		system.GetPreviousResults(w, r, db)
+	}))
+
 }
