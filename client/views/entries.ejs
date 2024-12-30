@@ -84,11 +84,44 @@
 			<tr>
 				<td><input type="text" name="message-date"></td>
 				<td><input type="button" name="time-now" value="time-now"></td>
-				<td><button type="button" name="reminds-entries">Remind</button></td>
+				<td><button type="button" name="reminds-entries">Sign and add Remind</button></td>
 			</tr>
 		</tbody>
 	</table>
 	<input type="submit" name="send-message" value="sign">
+	<p>.SO</p>
+</form>
+<form name="remind-form">
+	<table>
+		<thead>
+			<tr>
+				<th>Remind Date</th>
+				<th>Repeat</th>
+				<th>Remind Title</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					<input type="date" name="remind-date" required>
+				</td>
+				<td>
+					<select name="repeat" required>
+						<option value="unique">Unique</option>
+						<option value="pin">Pin</option>
+						<option value="daily">Daily</option>
+						<option value="weekly">Weekly</option>
+						<option value="monthly">Monthly</option>
+					</select>
+				</td>
+				<td>
+					<input type="text" name="remind-title" placeholder="Enter Title" required>
+				</td>
+				<td><button type="button" name="send-remind">Send</button></td>
+			</tr>
+		</tbody>
+	</table>
 	<p>.SO</p>
 </form>
 <script src="js/entries.js" defer></script>

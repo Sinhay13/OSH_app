@@ -15,6 +15,7 @@ let lastCity;
 let lastCountry;
 let oldEntryID;
 let lastEntryID;
+let newID;
 
 //buttons and elements 
 const validMessageButton = document.querySelector('form[name="message-form"] input[name="valid-message"]');
@@ -32,6 +33,8 @@ const infosMessageElement = document.forms["date-form"].querySelector('p[name="i
 const saveCommentButton = document.querySelector('button[name="save-comment"]');
 const selectPrinciple = document.forms["tag-form"].elements["principle-list"];
 const selectTag = document.forms["tag-form"].elements["tag-list"];
+const remindButton = document.querySelector('button[name="reminds-entries"]');
+const sendRemindButton = document.querySelector('button[name="send-remind"]');
 
 document.addEventListener('DOMContentLoaded', async () => {
 	//EasyMDE instance
@@ -53,6 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	document.forms["city-country-form"].style.display = "none";
 	document.forms["message-form"].style.display = "none";
 	document.forms["date-form"].style.display = "none";
+	document.forms["remind-form"].style.display = "none";
 
 	// Check if chapter opened
 	await checkChapterOpened();
@@ -252,10 +256,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 		event.preventDefault(); // Prevent the default form submission
 
 		// Get date
-		date = await getDateForm(messageDateInput);
-
-		// send data to the API 
-		await sendNewMessage(tag, city, country, message, date);
+		const dataDate = await getDateForm(messageDateInput);
+		date = dataDate.date;
+		validDate = dataDate.valid;
+		if (validDate != false) {
+			// send data to the API 
+			await sendNewMessage(tag, city, country, message, date);
+			location.reload();
+		};
 	});
 	// Save comment : 
 	saveCommentButton.addEventListener('click', async (event) => {
@@ -274,7 +282,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 		} else {
 			console.log("Comment is empty, not proceeding to the next step.");
 		}
-	})
+	});
+
+	// remind button :
+	remindButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+
+		// Get date
+		const data = await getDateForm(messageDateInput);
+		date = data.date;
+		valid = data.valid;
+		if (valid != false) {
+			// send data to the API 
+			await sendNewMessage(tag, city, country, message, date);
+			document.forms["date-form"].style.display = "none";
+			document.forms["remind-form"].style.display = "block";
+			newID = await getNewId();
+		};
+	});
+
+	// send remind
+	sendRemindButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+
+		const fullData = await prepareDataRemind();
+		const check = fullData.valid;
+		const dataRemind = fullData.postData;
+		if (check != false) {
+			await sendDataToRemind(dataRemind)
+			location.reload();
+		}
+	});
 });
 
 //  Functions // 
@@ -642,6 +680,7 @@ const getTimeNow = async () => {
 
 // get date from the form with validation
 const getDateForm = async (input) => {
+	let valid = true;
 	const date = input.value;
 
 	// Define the regular expression for the date format YYYY-MM-DD HH:MM:SS or YYYY-MM-DD HH:MM
@@ -649,10 +688,11 @@ const getDateForm = async (input) => {
 
 	// Check if the date matches the pattern
 	if (dateFormatPattern.test(date)) {
-		return date; // Return the date if it is in the correct format
+		return { date, valid }; // Return the date if it is in the correct format
 	} else {
 		alert("Invalid date format. Please use the format: YYYY-MM-DD HH:MM or YYYY-MM-DD HH:MM:SS");
-		return null; // Return null or handle the invalid format case as needed
+		valid = false;
+		return { date, valid }; // Return null or handle the invalid format case as needed
 	}
 };
 
@@ -682,7 +722,6 @@ const sendNewMessage = async (tag, city, country, message, date) => {
 		}
 		const data = await response.json();
 		alert("New message sent !");
-		location.reload();
 	} catch (error) {
 		console.error('Error fetching data:', error);
 	}
@@ -756,3 +795,97 @@ const checkChapterOpened = async () => {
 	}
 }
 
+// Functions for remind //
+
+// Get id after sent
+const getNewId = async () => {
+	const chapterName = "";
+
+	const chapterNameString = encodeURIComponent(chapterName);
+
+	const url = `http://127.0.0.1:2323/entries/count?name=${chapterNameString}`;
+
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		const data = await response.json();
+		return data.count;
+
+	} catch (error) {
+		console.error('Error fetching last message:', error);
+		return null; // Or handle the error as needed
+	}
+
+};
+
+// Prepare data to send to reminds 
+const prepareDataRemind = async () => {
+	let valid = true;
+
+	const form = document.forms['remind-form'];
+
+	const remindDate = form['remind-date'].value.trim();
+	const repeat = form['repeat'].value.trim();
+	const remindTitle = form['remind-title'].value.trim();
+
+	if (!remindDate) {
+		alert('Please enter the reminder date.');
+		valid = false;
+	} else {
+		// Check if the remindDate is in the past
+		const currentDate = new Date();
+		const selectedDate = new Date(remindDate);
+		if (selectedDate < currentDate) {
+			alert('The reminder date cannot be in the past.');
+			valid = false;
+		}
+	}
+
+	if (!repeat) {
+		alert('Please select a repeat option.');
+		valid = false;
+	}
+	if (!remindTitle) {
+		alert('Please enter a title for the reminder.');
+		valid = false;
+	}
+
+	// Prepare the POST body
+	const postData = {
+		remind_date: remindDate,
+		repeat: repeat,
+		remind_title: remindTitle,
+		entry_id: parseInt(newID, 10),  // Transformer newID en entier
+	};
+
+	const data = { postData, valid };
+
+	return data;
+};
+
+// send data to remind
+const sendDataToRemind = async (data) => {
+
+	const url = `http://127.0.0.1:2323/reminds/insert`
+
+	const body = JSON.stringify(data);
+
+	const reqOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: body,
+	};
+
+	try {
+		const response = await fetch(url, reqOptions);
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		const data = await response.json();
+		alert("Remind added !");
+	} catch (error) {
+		console.error('Error fetching data:', error);
+	}
+}
