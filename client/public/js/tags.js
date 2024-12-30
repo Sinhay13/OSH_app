@@ -12,10 +12,13 @@ let currentActive;
 let chapterName = 'all';
 
 
+
 // Buttons and elements :
 const saveCommentInput = document.querySelector('input[name="comment-save"]')
 const closeMessageInput = document.querySelector('input[name="message-close"]')
 const nextMessageButton = document.querySelector('button[name="message-next"]');
+const remindButton = document.querySelector('button[name="message-remind"]');
+const sendRemindButton = document.querySelector('button[name="send-remind"]');
 const previousMessageButton = document.querySelector('button[name="message-previous"]');
 const paragraphCommentMessage = document.querySelector('p[name="paragraph-message-comment"]');
 const headerCommentMessage = document.querySelector('h3[name="header-message-comment"]');
@@ -55,6 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	document.forms["tags-filtered"].style.display = "none";
 	document.forms["message-list"].style.display = "none";
 	document.forms["message-comment-form"].style.display = "none";
+	document.forms["remind-form"].style.display = "none";
 
 	// Count Tags //
 	await countAndShowTags(countElement);
@@ -92,6 +96,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 			document.forms["tags-filtered"].style.display = "block";
 			document.forms["message-list"].style.display = "none";
 			document.forms["message-comment-form"].style.display = "none";
+			//Reset for for message / comment
+			closeMessageInput.style.display = "block";
+			nextMessageButton.style.display = "block";
+			previousMessageButton.style.display = "block";
+			remindButton.style.display = "block";
 		});
 	});
 
@@ -103,6 +112,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 		document.forms["tags-filtered"].style.display = "none";
 		document.forms["message-list"].style.display = "block";
 		document.forms["message-comment-form"].style.display = "none";
+		//Reset for for message / comment
+		closeMessageInput.style.display = "block";
+		nextMessageButton.style.display = "block";
+		previousMessageButton.style.display = "block";
+		remindButton.style.display = "block";
 	});
 
 	// see comment
@@ -115,157 +129,188 @@ document.addEventListener('DOMContentLoaded', async () => {
 		document.forms["message-comment-form"].style.display = "block";
 	});
 
-	// reset button
-	resetButton.addEventListener('click', async (event) => {
-		event.preventDefault();
-		location.reload();
-	});
-
-	// Form "tags-filters" //
-	applyFiltersButton.addEventListener('click', async (event) => {
+	// remind
+	remindButton.addEventListener('click', async (event) => {
 		event.preventDefault();
 
-		params = await getParamsForFilteringTags();
-		const dataTags = await getListTagsFiltered(params);
-		await feedTableTags(dataTags, principlesList, params, countElement);
-
-		document.forms["tags-filters"].style.display = "none";
-		document.forms["tags-filtered"].style.display = "block";
-
-		await showFilter(params, currentFilter);
-	});
-
-	// Save comment 
-	saveCommentInput.addEventListener('click', async (event) => {
-		event.preventDefault();
-
-		const formData = await getMessageOrCommentForm();
-		const valid = formData.isValid;
-		if (valid) {
-			const newComment = formData.message;
-			await saveComment(currentTag, newComment);
-
-			const newDataTags = await getListTagsFiltered(params);
-			await feedTableTags(newDataTags, principlesList, params, countElement);
-
-			document.forms["tags-filtered"].style.display = "block";
-			document.forms["message-comment-form"].style.display = "none";
-
-			//Reset for for message / comment
-			closeMessageInput.style.display = "block";
-			nextMessageButton.style.display = "block";
-			previousMessageButton.style.display = "block";
-		} else {
-			return
-		};
-	});
-
-	// First page  (table-message-list)
-	firstPageButton.addEventListener('click', async (event) => {
-		event.preventDefault();
-
-		currentPage = 1;
-
-		const data = await getMessageList(currentTag, currentPage, chapterName)
-		await feedTableMessageList(data);
-	});
-
-	// Previous Page (table-message-list)
-	previousPageButton.addEventListener('click', async (event) => {
-		event.preventDefault();
-
-		const page = currentPage - 1;
-
-		if (page > 1) {
-			currentPage = page;
-
-			const data = await getMessageList(currentTag, currentPage, chapterName)
-			await feedTableMessageList(data);
-		}
-	});
-
-	// Next Page (table-message-list)
-	nextPageButton.addEventListener('click', async (event) => {
-		event.preventDefault();
-
-		let page = currentPage + 1;
-
-		const data = await getMessageList(currentTag, page, chapterName)
-		if (data) {
-			await feedTableMessageList(data);
-			currentPage = page;
-		} else {
-			alert(" No more data available.")
-		}
-	});
-
-	// Handle chapter filter change
-	chapterFilterButton.addEventListener('click', async (event) => {
-		event.preventDefault();
-		chapterName = chapterFilter.value;
-
-		let page = 1;
-
-		const data = await getMessageList(currentTag, page, chapterName)
-		if (data) {
-			await feedTableMessageList(data);
-			currentPage = page;
-		} else {
-			alert(" No data available.")
-			const form = document.forms["message-list"];
-			const tbody = form.querySelector('tbody');
-			// Clear existing rows
-			tbody.innerHTML = '';
-		}
-	});
-
-	// Close message form
-	closeMessageInput.addEventListener('click', async (event) => {
-		event.preventDefault();
-
+		// Hide the "message-comment-form"
 		document.forms["message-comment-form"].style.display = "none";
-		document.forms["message-list"].style.display = "block";
-		saveCommentInput.style.display = "block";
+
+		// Show the "remind-form"
+		const remindForm = document.forms["remind-form"];
+		remindForm.style.display = "block";
+
+		// Reset all inputs in the "remind-form"
+		remindForm.reset();
 	});
 
-	// Get Previous message 
-	previousMessageButton.addEventListener('click', async (event) => {
+	// send remind
+	sendRemindButton.addEventListener('click', async (event) => {
 		event.preventDefault();
 
-		data = await getLastMessageWithDate(currentTag, currentDate, "previous");
-		const message = data.message;
-
-		if (message != "No message") {
-			currentID = data.entryID;
-			currentDate = data.date;
-			currentCity = data.city;
-			currentCountry = data.country;
-			paragraphCommentMessage.innerHTML = `<strong>Tag:</strong> ${currentTag} <br> <strong>Date :</strong> ${formatDate(currentDate)} <br> <strong>City:</strong> ${currentCity} <br> <strong>Country:</strong> ${currentCountry}`;
-			await showCommentOrMessage(message);
-		} else {
-			alert('No more previous message');
-		}
-	});
-
-	// Get next message 
-	nextMessageButton.addEventListener('click', async (event) => {
-		event.preventDefault();
-
-		data = await getLastMessageWithDate(currentTag, currentDate, "next");
-		const message = data.message;
-
-		if (message != "No message") {
-			currentID = data.entryID;
-			currentDate = data.date;
-			currentCity = data.city;
-			currentCountry = data.country;
-			paragraphCommentMessage.innerHTML = `<strong>Tag:</strong> ${currentTag} <br> <strong>Date :</strong> ${formatDate(currentDate)} <br> <strong>City:</strong> ${currentCity} <br> <strong>Country:</strong> ${currentCountry}`;
-			await showCommentOrMessage(message);
-		} else {
-			alert('No more message');
+		const fullData = await prepareDataRemind();
+		const check = fullData.valid;
+		const dataRemind = fullData.postData;
+		if (check != false) {
+			await sendDataToRemind(dataRemind)
+			document.forms["message-comment-form"].style.display = "block";
+			document.forms["remind-form"].style.display = "none";
 		}
 	});
 });
+
+// reset button
+resetButton.addEventListener('click', async (event) => {
+	event.preventDefault();
+	location.reload();
+});
+
+// Form "tags-filters" //
+applyFiltersButton.addEventListener('click', async (event) => {
+	event.preventDefault();
+
+	params = await getParamsForFilteringTags();
+	const dataTags = await getListTagsFiltered(params);
+	await feedTableTags(dataTags, principlesList, params, countElement);
+
+	document.forms["tags-filters"].style.display = "none";
+	document.forms["tags-filtered"].style.display = "block";
+
+	await showFilter(params, currentFilter);
+});
+
+// Save comment 
+saveCommentInput.addEventListener('click', async (event) => {
+	event.preventDefault();
+
+	const formData = await getMessageOrCommentForm();
+	const valid = formData.isValid;
+	if (valid) {
+		const newComment = formData.message;
+		await saveComment(currentTag, newComment);
+
+		const newDataTags = await getListTagsFiltered(params);
+		await feedTableTags(newDataTags, principlesList, params, countElement);
+
+		document.forms["tags-filtered"].style.display = "block";
+		document.forms["message-comment-form"].style.display = "none";
+
+		//Reset for for message / comment
+		closeMessageInput.style.display = "block";
+		nextMessageButton.style.display = "block";
+		previousMessageButton.style.display = "block";
+		remindButton.style.display = "block";
+	} else {
+		return
+	};
+});
+
+// First page  (table-message-list)
+firstPageButton.addEventListener('click', async (event) => {
+	event.preventDefault();
+
+	currentPage = 1;
+
+	const data = await getMessageList(currentTag, currentPage, chapterName)
+	await feedTableMessageList(data);
+});
+
+// Previous Page (table-message-list)
+previousPageButton.addEventListener('click', async (event) => {
+	event.preventDefault();
+
+	const page = currentPage - 1;
+
+	if (page > 1) {
+		currentPage = page;
+
+		const data = await getMessageList(currentTag, currentPage, chapterName)
+		await feedTableMessageList(data);
+	}
+});
+
+// Next Page (table-message-list)
+nextPageButton.addEventListener('click', async (event) => {
+	event.preventDefault();
+
+	let page = currentPage + 1;
+
+	const data = await getMessageList(currentTag, page, chapterName)
+	if (data) {
+		await feedTableMessageList(data);
+		currentPage = page;
+	} else {
+		alert(" No more data available.")
+	}
+});
+
+// Handle chapter filter change
+chapterFilterButton.addEventListener('click', async (event) => {
+	event.preventDefault();
+	chapterName = chapterFilter.value;
+
+	let page = 1;
+
+	const data = await getMessageList(currentTag, page, chapterName)
+	if (data) {
+		await feedTableMessageList(data);
+		currentPage = page;
+	} else {
+		alert(" No data available.")
+		const form = document.forms["message-list"];
+		const tbody = form.querySelector('tbody');
+		// Clear existing rows
+		tbody.innerHTML = '';
+	}
+});
+
+// Close message form
+closeMessageInput.addEventListener('click', async (event) => {
+	event.preventDefault();
+
+	document.forms["message-comment-form"].style.display = "none";
+	document.forms["message-list"].style.display = "block";
+	saveCommentInput.style.display = "block";
+});
+
+// Get Previous message 
+previousMessageButton.addEventListener('click', async (event) => {
+	event.preventDefault();
+
+	data = await getLastMessageWithDate(currentTag, currentDate, "previous");
+	const message = data.message;
+
+	if (message != "No message") {
+		currentID = data.entryID;
+		currentDate = data.date;
+		currentCity = data.city;
+		currentCountry = data.country;
+		paragraphCommentMessage.innerHTML = `<strong>Tag:</strong> ${currentTag} <br> <strong>Date :</strong> ${formatDate(currentDate)} <br> <strong>City:</strong> ${currentCity} <br> <strong>Country:</strong> ${currentCountry}`;
+		await showCommentOrMessage(message);
+	} else {
+		alert('No more previous message');
+	}
+});
+
+// Get next message 
+nextMessageButton.addEventListener('click', async (event) => {
+	event.preventDefault();
+
+	data = await getLastMessageWithDate(currentTag, currentDate, "next");
+	const message = data.message;
+
+	if (message != "No message") {
+		currentID = data.entryID;
+		currentDate = data.date;
+		currentCity = data.city;
+		currentCountry = data.country;
+		paragraphCommentMessage.innerHTML = `<strong>Tag:</strong> ${currentTag} <br> <strong>Date :</strong> ${formatDate(currentDate)} <br> <strong>City:</strong> ${currentCity} <br> <strong>Country:</strong> ${currentCountry}`;
+		await showCommentOrMessage(message);
+	} else {
+		alert('No more message');
+	}
+});
+
 
 // Count Tags functions //
 
@@ -759,6 +804,7 @@ const commentTagButton = async (tag) => {
 	saveCommentInput.style.display = "block"
 	closeMessageInput.style.display = "none";
 	nextMessageButton.style.display = "none";
+	remindButton.style.display = "none";
 	previousMessageButton.style.display = "none";
 	paragraphCommentMessage.innerHTML = `<strong> Tag :</strong> ${tag}`;
 	headerCommentMessage.innerHTML = `Comment :`;
@@ -1127,4 +1173,91 @@ const getChapterTitle = async (chapterName) => {
 	} else {
 		chapterTitleElement.innerHTML = `<center>All Chapters</center>`;
 	}
-}
+};
+
+// Code for remind //
+
+
+// Prepare data to send to reminds 
+const prepareDataRemind = async () => {
+	let valid = true;
+
+	const form = document.forms['remind-form'];
+
+	const remindDate = form['remind-date'].value.trim();
+	const repeat = form['repeat'].value.trim();
+	const remindTitle = form['remind-title'].value.trim();
+
+	if (!remindDate) {
+		alert('Please enter the reminder date.');
+		valid = false;
+	} else {
+		// Check if the remindDate is in the past
+		const currentDate = new Date();
+		const selectedDate = new Date(remindDate);
+		if (selectedDate < currentDate) {
+			alert('The reminder date cannot be in the past.');
+			valid = false;
+		}
+	}
+
+	if (!repeat) {
+		alert('Please select a repeat option.');
+		valid = false;
+	}
+	if (!remindTitle) {
+		alert('Please enter a title for the reminder.');
+		valid = false;
+	}
+
+	// Prepare the POST body
+	const postData = {
+		remind_date: remindDate,
+		repeat: repeat,
+		remind_title: remindTitle,
+		entry_id: parseInt(currentID, 10),
+	};
+
+	const data = { postData, valid };
+
+	return data;
+};
+
+// Function to send data to the "remind" system
+const sendDataToRemind = async (data) => {
+	const url = 'http://127.0.0.1:2323/reminds/insert';
+
+	// Convert the data object to a JSON string
+	const body = JSON.stringify(data);
+
+	// Request options for the fetch call
+	const reqOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: body,
+	};
+
+	try {
+		// Send the POST request
+		const response = await fetch(url, reqOptions);
+
+		// Check if the response is successful
+		if (!response.ok) {
+			alert('Failed to add the reminder. It might already exist. Please check and try again.');
+			document.forms["message-comment-form"].style.display = "block";
+			document.forms["remind-form"].style.display = "none";
+			throw new Error('Network response was not ok');
+		}
+
+		// Parse the response data
+		const responseData = await response.json();
+		alert('Reminder added successfully!');
+		console.log('Response data:', responseData);
+	} catch (error) {
+		// Log and alert the error
+		console.error('Error while sending data:', error);
+		alert(`Error: ${error.message}`);
+		document.forms["message-comment-form"].style.display = "block";
+		document.forms["remind-form"].style.display = "none";
+	}
+};

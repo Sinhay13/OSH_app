@@ -283,3 +283,18 @@ button[name="apply-chapter-filter"]:hover {
     transform: translateY(0);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+button[name="message-remind"] {
+    background-color: #a01368;
+    color: white; 
+    border: none; 
+    padding: 10px 20px; 
+    cursor: pointer; 
+}
+
+button[name="message-remind"]:hover {
+    background-color: #d02090; 
+    color: #fff; 
+    transform: scale(1.05); 
+    transition: all 0.3s ease; 
+}
