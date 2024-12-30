@@ -50,6 +50,9 @@ type Queries struct {
 	TagSystem             string `json:"tag_system"`
 	TagType               string `json:"tag_type"`
 
+	//reminds:
+	InsertRemind string `json:"insert_remind"`
+
 	// system :
 	CountSystemEntries    string `json:"count_system_entries"`
 	ActiveTagCheck        string `json:"active_tag_check"`

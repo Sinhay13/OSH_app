@@ -1,0 +1,3 @@
+{
+	"insert_remind":"INSERT INTO reminds (entry_id, remind_date, repeat, remind_title) VALUES (?,?,?,?);"
+}

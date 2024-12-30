@@ -261,10 +261,12 @@ const checkPreviousData = async (data) => {
 		if (type === 'S') {
 			alert(' It is a special tag, you have no excuses Samurai... Take action !')
 			data[2].result = 'red';
+			await sendMessageToReminds();
 		} else if (type === 'A') {
 			data[2].result = await checkActiveTag(data)
 			if (data[2].result === 'red') {
 				alert(' You failed samurai take actions !')
+				await sendMessageToReminds();
 			} else {
 				alert('You have a second chance Samurai, you can do it !')
 			}
@@ -272,6 +274,7 @@ const checkPreviousData = async (data) => {
 			data[2].result = await checkPassiveTag(data)
 			if (data[2].result === 'red') {
 				alert(' You failed samurai take actions !')
+				await sendMessageToReminds();
 			} else {
 				alert(' You failed this time, but do better next time ! ')
 			}
