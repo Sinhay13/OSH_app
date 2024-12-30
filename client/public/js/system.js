@@ -79,17 +79,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 	sendResult.addEventListener('click', async (event) => {
 		event.preventDefault();
 
-		// prepare and check data
-		const dataAndCHeck = await prepareResults();
-		const data = dataAndCHeck.data;
-		const valid = dataAndCHeck.valid;
-		if (valid != false) {
-			// Check previous results in function of System type
+		// Prepare and validate data
+		const dataAndCheck = await prepareResults();
+		const data = dataAndCheck.data;
+		const valid = dataAndCheck.valid;
+
+		if (valid) {
+			// Check previous results based on system type
 			const dataToSend = await checkPreviousData(data);
-			// Send result in the database and go to the next step 
+
+			// Send result to the database and move to the next tag
 			await sendToDb(dataToSend);
+		} else {
+			alert('Please correct the errors before submitting.');
 		}
-	})
+	});
 });
 
 // Get list of principles
@@ -203,7 +207,6 @@ const insertResult = async (list) => {
 
 // Prepare results from the form
 const prepareResults = async () => {
-
 	let valid = true;
 
 	const date = currentDate;
@@ -211,28 +214,23 @@ const prepareResults = async () => {
 
 	const form = document.forms['new-result'];
 	const result = parseInt(form['select-result'].value, 10);
-	let observation = form['observation'].value;
+	let observation = form['observation'].value.trim(); // Trim whitespace
 
-	if (result === 0) {
-		if (observation === "") {
-			alert('In this case observation are mandatory !')
-			valid = false;
-		}
-	}
-
-	if (observation === "") {
-		observation = "none";
+	// Validation: Ensure observation is mandatory when result === 0
+	if (result === 0 && observation === "") {
+		alert('In this case, observation is mandatory!');
+		valid = false;
 	}
 
 	const data = [
 		{ date },
 		{ tag },
 		{ result },
-		{ observation }
+		{ observation },
 	];
 
 	return { valid, data };
-}
+};
 
 
 // delete principle of the current principle when complete 
@@ -261,7 +259,7 @@ const checkPreviousData = async (data) => {
 	} else {
 		const type = await getTypeSystem(data[1].tag);
 		if (type === 'S') {
-			alert(' It is a special tag, you no excuses Samurai... Take action !')
+			alert(' It is a special tag, you have no excuses Samurai... Take action !')
 			data[2].result = 'red';
 		} else if (type === 'A') {
 			data[2].result = await checkActiveTag(data)
@@ -390,6 +388,12 @@ const sendToDb = async (dataArray) => {
 
 // Go to the next tag
 const goToNextTag = async () => {
+	// Prepare results and validate before transitioning
+	const { valid } = await prepareResults();
+	if (!valid) {
+		alert('Complete the current tag before proceeding.');
+		return;
+	}
 
 	// Reset elements
 	inputObservation.value = " ";
@@ -402,15 +406,13 @@ const goToNextTag = async () => {
 		currentTag = list[0];
 		showCurrentTag.textContent = `Current Tag: ${currentTag}`;
 		await updateCommentAndPastResults();
-
 	} else {
-		// hide elements
+		// Hide elements
 		divProcessTag.style.display = "none";
 		divButtonPrinciples.style.display = 'block';
 		await closePrinciple();
 	}
-
-}
+};
 
 // Function to get comment 
 const readComment = async (tag) => {
@@ -562,3 +564,25 @@ const updateCommentAndPastResults = async () => {
 	await showPreviousResults(results);
 }
 
+// Send message to reminds (take actions)
+const sendMessageToReminds = async () => {
+
+	const tag = currentTag;
+
+	try {
+		const url = `http://127.0.0.1:2323/reminds/action?tag=${tag}`;
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const data = await response.json();
+		console.log("Message sent to Reminds ! ");
+
+	} catch (error) {
+		console.error('Error getting comment:', error);
+		alert("Error getting comment");
+	}
+
+}
