@@ -20,6 +20,7 @@ const sendResult = document.getElementsByName("send-new-result")[0];
 const workingPrinciple = document.getElementsByName("current-principle")[0];
 const inputObservation = document.getElementsByName("observation")[0];
 const selectResult = document.getElementsByName("select-result")[0];
+const lastDate = document.getElementsByName("last-date")[0];
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -31,6 +32,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 		// Start in preview mode for the first editor
 		window.easyMDE.togglePreview();
 	};
+
+	// get last date
+	await getLastDate()
 
 	// hide elements: 
 	divButtonPrinciples.style.display = "none";
@@ -588,4 +592,29 @@ const sendMessageToReminds = async () => {
 		alert("Error getting comment");
 	}
 
+}
+
+// get last date
+const getLastDate = async () => {
+
+	try {
+		const url = `http://127.0.0.1:2323/system/last`;
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const data = await response.json();
+		// Safely update its content
+		if (lastDate && data.last) {
+			lastDate.innerHTML = `<strong>Last date in the system is: ${data.last}</strong>`;
+		} else {
+			console.error("Element or data is missing.");
+		}
+
+	} catch (error) {
+		console.error('Error getting comment:', error);
+		alert("Error getting comment");
+	}
 }

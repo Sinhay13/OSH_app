@@ -35,4 +35,9 @@ func RegisterSystemEndpoints(mux *http.ServeMux, db *sql.DB) {
 		system.GetPreviousResults(w, r, db)
 	}))
 
+	// get last date in system + CORS (last.go)
+	mux.HandleFunc("/system/last", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		system.GetLastDate(w, r, db)
+	}))
+
 }

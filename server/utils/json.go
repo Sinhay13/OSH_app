@@ -59,6 +59,7 @@ type Queries struct {
 	PassiveTagCheck       string `json:"passive_tag_check"`
 	UpdateSystem          string `json:"update_system"`
 	SelectPreviousResults string `json:"select_previous_results"`
+	GetLastDate           string `json:"get_last_date"`
 }
 
 // To load queries :
