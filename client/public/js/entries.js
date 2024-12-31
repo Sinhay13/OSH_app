@@ -820,7 +820,6 @@ const getNewId = async () => {
 
 };
 
-// Prepare data to send to reminds 
 const prepareDataRemind = async () => {
 	let valid = true;
 
@@ -837,8 +836,19 @@ const prepareDataRemind = async () => {
 		// Check if the remindDate is in the past
 		const currentDate = new Date();
 		const selectedDate = new Date(remindDate);
+
+		// Normalize dates to only compare year, month, and day
+		currentDate.setHours(0, 0, 0, 0); // Reset to midnight
+		selectedDate.setHours(0, 0, 0, 0); // Reset to midnight
+
 		if (selectedDate < currentDate) {
 			alert('The reminder date cannot be in the past.');
+			valid = false;
+		}
+
+		// Check if repeat is "pin" and remindDate is not today
+		if (repeat === "pin" && selectedDate.getTime() !== currentDate.getTime()) {
+			alert('When "pin" is selected, the reminder date must be today.');
 			valid = false;
 		}
 	}
@@ -847,6 +857,7 @@ const prepareDataRemind = async () => {
 		alert('Please select a repeat option.');
 		valid = false;
 	}
+
 	if (!remindTitle) {
 		alert('Please enter a title for the reminder.');
 		valid = false;
@@ -857,7 +868,7 @@ const prepareDataRemind = async () => {
 		remind_date: remindDate,
 		repeat: repeat,
 		remind_title: remindTitle,
-		entry_id: parseInt(newID, 10),  // Transformer newID en entier
+		entry_id: parseInt(newID, 10), // Transform newID into an integer
 	};
 
 	const data = { postData, valid };

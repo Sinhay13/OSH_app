@@ -30,6 +30,7 @@ type Queries struct {
 	GetMessagesList                  string `json:"get_messages_list"`
 	GetMessagesListFilteredByChapter string `json:"get_messages_list_filtered_by_chapter"`
 	GetMessageFromID                 string `json:"get_message_from_id"`
+	GetTagFromID                     string `json:"get_tag_from_id"`
 
 	//tags:
 	ActiveList            string `json:"active_list"`
@@ -51,7 +52,8 @@ type Queries struct {
 	TagType               string `json:"tag_type"`
 
 	//reminds:
-	InsertRemind string `json:"insert_remind"`
+	InsertRemind      string `json:"insert_remind"`
+	GetCurrentReminds string `json:"get_current_reminds"`
 
 	// system :
 	CountSystemEntries    string `json:"count_system_entries"`

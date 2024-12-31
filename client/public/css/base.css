@@ -298,3 +298,8 @@ button[name="message-remind"]:hover {
     transform: scale(1.05); 
     transition: all 0.3s ease; 
 }
+
+form[name="edit"],
+form[name="read"] {
+	display: none;
+}

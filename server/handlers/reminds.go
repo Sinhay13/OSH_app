@@ -18,4 +18,9 @@ func RegisterRemindsEndpoints(mux *http.ServeMux, db *sql.DB) {
 	mux.HandleFunc("/reminds/insert", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		reminds.InsertNewRemind(w, r, db)
 	}))
+
+	// get list of current reminds + CORS (current.go)
+	mux.HandleFunc("/reminds/current", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		reminds.GetCurrentReminds(w, r, db)
+	}))
 }

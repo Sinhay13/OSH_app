@@ -1,3 +1,4 @@
 {
-	"insert_remind":"INSERT INTO reminds (entry_id, remind_date, repeat, remind_title) VALUES (?,?,?,?);"
+	"insert_remind":"INSERT INTO reminds (entry_id, remind_date, repeat, remind_title) VALUES (?,?,?,?);",
+	"get_current_reminds": "SELECT * FROM reminds WHERE remind_date <= ? AND repeat != 'pin';"
 }

@@ -29,9 +29,15 @@ func RegisterEntriesEndpoints(mux *http.ServeMux, db *sql.DB) {
 	mux.HandleFunc("/entries/messages/list", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		entries.GetMessagesList(w, r, db)
 	}))
+
 	// get message in function of ID + CORS (count.go)
 	mux.HandleFunc("/entries/messages/message", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		entries.GetMessageFromID(w, r, db)
+	}))
+
+	// get tag from if + CORS (tag.go)
+	mux.HandleFunc("/entries/tag", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		entries.GetTagFromID(w, r, db)
 	}))
 
 }

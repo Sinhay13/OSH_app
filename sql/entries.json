@@ -7,6 +7,7 @@
 	"count_entries_per_chapter": "SELECT COUNT(*) AS entries_per_chapter FROM entries WHERE chapter_name = ?;",
 	"get_messages_list": "SELECT entry_id, chapter_name, city, country, date FROM entries WHERE tag = ? ORDER BY datetime(date) DESC LIMIT 5 OFFSET ?; ",
 	"get_messages_list_filtered_by_chapter": "SELECT entry_id, chapter_name, city, country, date FROM entries WHERE tag = ? AND chapter_name = ? ORDER BY datetime(date) DESC LIMIT 5 OFFSET ?; ",
-	"get_message_from_id": "SELECT message, date, country, city, entry_id FROM entries WHERE entry_id = ?; "
+	"get_message_from_id": "SELECT message, date, country, city, entry_id FROM entries WHERE entry_id = ?; ",
+	"get_tag_from_id":"SELECT tag FROM entries WHERE entry_id= ?"
 }
 
