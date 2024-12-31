@@ -38,6 +38,7 @@
 	<table>
 		<thead>
 			<tr>
+				<th>Tag</th>
 				<th>Message-id</th>
 				<th>Title</th>
 				<th>Date-remind</th>
@@ -48,6 +49,7 @@
 		</thead>
 		<tbody>
 			<tr>
+				<td><input type="text" name="tag"></td>
 				<td><input type="text" name="message-id"></td>
 				<td><input type="text" name="title"></td>
 				<td><input type="text" name="date-remind"></td>
@@ -59,6 +61,7 @@
 	</table>
 </form>
 <form name="edit">
+	<br>
 	<fieldset style="display: flex; flex-direction: column; gap: 10px; width: 200px;">
 		<br>
 		<legend>Edit remind</legend>
@@ -70,10 +73,17 @@
 		<input type="text" name="message-id" style="width: 200px;">
 
 		<label for="date-remind">Date-remind</label>
-		<input type="text" name="date-remind" style="width: 200px;">
+		<input type="date" name="date-remind" style="width: 200px;">
 
 		<label for="repeat">Repeat</label>
-		<input type="text" name="repeat" style="width: 200px;">
+		<select name="repeat" style="width: 200px;">
+			<option value="unique">Unique</option>
+			<option value="pin">Pin</option>
+			<option value="daily">Daily</option>
+			<option value="weekly">Weekly</option>
+			<option value="monthly">Monthly</option>
+			<option value="yearly">Yearly</option>
+		</select>
 
 		<button name="save-edit">Save</button>
 	</fieldset>

@@ -1,4 +1,9 @@
 {
 	"insert_remind":"INSERT INTO reminds (entry_id, remind_date, repeat, remind_title) VALUES (?,?,?,?);",
-	"get_current_reminds": "SELECT * FROM reminds WHERE remind_date <= ? AND repeat != 'pin';"
+	"get_current_reminds": "SELECT * FROM reminds WHERE remind_date <= ? AND repeat != 'pin';",
+	"delete_remind":"DELETE FROM reminds WHERE entry_id = ?;",
+	"update_remind_date":"UPDATE reminds SET remind_date = ? WHERE entry_id = ?;",
+	"get_pinned_reminds": "SELECT * FROM reminds WHERE repeat = 'pin';",
+	"get_all_reminds":"SELECT * FROM reminds;",
+	"update_remind":"UPDATE reminds SET remind_date = ?, repeat = ?, remind_title = ? WHERE entry_id = ?;"
 }

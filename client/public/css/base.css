@@ -303,3 +303,9 @@ form[name="edit"],
 form[name="read"] {
 	display: none;
 }
+
+form[name="all"] input[type="text"] {
+    width: 280px !important;  
+    min-width: 150px !important; 
+    box-sizing: border-box; 
+}

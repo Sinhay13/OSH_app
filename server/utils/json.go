@@ -54,6 +54,11 @@ type Queries struct {
 	//reminds:
 	InsertRemind      string `json:"insert_remind"`
 	GetCurrentReminds string `json:"get_current_reminds"`
+	DeleteRemind      string `json:"delete_remind"`
+	UpdateRemindDate  string `json:"update_remind_date"`
+	GetPinnedReminds  string `json:"get_pinned_reminds"`
+	GetAllReminds     string `json:"get_all_reminds"`
+	UpdateRemind      string `json:"update_remind"`
 
 	// system :
 	CountSystemEntries    string `json:"count_system_entries"`

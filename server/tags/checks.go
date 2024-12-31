@@ -19,7 +19,6 @@ func CheckIfTagInactive(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	query := tagsJson.CheckIfTagInactive
 
 	tag := r.URL.Query().Get("name")
-
 	if tag == "" {
 		utils.Logger.Println("Tag name is missing")
 		http.Error(w, "Tag name is required", http.StatusBadRequest)
