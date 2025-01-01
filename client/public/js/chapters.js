@@ -1,3 +1,7 @@
+
+let lastDate;
+
+
 document.addEventListener('DOMContentLoaded', async () => {
 
 	// Get elements:
@@ -40,8 +44,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 				alert('Title for the previous chapter is needed !')
 			} else {
 				await newChapter(title);
-				alert('New chapter created !')
-				location.reload();
 			}
 
 		});
@@ -55,21 +57,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // create a new chapter 
 const newChapter = async (title) => {
-	const title_string = encodeURIComponent(title);
 
-	try {
-		const url = `http://127.0.0.1:2323/chapters/new?title=${title_string}`;
-		const response = await fetch(url)
+	const check = isNewChapterAllow(lastDate);
+	if (check === true) {
 
-		if (!response.ok) {
-			throw new Error(`HTTP error! Status: ${response.status}`);
+
+		const title_string = encodeURIComponent(title);
+
+		try {
+			const url = `http://127.0.0.1:2323/chapters/new?title=${title_string}`;
+			const response = await fetch(url)
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const result = await response.json();
+			console.log('New chapter created:', result);
+
+			alert('New chapter created !')
+			location.reload();
+
+		} catch (error) {
+			console.error('Error creating new chapter:', error);
 		}
-
-		const result = await response.json();
-		console.log('New chapter created:', result);
-
-	} catch (error) {
-		console.error('Error creating new chapter:', error);
+	} else {
+		alert('Only one chapter can be opened each year.');
 	}
 };
 
@@ -150,8 +163,10 @@ const currentChapter = async (data) => {
 
 		const entriesValue = await getEntriesNB(currentChapterData.chapter_name);
 
+		lastDate = formatDate(currentChapterData.opened);
+
 		chapterNameInput.value = currentChapterData.chapter_name;
-		openedInput.value = formatDate(currentChapterData.opened);
+		openedInput.value = lastDate
 		entriesInput.value = entriesValue;
 
 	} else {
@@ -206,4 +221,19 @@ const getEntriesNB = async (chapterName = "") => {
 		console.error('Error fetching last message:', error);
 		return null; // Or handle the error as needed
 	}
+}
+
+// check if new chapter all :
+
+const isNewChapterAllow = (dateString) => {
+
+
+	// Extract the year from the input date
+	const inputYear = parseInt(dateString.split("-")[0], 10);
+
+	// Get the current year
+	const currentYear = new Date().getFullYear();
+
+	// Compare the years
+	return inputYear !== currentYear;
 }
