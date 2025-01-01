@@ -1,10 +1,15 @@
 let currentDate = 'None';
-let nowDate = new Date().toISOString().split('T')[0];
+let nowDate = new Date();
+let year = nowDate.getFullYear();
+let month = String(nowDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+let day = String(nowDate.getDate()).padStart(2, '0');
+nowDate = `${year}-${month}-${day}`;
 let currentPrinciple = 'None';
 let currentTag = 'None';
 let currentMonth = 'None';
 let listPrinciples = [];
 let currentListSystemTag = [];
+
 
 const datePicker = document.querySelector('input[name="datePicker"]');
 const selectedDate = document.querySelector('span[name="selectedDate"]');
