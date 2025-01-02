@@ -553,10 +553,10 @@ const showPreviousResults = async (results) => {
 		} else if (result.result === 'red') {
 			observationInput.style.backgroundColor = '#FFB6C1';
 		} else if (result.result === 'blue') {
-			observationInput.style.backgroundColor = '#FFFF00';
+			observationInput.style.backgroundColor = '#87CEEB';
 		}
 		else {
-			observationInput.style.backgroundColor = '#87CEEB';
+			observationInput.style.backgroundColor = '#FFFF00';
 		}
 
 		// disabled all result ! 
