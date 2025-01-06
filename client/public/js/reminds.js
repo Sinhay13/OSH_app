@@ -298,11 +298,18 @@ const showMessage = async (message) => {
 }
 
 // Get date time in the good format 
-const getDateTime = (isoString) => {
-	const dateObject = new Date(isoString);
-	const date = dateObject.toISOString().split('T')[0];
-	const time = dateObject.toTimeString().split(' ')[0];
-	return `${date} ${time}`;
+const getDateTime = (dateString) => {
+	if (dateString === "?") {
+		return dateString;
+	}
+
+	const [datePart, timePart] = dateString.split('T');
+	const [hours, minutes, seconds] = timePart.replace('Z', '').split(':');
+
+	// Construct the formatted date with or without seconds
+	const formattedDate = `${datePart} ${hours}:${minutes}` + (seconds ? `:${seconds}` : '');
+
+	return formattedDate;
 }
 
 // Delete remind 
