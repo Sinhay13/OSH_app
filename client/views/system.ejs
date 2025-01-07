@@ -10,6 +10,10 @@
 	<label for="datePicker">Select a date:</label>
 	<input type="date" name="datePicker" />
 	<p>Selected Date: <span name="selectedDate">None</span></p>
+	<div name="special-actions">
+		<button name="change-last-entry">Last update</button>
+		<button name="see-previous-results">See all</button>
+	</div>
 	<button name="start-system">Next</button>
 </div>
 
@@ -84,8 +88,31 @@
 
 		<p class="right">.SO</p>
 	</form>
-
 </div>
+
+
+<form name="change-last-entry">
+
+	<table>
+		<thead>
+			<tr>
+				<th>date</th>
+				<th>tag</th>
+				<th>observations</th>\
+				<th>action</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="date" name="last-date"></td>
+				<td><input type="text" name="last-tag"></td>
+				<td><input type="text" name="last-observation"></td>
+				<td><button name="delete-last">delete</button></td>
+			</tr>
+		</tbody>
+	</table>
+
+</form>
 
 
 

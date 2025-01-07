@@ -26,6 +26,9 @@ const workingPrinciple = document.getElementsByName("current-principle")[0];
 const inputObservation = document.getElementsByName("observation")[0];
 const selectResult = document.getElementsByName("select-result")[0];
 const lastDate = document.getElementsByName("last-date")[0];
+const deleteLastEntryForm = document.querySelector('form[name="change-last-entry"]');
+const changeLastEntryButton = document.querySelector('div[name="special-actions"] button[name="change-last-entry"]');
+const seePreviousResultsButton = document.querySelector('div[name="special-actions"] button[name="see-previous-results"]');
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -44,6 +47,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 	// hide elements: 
 	divButtonPrinciples.style.display = "none";
 	divProcessTag.style.display = "none";
+	deleteLastEntryForm.style.display = "none";
+
+	// change last entry
+	changeLastEntryButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+		location.reload();
+	});
+
+	// See all results in function of the tag (future feature)
+	seePreviousResultsButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+		location.reload();
+	});
+
 
 
 	// reset button
