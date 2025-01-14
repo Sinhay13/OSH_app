@@ -49,17 +49,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 	divProcessTag.style.display = "none";
 	deleteLastEntryForm.style.display = "none";
 
-	// change last entry
-	changeLastEntryButton.addEventListener('click', async (event) => {
-		event.preventDefault();
-		location.reload();
-	});
-
 	// See all results in function of the tag (future feature)
 	seePreviousResultsButton.addEventListener('click', async (event) => {
 		event.preventDefault();
 		location.reload();
 	});
+
+	// Last results change button
+	changeLastEntryButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+		deleteLastEntryForm.style.display = "block";
+		divDate.style.display = "none";
+	})
 
 
 
@@ -239,7 +240,16 @@ const prepareResults = async () => {
 	const tag = currentTag;
 
 	const form = document.forms['new-result'];
-	const result = parseInt(form['select-result'].value, 10);
+	const selectValue = form['select-result'].value;
+
+	// Check if default value is selected
+	if (selectValue === "x") {
+		alert('Please select a result');
+		valid = false;
+		return { valid, data: null };
+	}
+
+	const result = parseInt(selectValue, 10);
 	let observation = form['observation'].value.trim(); // Trim whitespace
 
 	// Validation: Ensure observation is mandatory when result === 0
@@ -426,7 +436,7 @@ const goToNextTag = async () => {
 
 	// Reset elements
 	inputObservation.value = " ";
-	selectResult.value = "1";
+	selectResult.value = "x";
 
 	const list = currentListSystemTag;
 	list.shift();
