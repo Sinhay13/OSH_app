@@ -50,6 +50,7 @@ type Queries struct {
 	SaveComment           string `json:"save_comment"`
 	TagSystem             string `json:"tag_system"`
 	TagType               string `json:"tag_type"`
+	GetPrinciple          string `json:"get_principle"`
 
 	//reminds:
 	InsertRemind      string `json:"insert_remind"`
@@ -67,6 +68,8 @@ type Queries struct {
 	UpdateSystem          string `json:"update_system"`
 	SelectPreviousResults string `json:"select_previous_results"`
 	GetLastDate           string `json:"get_last_date"`
+	GetLastData           string `json:"get_last_data"`
+	DeleteEntrySystem     string `json:"delete_entry_system"`
 }
 
 // To load queries :

@@ -329,3 +329,23 @@ div[name="special-actions"] button {
 div[name="special-actions"] button:hover {
     background-color: #e0e0e0;
 }
+
+button[name="go-back-last"] {
+    width: 100px;
+    height: 40px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 20px;
+    float: right;
+}
+
+button[name="go-back-last"]:hover {
+    background-color: #45a049;
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+

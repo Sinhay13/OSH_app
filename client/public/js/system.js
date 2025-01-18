@@ -9,6 +9,7 @@ let currentTag = 'None';
 let currentMonth = 'None';
 let listPrinciples = [];
 let currentListSystemTag = [];
+let lastUpdate;
 
 
 const datePicker = document.querySelector('input[name="datePicker"]');
@@ -29,6 +30,7 @@ const lastDate = document.getElementsByName("last-date")[0];
 const deleteLastEntryForm = document.querySelector('form[name="change-last-entry"]');
 const changeLastEntryButton = document.querySelector('div[name="special-actions"] button[name="change-last-entry"]');
 const seePreviousResultsButton = document.querySelector('div[name="special-actions"] button[name="see-previous-results"]');
+const goBackLastButton = document.querySelector('button[name="go-back-last"]');
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -60,7 +62,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 		event.preventDefault();
 		deleteLastEntryForm.style.display = "block";
 		divDate.style.display = "none";
+		const data = await getLastData(lastUpdate)
+		await feedTableLastData(data)
 	})
+
+	// go back from last result
+	goBackLastButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+		deleteLastEntryForm.style.display = "none";
+		divDate.style.display = "block";
+
+	});
 
 
 
@@ -529,7 +541,6 @@ const getPreviousResults = async () => {
 
 // Feed table with previous result :
 const showPreviousResults = async (results) => {
-
 	// Get the table
 	const tbody = document.querySelector('form[name="previous-result"] tbody');
 
@@ -573,18 +584,8 @@ const showPreviousResults = async (results) => {
 		inputs[1].value = result.date;
 		inputs[2].value = result.observation;
 
-		// Put colors to observation in function of result
-		const observationInput = inputs[2];
-		if (result.result === 'green') {
-			observationInput.style.backgroundColor = '#90EE90';
-		} else if (result.result === 'red') {
-			observationInput.style.backgroundColor = '#FFB6C1';
-		} else if (result.result === 'blue') {
-			observationInput.style.backgroundColor = '#87CEEB';
-		}
-		else {
-			observationInput.style.backgroundColor = '#FFFF00';
-		}
+		// Set color using helper function
+		setResultColor(inputs[2], result.result);
 
 		// disabled all result ! 
 		inputs.forEach(input => {
@@ -641,6 +642,7 @@ const getLastDate = async () => {
 		// Safely update its content
 		if (lastDate && data.last) {
 			lastDate.innerHTML = `<strong>Last date in the system is: ${data.last}</strong>`;
+			lastUpdate = data.last
 		} else {
 			console.error("Element or data is missing.");
 		}
@@ -650,3 +652,144 @@ const getLastDate = async () => {
 		alert("Error getting comment");
 	}
 }
+
+// Get data of the last update 
+const getLastData = async (date) => {
+
+	try {
+		const url = `http://127.0.0.1:2323/system/last-data?date=${date}`;
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		if (data) {
+
+			return data;
+
+		} else {
+			console.error("Element or data is missing.");
+		}
+
+	} catch (error) {
+		console.error('Error getting comment:', error);
+		alert("Error getting last data");
+	}
+
+};
+
+// feed table with the last data
+const feedTableLastData = async (data) => {
+	const form = document.forms['change-last-entry'];
+	const tbody = form.querySelector('tbody');
+
+	// Sort data by principle
+	data.sort((a, b) => a.principle.localeCompare(b.principle));
+
+	const createInput = (type, value, disabled = true) => {
+		const input = document.createElement('input');
+		input.type = type;
+		input.value = value;
+		input.disabled = disabled;
+		return input;
+	};
+
+	const createTableRow = (item) => {
+		const row = document.createElement('tr');
+		const inputs = {
+			date: createInput('date', item.date),
+			principle: createInput('text', item.principle),
+			tag: createInput('text', item.tag),
+			observation: createInput('text', item.observation)
+		};
+
+		setResultColor(inputs.observation, item.result);
+
+		const deleteButton = document.createElement('button');
+		deleteButton.textContent = 'delete';
+		deleteButton.name = 'delete-last';
+		deleteButton.type = 'button';
+		deleteButton.onclick = async function () {
+			const isValid = await deleteLastEntry(item.date, item.tag);
+			if (isValid === true) {
+				row.remove();
+			}
+		};
+
+		const cells = [
+			...Object.values(inputs),
+			deleteButton
+		].map(element => {
+			const td = document.createElement('td');
+			td.appendChild(element);
+			return td;
+		});
+
+		row.append(...cells);
+		return row;
+	};
+
+	// Clear all existing rows
+	tbody.innerHTML = '';
+
+	// Populate data
+	if (data.length > 0) {
+		data.forEach(item => {
+			tbody.appendChild(createTableRow(item));
+		});
+	}
+};
+
+// function to remove an entry in system
+const deleteLastEntry = async (date, tag) => {
+
+	let isValid = false
+
+	const confirmed = confirm(`Are you sure to delete entry tag : ${tag} and date : ${date} `);
+
+	if (confirmed) {
+		try {
+			const url = `http://127.0.0.1:2323/system/delete?date=${date}&tag=${tag}`;
+			const response = await fetch(url)
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const data = await response.json();
+
+			if (data) {
+
+				isValid = true
+
+			} else {
+				console.error("Element or data is missing.");
+			}
+
+		} catch (error) {
+			console.error('Error to delete entry:', error);
+			alert("Error getting last data");
+		}
+	} else {
+		alert('Action canceled')
+
+	}
+
+	return isValid
+}
+
+// helper color result 
+const setResultColor = (element, result) => {
+	if (result === 'green') {
+		element.style.backgroundColor = '#90EE90';
+	} else if (result === 'red') {
+		element.style.backgroundColor = '#FFB6C1';
+	} else if (result === 'blue') {
+		element.style.backgroundColor = '#87CEEB';
+	} else if (result === 'yellow') {
+		element.style.backgroundColor = '#FFFF00';
+	}
+};

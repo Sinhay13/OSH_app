@@ -40,4 +40,14 @@ func RegisterSystemEndpoints(mux *http.ServeMux, db *sql.DB) {
 		system.GetLastDate(w, r, db)
 	}))
 
+	// get last data in system + CORS (last.go)
+	mux.HandleFunc("/system/last-data", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		system.GetLastData(w, r, db)
+	}))
+
+	// delete entry in system + CORS (delete.go)
+	mux.HandleFunc("/system/delete", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		system.DeleteSystem(w, r, db)
+	}))
+
 }

@@ -4,6 +4,7 @@
 	"passive_tag_check": "SELECT COUNT(*) FROM (SELECT result FROM system WHERE tag = ? ORDER BY date DESC LIMIT 30) subquery WHERE result IN ('red', 'yellow');",
 	"update_system":"INSERT INTO system (date, tag, observation, result) VALUES (?,?,?,?)",
 	"select_previous_results": "SELECT * FROM (SELECT * FROM system WHERE tag = ? ORDER BY date DESC LIMIT 30) subquery ORDER BY date ASC;",
-	"get_last_date":"SELECT IFNULL(MAX(date), 'none') AS most_recent_date FROM system;"
+	"get_last_date":"SELECT IFNULL(MAX(date), 'none') AS most_recent_date FROM system;",
+	"get_last_data":"SELECT * FROM system WHERE date = ?;",
+	"delete_entry_system" : "DELETE FROM system WHERE date = ? AND tag = ?"
 }
-  

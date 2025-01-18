@@ -1,6 +1,7 @@
 <h1>System</h1>
-<div name='return-button'></div>
-<button type="button" name="reset">Reset</button>
+
+<div name='return-button'>
+	<button type="button" name="reset">Reset</button>
 </div>
 
 <div name="date-picker">
@@ -94,24 +95,30 @@
 
 <form name="change-last-entry">
 
+	<h4>Last result inserted in system : </h4>
+
 	<table>
 		<thead>
 			<tr>
 				<th>date</th>
+				<th>principle</th>
 				<th>tag</th>
-				<th>observations</th>\
+				<th>observations</th>
 				<th>action</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
 				<td><input type="date" name="last-date"></td>
+				<td><input type="text" name="last-principle"></td>
 				<td><input type="text" name="last-tag"></td>
 				<td><input type="text" name="last-observation"></td>
-				<td><button name="delete-last">delete</button></td>
+				<td><button type="button" name="delete-last">delete</button></td>
 			</tr>
 		</tbody>
 	</table>
+
+	<button name="go-back-last">Go Back</button>
 
 </form>
 
