@@ -27,7 +27,6 @@ func DeleteSystem(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		http.Error(w, "Date is required", http.StatusBadRequest)
 		return
 	}
-	utils.Logger.Printf("Received date parameter: %s\n", date)
 
 	// Get tag
 	tag := r.URL.Query().Get("tag")
@@ -36,7 +35,6 @@ func DeleteSystem(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		http.Error(w, "Tag is required", http.StatusBadRequest)
 		return
 	}
-	utils.Logger.Printf("Received tag parameter: %s\n", tag)
 
 	// Execute the delete query
 	result, err := db.Exec(query, date, tag)
@@ -50,7 +48,7 @@ func DeleteSystem(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	if rowsAffected == 0 {
 		utils.Logger.Printf("Delete query completed but no records were found/deleted for date=%s and tag=%s\n", date, tag)
 	} else {
-		utils.Logger.Printf("Successfully deleted system entry. Rows affected: %d\n", rowsAffected)
+		//utils.Logger.Printf("Successfully deleted system entry. Rows affected: %d\n", rowsAffected)
 	}
 
 	// Set response headers
@@ -67,6 +65,6 @@ func DeleteSystem(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.Logger.Printf("Error encoding response: %v\n", err)
 		http.Error(w, "Error encoding response", http.StatusInternalServerError)
 	} else {
-		utils.Logger.Println("Successfully sent response for delete operation")
+		//utils.Logger.Println("Successfully sent response for delete operation")
 	}
 }

@@ -22,7 +22,6 @@ func GetPreviousResults(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		handleError(w, "Tag parameter is required", http.StatusBadRequest, nil)
 		return
 	}
-
 	// Call json
 	systemJson, err := utils.LoadQueries("system.json")
 	if err != nil {

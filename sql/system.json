@@ -1,6 +1,6 @@
 {
 	"count_system_entries": "SELECT COUNT(tag) FROM system WHERE date = ? AND tag = ?;",
-	"active_tag_check": "WITH RECURSIVE check_previous AS (SELECT date, tag, result FROM system WHERE tag = ? UNION ALL SELECT s.date, s.tag, s.result FROM system s JOIN check_previous c ON s.date < c.date AND s.tag = c.tag) SELECT result FROM check_previous WHERE result != 'blue' ORDER BY date DESC LIMIT 1;",
+	"active_tag_check": "SELECT result FROM system WHERE tag = ? AND result != 'blue' ORDER BY date DESC LIMIT 1;",
 	"passive_tag_check": "SELECT COUNT(*) FROM (SELECT result FROM system WHERE tag = ? ORDER BY date DESC LIMIT 30) subquery WHERE result IN ('red', 'yellow');",
 	"update_system":"INSERT INTO system (date, tag, observation, result) VALUES (?,?,?,?)",
 	"select_previous_results": "SELECT * FROM (SELECT * FROM system WHERE tag = ? ORDER BY date DESC LIMIT 30) subquery ORDER BY date DESC;",
