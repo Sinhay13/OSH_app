@@ -122,16 +122,37 @@
 
 </form>
 
-<form>
+<form name="see-all-results-tag">
+
+	<h4>See all results of one tag : </h4>
 
 	<div name="selector-tag">
-		<select></select>
-
+		<select name="tag-list-selector"></select>
+		<button name="go-see-result">Go</button>
 	</div>
 
-	<table>
-
+	<table name="result-full">
+		<thead>
+			<tr>
+				<th>Date</th>
+				<th>observations</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="date" name="last-date-full"></td>
+				<td><input type="text" name="observation-full"></td>
+			</tr>
+		</tbody>
 	</table>
+
+	<div name="buttons-action-full">
+		<button name="previous-full">-</button>
+		<button name="first-full">First</button>
+		<button name="next-full">+</button>
+	</div>
+
+	<button name="go-back-full">Go Back</button>
 
 </form>
 

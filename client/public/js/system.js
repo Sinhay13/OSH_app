@@ -31,6 +31,8 @@ const deleteLastEntryForm = document.querySelector('form[name="change-last-entry
 const changeLastEntryButton = document.querySelector('div[name="special-actions"] button[name="change-last-entry"]');
 const seePreviousResultsButton = document.querySelector('div[name="special-actions"] button[name="see-previous-results"]');
 const goBackLastButton = document.querySelector('button[name="go-back-last"]');
+const goBackFullButton = document.querySelector('button[name="go-back-full"]');
+const seeAllResultTag = document.getElementsByName("see-all-results-tag")[0];
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -50,11 +52,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 	divButtonPrinciples.style.display = "none";
 	divProcessTag.style.display = "none";
 	deleteLastEntryForm.style.display = "none";
+	seeAllResultTag.style.display = "none";
 
-	// See all results in function of the tag (future feature)
+	// See all results in function of the tag 
 	seePreviousResultsButton.addEventListener('click', async (event) => {
 		event.preventDefault();
-		location.reload();
+		seeAllResultTag.style.display = "block";
+		divDate.style.display = "none";
 	});
 
 	// Last results change button
@@ -71,17 +75,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 		event.preventDefault();
 		deleteLastEntryForm.style.display = "none";
 		divDate.style.display = "block";
-
 	});
 
-
+	// go back from full result
+	goBackFullButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+		seeAllResultTag.style.display = "none";
+		divDate.style.display = "block";
+	});
 
 	// reset button
 	resetButton.addEventListener('click', async (event) => {
 		event.preventDefault();
 		location.reload();
 	});
-
 
 	// Selector Date : 
 	datePicker.addEventListener('change', function () {

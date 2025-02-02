@@ -330,7 +330,8 @@ div[name="special-actions"] button:hover {
     background-color: #e0e0e0;
 }
 
-button[name="go-back-last"] {
+button[name="go-back-last"],
+button[name="go-back-full"] {
     width: 100px;
     height: 40px;
     background-color: #4CAF50;
@@ -349,3 +350,76 @@ button[name="go-back-last"]:hover {
     transition: all 0.2s ease;
 }
 
+
+/* Form header styling */
+form[name="see-all-results-tag"] h4 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    border-bottom: 2px solid #E8DDB5;
+    padding-bottom: 10px;
+}
+
+/* Tag selector container */
+div[name="selector-tag"] {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+	width: 100px;
+}
+
+/* Tag selector dropdown */
+select[name="tag-list-selector"] {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Go button styling */
+button[name="go-see-result"] {
+    width: 100px;
+    height: 40px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+button[name="go-see-result"]:hover {
+    background-color: #45a049;
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+/* Navigation buttons container */
+div[name="buttons-action-full"] {
+    display: flex;
+    gap: 5px;
+    margin-top: 20px;
+}
+
+/* Navigation buttons styling */
+button[name="previous-full"],
+button[name="next-full"],
+button[name="first-full"] {
+    width: 100px;
+    height: 40px;
+    background-color: #D2BE76;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+button[name="previous-full"]:hover,
+button[name="next-full"]:hover,
+button[name="first-full"]:hover {
+    background-color: #c4b16d;
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
