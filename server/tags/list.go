@@ -88,3 +88,49 @@ func TagsListActive(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		utils.Logger.Printf("Error encoding JSON: %v", err)
 	}
 }
+
+// TagsSystem handles retrieving system tags.
+func TagsSystem(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	// Load JSON query configurations
+	tagsJson, err := utils.LoadQueries("tags.json")
+	if err != nil {
+		http.Error(w, "Failed to load queries", http.StatusInternalServerError)
+		utils.Logger.Printf("Error loading queries: %v", err)
+		return
+	}
+
+	// Execute query
+	query := tagsJson.GetSystemTag
+	rows, err := db.Query(query)
+	if err != nil {
+		http.Error(w, "Database query error", http.StatusInternalServerError)
+		utils.Logger.Printf("Error executing query: %v", err)
+		return
+	}
+	defer rows.Close()
+
+	// Process query results
+	var tags []Tags
+	for rows.Next() {
+		var tag Tags
+		if err := rows.Scan(&tag.Tag); err != nil {
+			utils.Logger.Printf("Error scanning row: %v", err)
+			continue // Skip faulty row instead of stopping entirely
+		}
+		tags = append(tags, tag)
+	}
+
+	// Check for errors after iteration
+	if err := rows.Err(); err != nil {
+		http.Error(w, "Error reading database rows", http.StatusInternalServerError)
+		utils.Logger.Printf("Error iterating rows: %v", err)
+		return
+	}
+
+	// Set response headers and encode response
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(tags); err != nil {
+		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
+		utils.Logger.Printf("Error encoding JSON: %v", err)
+	}
+}

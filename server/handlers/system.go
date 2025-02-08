@@ -50,4 +50,9 @@ func RegisterSystemEndpoints(mux *http.ServeMux, db *sql.DB) {
 		system.DeleteSystem(w, r, db)
 	}))
 
+	// get full result + CORS (full.go)
+	mux.HandleFunc("/system/full", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		system.FullResult(w, r, db)
+	}))
+
 }

@@ -51,6 +51,7 @@ type Queries struct {
 	TagSystem             string `json:"tag_system"`
 	TagType               string `json:"tag_type"`
 	GetPrinciple          string `json:"get_principle"`
+	GetSystemTag          string `json:"get_system_tag"`
 
 	//reminds:
 	InsertRemind      string `json:"insert_remind"`
@@ -70,6 +71,7 @@ type Queries struct {
 	GetLastDate           string `json:"get_last_date"`
 	GetLastData           string `json:"get_last_data"`
 	DeleteEntrySystem     string `json:"delete_entry_system"`
+	GetFullResult         string `json:"get_full_result"`
 }
 
 // To load queries :

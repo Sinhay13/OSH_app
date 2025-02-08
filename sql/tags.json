@@ -14,7 +14,8 @@
 "save_comment": "UPDATE tags SET comment = ?, updated_time = ? WHERE tag = ?;",
 "tag_system": "SELECT tag FROM tags WHERE is_system = 1 AND principle_tag = ?;",
 "tag_type":"SELECT system_type FROM tags WHERE tag = ?",
-"get_principle":"SELECT principle_tag FROM tags WHERE tag= ?;"
+"get_principle":"SELECT principle_tag FROM tags WHERE tag= ?;",
+"get_system_tag": "SELECT tag FROM tags WHERE is_system = 1;"
 }
 
 

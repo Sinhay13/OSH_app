@@ -11,6 +11,11 @@ let listPrinciples = [];
 let currentListSystemTag = [];
 let lastUpdate;
 
+// Variables for the pagination in full list result :
+let fullResultData;
+let currentPage = 1;
+const itemsPerPage = 30;
+
 
 const datePicker = document.querySelector('input[name="datePicker"]');
 const selectedDate = document.querySelector('span[name="selectedDate"]');
@@ -33,6 +38,10 @@ const seePreviousResultsButton = document.querySelector('div[name="special-actio
 const goBackLastButton = document.querySelector('button[name="go-back-last"]');
 const goBackFullButton = document.querySelector('button[name="go-back-full"]');
 const seeAllResultTag = document.getElementsByName("see-all-results-tag")[0];
+const selectTagsSystem = document.getElementsByName("tag-list-selector")[0];
+const selectTagsSystemGO = document.getElementsByName("go-see-result")[0];
+const afterFullResultButton = document.getElementsByName("next-full")[0];
+const beforeFullResultButton = document.getElementsByName("previous-full")[0];
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -59,6 +68,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 		event.preventDefault();
 		seeAllResultTag.style.display = "block";
 		divDate.style.display = "none";
+		const listTagSystem = await getLisTagsSystem()
+		feedSelectTagsSystem(listTagSystem);
+	});
+
+	// Button go selector tags system
+	selectTagsSystemGO.addEventListener('click', async (event) => {
+		event.preventDefault();
+		const currentTagSystem = selectTagsSystem.value;
+		fullResultData = await GetFullResultData(currentTagSystem);
+
+		currentPage = 1;
+
+		renderTablePage();
+	});
+
+	// Button to see next full result
+	afterFullResultButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+		if ((currentPage * itemsPerPage) < fullResultData.length) {
+			currentPage++;
+			renderTablePage();
+		}
+	});
+
+	// Button to see previous full result
+	beforeFullResultButton.addEventListener('click', async (event) => {
+		event.preventDefault();
+		if (currentPage > 1) {
+			currentPage--;
+			renderTablePage();
+		}
 	});
 
 	// Last results change button
@@ -778,7 +818,7 @@ const deleteLastEntry = async (date, tag) => {
 
 		} catch (error) {
 			console.error('Error to delete entry:', error);
-			alert("Error getting last data");
+			alert("Error to delete entry");
 		}
 	} else {
 		alert('Action canceled')
@@ -799,4 +839,119 @@ const setResultColor = (element, result) => {
 	} else if (result === 'yellow') {
 		element.style.backgroundColor = '#FFFF00';
 	}
+};
+
+// Get list of tag system
+const getLisTagsSystem = async () => {
+
+	const url = `http://127.0.0.1:2323/tags/list/system`;
+	let data;
+
+	try {
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		data = await response.json();
+	} catch (error) {
+		console.error('Error to get tag:', error);
+		alert("Error getting tag");
+	}
+	return data;
+};
+
+// Function to feed select element with tags system
+const feedSelectTagsSystem = (data) => {
+
+	// Populate the select element
+	data.forEach(item => {
+		const option = document.createElement("option");
+		option.value = item.tag;
+		option.textContent = item.tag;
+		selectTagsSystem.appendChild(option);
+	})
+};
+
+// Function to get full result in function of the tag
+const GetFullResultData = async (tag) => {
+
+	const url = `http://127.0.0.1:2323/system/full?tag=${tag}`;
+	let data;
+
+	try {
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		data = await response.json();
+	} catch (error) {
+		console.error("Error getting full data :", error);
+		alert("Error getting full data");
+	}
+	return data;
+};
+
+// Feed table full result
+const feedTableFullData = async (data) => {
+
+	const form = document.forms['see-all-results-tag'];
+	const tbody = form.querySelector('tbody');
+
+	const createInput = (type, value, disabled = true) => {
+		const input = document.createElement('input');
+		input.type = type;
+		input.value = value;
+		input.disabled = disabled;
+		return input;
+	};
+
+	const createTableRow = (item) => {
+		const row = document.createElement('tr');
+		const inputs = {
+			date: createInput('date', item.date),
+			tag: createInput('text', item.tag),
+			observation: createInput('text', item.observation)
+		};
+
+		setResultColor(inputs.observation, item.result);
+
+		const cells = [
+			...Object.values(inputs)
+		].map(element => {
+			const td = document.createElement('td');
+			td.appendChild(element);
+			return td;
+		});
+
+		row.append(...cells);
+		return row;
+	};
+
+	// Clear all existing rows
+	tbody.innerHTML = '';
+
+	// Populate data
+	if (data.length > 0) {
+		data.forEach(item => {
+			tbody.appendChild(createTableRow(item));
+		});
+	}
+};
+
+// Function render full result by pages
+const renderTablePage = () => {
+	const start = (currentPage - 1) * itemsPerPage;
+	const end = start + itemsPerPage;
+	const pageData = fullResultData.slice(start, end);
+
+	feedTableFullData(pageData);
+	updateButtons();
+};
+
+// Update button for pagination
+const updateButtons = () => {
+
+	afterFullResultButton.disabled = currentPage * itemsPerPage >= fullResultData.length;
+
+	beforeFullResultButton.disabled = currentPage === 1;
 };
