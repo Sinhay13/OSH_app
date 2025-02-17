@@ -8,7 +8,7 @@ import (
 )
 
 func DeleteSystem(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	utils.Logger.Printf("DeleteSystem called with URL: %s\n", r.URL.String())
+	//utils.Logger.Printf("DeleteSystem called with URL: %s\n", r.URL.String())
 
 	// Load queries from JSON
 	systemJson, err := utils.LoadQueries("system.json")
@@ -18,7 +18,7 @@ func DeleteSystem(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		return
 	}
 	query := systemJson.DeleteEntrySystem
-	utils.Logger.Printf("Delete query loaded: %s\n", query)
+	//utils.Logger.Printf("Delete query loaded: %s\n", query)
 
 	// Get date
 	date := r.URL.Query().Get("date")
