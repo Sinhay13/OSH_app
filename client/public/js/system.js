@@ -42,6 +42,7 @@ const selectTagsSystem = document.getElementsByName("tag-list-selector")[0];
 const selectTagsSystemGO = document.getElementsByName("go-see-result")[0];
 const afterFullResultButton = document.getElementsByName("next-full")[0];
 const beforeFullResultButton = document.getElementsByName("previous-full")[0];
+const resultOfSeeAllResultTagDiv = document.getElementsByName("result-of-see-all-result-tag")[0];
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -62,6 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	divProcessTag.style.display = "none";
 	deleteLastEntryForm.style.display = "none";
 	seeAllResultTag.style.display = "none";
+	resultOfSeeAllResultTagDiv.style.display = "none";
 
 	// See all results in function of the tag 
 	seePreviousResultsButton.addEventListener('click', async (event) => {
@@ -337,6 +339,7 @@ const closePrinciple = async () => {
 		await feedButtons(listPrinciples); // Feed updated listPrinciples
 	} else {
 		alert('Update of the system complete !')
+		await isLastDayOfTheYear();
 		location.reload();
 	}
 
@@ -894,6 +897,8 @@ const GetFullResultData = async (tag) => {
 // Feed table full result
 const feedTableFullData = async (data) => {
 
+	resultOfSeeAllResultTagDiv.style.display = "block";
+
 	const form = document.forms['see-all-results-tag'];
 	const tbody = form.querySelector('tbody');
 
@@ -955,3 +960,25 @@ const updateButtons = () => {
 
 	beforeFullResultButton.disabled = currentPage === 1;
 };
+
+// Fuction to check if it is the last day of the year, and clear system - table
+const isLastDayOfTheYear = async () => {
+
+	// Check if it is last day
+	const isLastDayYear = currentDate.includes('-12-31');
+
+	if(isLastDayYear){
+			try {
+				const url = `http://127.0.0.1:2323/system/clear?${currentDate}`;
+				const response = await fetch(url);
+
+				if (!response.ok) {
+					throw new Error(`HTTP error! Status: ${response.status}`);
+				};
+
+			} catch (error) {
+				console.error('Error to clean table system:', error);
+			};
+	};
+	return;	
+}
