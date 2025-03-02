@@ -725,40 +725,46 @@ const checkPrincipleTags = async (tag) => {
 
 // deal with update button 
 const updateTagButton = async (tag, active, is_principle, is_system, principle_tag, system_type, principlesList, params, countElement) => {
-	let count = 0;
-	let messageError;
 
+	// init variables :
+	let count =0;
+	let messagesError;
+
+	// first we check if changing 'is_principle' is allowed
 	if (is_principle === 0) {
 		count = await checkPrincipleTags(tag);
-		messageError = "It is not allowed to update is_principle to no a tag if another tag uses it as a principle.";
+		messageError = "It is not allowed to update is_principle to 'no' if another tag uses it as a principle."
 	};
 
+	// Not allow disable a tag if it is a principle
 	if (active === 0 && is_principle === 1) {
-		count = 1;
-		messageError = "A principle cannot be disable.";
+		count =1;
+		messageError = "A principle cannot be disabled. ";
 	};
 
+	// Add 'none' if tad does not have principle
 	if (principle_tag === null) {
 		principle_tag = "none";
-	}
-
-	if (is_system === 1) {
-		if (system_type === "N") {
-			count = 1;
-			messageError = "If is system, system type must different from none.";
-		}
-
-		if (count > 0) {
-			alert(messageError);
-			return;
-		} else {
-			await updateTag(tag, active, is_principle, is_system, principle_tag, system_type);
-			const newDataTags = await getListTagsFiltered(params);
-			principlesList = await principles();
-			await feedTableTags(newDataTags, principlesList, params, countElement);
-		}
 	};
-}
+
+	// Check if system type is valid
+	if (is_system === 1 && system_type === "N"){
+		count = 1;
+		messageError = "If 'is_system' is true , system type must be different from 'none'";
+	};
+
+	// If there is an error do not do the request 
+	if (count>0){
+		alert(messageError);
+		return;
+	};
+
+	await updateTag(tag, active, is_principle, is_system, principle_tag, system_type);
+	const newDataTags = await getListTagsFiltered(params);
+	principlesList = await principles();
+	await feedTableTags(newDataTags, principlesList, params, countElement);
+
+};
 
 // Function to update tag : 
 const updateTag = async (tag, active, is_principle, is_system, principle_tag, system_type) => {
@@ -772,6 +778,7 @@ const updateTag = async (tag, active, is_principle, is_system, principle_tag, sy
 		principle_tag,
 		system_type
 	})
+
 
 	const reqOptions = {
 		method: 'POST',
