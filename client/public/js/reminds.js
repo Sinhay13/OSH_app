@@ -542,11 +542,13 @@ const getDataToUpdate = async () => {
 	if (!dateRemind) {
 		errors.push('Date-remind cannot be empty.');
 	} else {
-		const today = new Date();
+	
 		const selectedDate = new Date(dateRemind);
-
 		// Format today's date to compare properly (YYYY-MM-DD)
-		const todayFormatted = today.toISOString().split('T')[0];
+		const today = new Date();
+		const todayFormatted = today.getFullYear() + '-' + 
+    	String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+    	String(today.getDate()).padStart(2, '0');
 
 		// Check if the selected date is in the past
 		if (selectedDate < today.setHours(0, 0, 0, 0)) {
