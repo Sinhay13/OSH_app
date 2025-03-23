@@ -55,4 +55,10 @@ func RegisterSystemEndpoints(mux *http.ServeMux, db *sql.DB) {
 		system.FullResult(w, r, db)
 	}))
 
+	// Reset table system + CORS (reset.go)
+	mux.HandleFunc("/system/reset", utils.CorsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		system.ResetSystem(w, r, db)
+	}))
+
+
 }

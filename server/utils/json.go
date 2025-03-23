@@ -72,6 +72,7 @@ type Queries struct {
 	GetLastData           string `json:"get_last_data"`
 	DeleteEntrySystem     string `json:"delete_entry_system"`
 	GetFullResult         string `json:"get_full_result"`
+	ResetSystem 		  string `json:"reset_system"`
 }
 
 // To load queries :

@@ -7,5 +7,6 @@
 	"get_last_date":"SELECT IFNULL(MAX(date), 'none') AS most_recent_date FROM system;",
 	"get_last_data":"SELECT * FROM system WHERE date = ?;",
 	"delete_entry_system" : "DELETE FROM system WHERE date = ? AND tag = ?",
-	"get_full_result":"SELECT * FROM system WHERE tag = ? ORDER BY date DESC;"
+	"get_full_result":"SELECT * FROM system WHERE tag = ? ORDER BY date DESC;",
+	"reset_system" : "DELETE FROM system;"
 }

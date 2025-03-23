@@ -733,63 +733,72 @@ const getLastData = async (date) => {
 
 // feed table with the last data
 const feedTableLastData = async (data) => {
+
+	console.log(data);
+
 	const form = document.forms['change-last-entry'];
-	const tbody = form.querySelector('tbody');
 
-	// Sort data by principle
-	data.sort((a, b) => a.principle.localeCompare(b.principle));
+	if (data != undefined){
+		
+		const tbody = form.querySelector('tbody');
 
-	const createInput = (type, value, disabled = true) => {
-		const input = document.createElement('input');
-		input.type = type;
-		input.value = value;
-		input.disabled = disabled;
-		return input;
-	};
+		// Sort data by principle
+		data.sort((a, b) => a.principle.localeCompare(b.principle));
 
-	const createTableRow = (item) => {
-		const row = document.createElement('tr');
-		const inputs = {
-			date: createInput('date', item.date),
-			principle: createInput('text', item.principle),
-			tag: createInput('text', item.tag),
-			observation: createInput('text', item.observation)
+		const createInput = (type, value, disabled = true) => {
+			const input = document.createElement('input');
+			input.type = type;
+			input.value = value;
+			input.disabled = disabled;
+			return input;
 		};
 
-		setResultColor(inputs.observation, item.result);
+		const createTableRow = (item) => {
+			const row = document.createElement('tr');
+			const inputs = {
+				date: createInput('date', item.date),
+				principle: createInput('text', item.principle),
+				tag: createInput('text', item.tag),
+				observation: createInput('text', item.observation)
+			};
 
-		const deleteButton = document.createElement('button');
-		deleteButton.textContent = 'delete';
-		deleteButton.name = 'delete-last';
-		deleteButton.type = 'button';
-		deleteButton.onclick = async function () {
-			const isValid = await deleteLastEntry(item.date, item.tag);
-			if (isValid === true) {
-				row.remove();
-			}
+			setResultColor(inputs.observation, item.result);
+
+			const deleteButton = document.createElement('button');
+			deleteButton.textContent = 'delete';
+			deleteButton.name = 'delete-last';
+			deleteButton.type = 'button';
+			deleteButton.onclick = async function () {
+				const isValid = await deleteLastEntry(item.date, item.tag);
+				if (isValid === true) {
+					row.remove();
+				}
+			};
+
+			const cells = [
+				...Object.values(inputs),
+				deleteButton
+			].map(element => {
+				const td = document.createElement('td');
+				td.appendChild(element);
+				return td;
+			});
+
+			row.append(...cells);
+			return row;
 		};
 
-		const cells = [
-			...Object.values(inputs),
-			deleteButton
-		].map(element => {
-			const td = document.createElement('td');
-			td.appendChild(element);
-			return td;
-		});
+		// Clear all existing rows
+		tbody.innerHTML = '';
 
-		row.append(...cells);
-		return row;
-	};
-
-	// Clear all existing rows
-	tbody.innerHTML = '';
-
-	// Populate data
-	if (data.length > 0) {
-		data.forEach(item => {
-			tbody.appendChild(createTableRow(item));
-		});
+		// Populate data
+		if (data.length > 0) {
+			data.forEach(item => {
+				tbody.appendChild(createTableRow(item));
+			});
+		}
+	} else {
+		form.style.display = "none";
 	}
 };
 
@@ -961,7 +970,7 @@ const updateButtons = () => {
 	beforeFullResultButton.disabled = currentPage === 1;
 };
 
-// Fuction to check if it is the last day of the year, and clear system - table
+// Function to check if it is the last day of the year, and clear system - table
 const isLastDayOfTheYear = async () => {
 
 	// Check if it is last day
@@ -969,15 +978,18 @@ const isLastDayOfTheYear = async () => {
 
 	if(isLastDayYear){
 			try {
-				const url = `http://127.0.0.1:2323/system/clear?${currentDate}`;
+				const url = `http://127.0.0.1:2323/system/reset?date=${currentDate}`;
 				const response = await fetch(url);
 
 				if (!response.ok) {
 					throw new Error(`HTTP error! Status: ${response.status}`);
+				} else {
+					alert("System data cleared")
 				};
 
 			} catch (error) {
 				console.error('Error to clean table system:', error);
+				alert ("Error to clear system" + error)
 			};
 	};
 	return;	
